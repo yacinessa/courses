@@ -1,0 +1,1950 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comprendre l'IA — Guide Complet pour Débutants</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=JetBrains+Mono:wght@300;400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #f5f0e8;
+  --milk: #faf7f2;
+  --dark: #1a1612;
+  --dark2: #2a2520;
+  --dark3: #3a342e;
+  --accent: #e8a855;
+  --accent2: #c96f3a;
+  --accent3: #6b9e78;
+  --accent4: #7b8ec8;
+  --accent5: #c87b9e;
+  --text: #4a3f35;
+  --text-light: #7a6f65;
+  --border: rgba(232,168,85,0.25);
+  --glow: rgba(232,168,85,0.15);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--dark);
+  color: var(--cream);
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  position: relative;
+  background: radial-gradient(ellipse at 50% 0%, rgba(232,168,85,0.12) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 80%, rgba(107,158,120,0.08) 0%, transparent 50%),
+              var(--dark);
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(232,168,85,0.04) 0%, transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(123,142,200,0.05) 0%, transparent 35%);
+}
+
+.hero-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.2s forwards;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 7vw, 5.5rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.4s forwards;
+}
+
+.hero h1 span { color: var(--accent); }
+
+.hero p {
+  max-width: 600px;
+  color: rgba(245,240,232,0.65);
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.6s forwards;
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.8s forwards;
+}
+
+.pill {
+  padding: 0.5rem 1.2rem;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+  color: var(--cream);
+  background: rgba(255,255,255,0.04);
+}
+.pill:hover, .pill.active {
+  background: var(--accent);
+  color: var(--dark);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+/* ── NAV ── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(26,22,18,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 2rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.nav a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: rgba(245,240,232,0.5);
+  text-decoration: none;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+}
+.nav a:hover { color: var(--accent); background: rgba(232,168,85,0.08); }
+
+/* ── SECTIONS ── */
+section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 5rem 2rem;
+}
+
+.section-header {
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.section-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 0.3em;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 1rem;
+}
+
+.section-subtitle {
+  color: rgba(245,240,232,0.55);
+  font-size: 1rem;
+  max-width: 600px;
+}
+
+/* ── CONCEPT BOX ── */
+.concept {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 2rem 0;
+  position: relative;
+  overflow: hidden;
+}
+.concept::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+.concept-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+/* ── ANALOGY ── */
+.analogy {
+  background: linear-gradient(135deg, rgba(232,168,85,0.08), rgba(232,168,85,0.03));
+  border-left: 3px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+  padding: 1.5rem 1.75rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+}
+.analogy strong {
+  font-style: normal;
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+/* ── FORMULA ── */
+.formula {
+  background: var(--dark2);
+  border: 1px solid rgba(123,142,200,0.25);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  color: #a8c0f0;
+  margin: 1.5rem 0;
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+.formula .label {
+  font-size: 0.65rem;
+  color: rgba(168,192,240,0.5);
+  display: block;
+  margin-top: 0.5rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ── STEP ── */
+.steps { margin: 2rem 0; }
+.step {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.75rem;
+  align-items: flex-start;
+}
+.step-num {
+  flex-shrink: 0;
+  width: 2.5rem; height: 2.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--dark);
+}
+.step-body h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  margin-bottom: 0.35rem;
+  color: var(--accent);
+}
+.step-body p { color: rgba(245,240,232,0.75); font-size: 0.93rem; }
+
+/* ── CANVAS AREA ── */
+.canvas-wrap {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 2rem 0;
+}
+.canvas-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; }
+.dot.red { background: #ff5f57; }
+.dot.yellow { background: #febc2e; }
+.dot.green { background: #28c840; }
+canvas { display: block; width: 100%; }
+
+/* ── TABLE ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+.data-table th {
+  background: rgba(232,168,85,0.12);
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.data-table td {
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: rgba(245,240,232,0.8);
+}
+.data-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* ── HIGHLIGHT ── */
+.highlight {
+  display: inline-block;
+  background: rgba(232,168,85,0.15);
+  border-radius: 4px;
+  padding: 0.1em 0.4em;
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.88em;
+}
+
+/* ── CARDS GRID ── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+  gap: 1.25rem;
+  margin: 2rem 0;
+}
+.card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  transition: all 0.3s;
+}
+.card:hover {
+  border-color: var(--accent);
+  background: rgba(232,168,85,0.06);
+  transform: translateY(-3px);
+}
+.card-icon {
+  font-size: 1.8rem;
+  margin-bottom: 0.75rem;
+}
+.card h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+.card p { font-size: 0.85rem; color: rgba(245,240,232,0.6); }
+
+/* ── PROS/CONS ── */
+.pros-cons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin: 2rem 0;
+}
+.pros, .cons {
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+.pros {
+  background: rgba(107,158,120,0.08);
+  border: 1px solid rgba(107,158,120,0.25);
+}
+.cons {
+  background: rgba(201,111,58,0.08);
+  border: 1px solid rgba(201,111,58,0.25);
+}
+.pros h4 { color: var(--accent3); margin-bottom: 0.75rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; letter-spacing: 0.1em; }
+.cons h4 { color: var(--accent2); margin-bottom: 0.75rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; letter-spacing: 0.1em; }
+.pros li, .cons li {
+  list-style: none;
+  font-size: 0.87rem;
+  color: rgba(245,240,232,0.75);
+  padding: 0.3rem 0;
+  padding-left: 1.2rem;
+  position: relative;
+}
+.pros li::before { content: '✓'; color: var(--accent3); position: absolute; left: 0; }
+.cons li::before { content: '✗'; color: var(--accent2); position: absolute; left: 0; }
+
+/* ── DIVIDER ── */
+.divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  margin: 2rem 0;
+}
+
+/* ── COMPARISON TABLE ── */
+.comparison-section {
+  background: var(--dark2);
+  padding: 5rem 2rem;
+}
+
+/* ── ALGORITHM BADGE ── */
+.algo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(232,168,85,0.1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0.9rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  margin: 0.3rem;
+}
+
+/* ── INTERACTIVE DEMO ── */
+.demo-controls {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+  align-items: center;
+}
+.demo-btn {
+  background: var(--accent);
+  color: var(--dark);
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.25rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.demo-btn:hover { background: var(--accent2); color: white; }
+.demo-btn.secondary {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--cream);
+}
+.demo-btn.secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: rgba(245,240,232,0.6);
+}
+input[type=range] {
+  width: 120px;
+  accent-color: var(--accent);
+}
+select {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  color: var(--cream);
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+}
+
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: rgba(245,240,232,0.3);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  border-top: 1px solid var(--border);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── NEURAL NET VIZ ── */
+.nn-svg { width: 100%; height: 300px; }
+
+/* ── TOOLTIP ── */
+.tooltip-wrap { position: relative; display: inline; cursor: help; border-bottom: 1px dashed var(--accent); color: var(--accent); }
+
+/* ── PROGRESS BAR ── */
+.progress-bar-wrap {
+  background: rgba(255,255,255,0.06);
+  border-radius: 100px;
+  height: 8px;
+  margin: 0.3rem 0;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width 1s ease;
+}
+
+/* ── IMC INTERACTIVE ── */
+.imc-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.imc-input-group label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: rgba(245,240,232,0.6);
+  font-size: 0.75rem;
+}
+.imc-input {
+  width: 100%;
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  color: var(--cream);
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+.imc-input:focus { outline: none; border-color: var(--accent); }
+
+.imc-result {
+  padding: 1.5rem;
+  border-radius: 14px;
+  text-align: center;
+  margin-top: 1rem;
+  display: none;
+}
+.imc-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 900;
+}
+.imc-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  margin-top: 0.25rem;
+}
+
+@media(max-width: 600px) {
+  .pros-cons { grid-template-columns: 1fr; }
+  .imc-form { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════ HERO ════════════════ -->
+<div class="hero">
+  <div class="hero-tag">Intelligence Artificielle — Guide Complet</div>
+  <h1>Comprendre l'IA<br><span>de Zéro à Expert</span></h1>
+  <p>6 algorithmes fondamentaux expliqués avec des exemples du quotidien, des visualisations interactives et des formules mathématiques accessibles.</p>
+  <div class="pills">
+    <a href="#intro" class="pill">L'IA c'est quoi?</a>
+    <a href="#linear" class="pill">Régression Linéaire</a>
+    <a href="#knn" class="pill">K-NN</a>
+    <a href="#bayes" class="pill">Naive Bayes</a>
+    <a href="#logistic" class="pill">Régression Logistique</a>
+    <a href="#nn" class="pill">Neural Network</a>
+    <a href="#imc" class="pill">Projet IMC</a>
+  </div>
+</div>
+
+<!-- ════════════════ NAV ════════════════ -->
+<nav class="nav">
+  <a href="#intro">Intro</a>
+  <a href="#linear">Linéaire</a>
+  <a href="#knn">K-NN</a>
+  <a href="#bayes">Naive Bayes</a>
+  <a href="#logistic">Logistique</a>
+  <a href="#nn">Neural Net</a>
+  <a href="#imc">IMC</a>
+  <a href="#compare">Comparaison</a>
+</nav>
+
+<!-- ════════════════ INTRO ════════════════ -->
+<section id="intro">
+  <div class="section-header reveal">
+    <span class="section-number">00 — FONDATIONS</span>
+    <h2 class="section-title">Avant tout : c'est quoi l'IA ?</h2>
+    <p class="section-subtitle">Pas de magie. Juste des mathématiques qui apprennent à partir de données.</p>
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">La définition simple</div>
+    <p>L'IA (Intelligence Artificielle) est la capacité d'une machine à <strong style="color:var(--accent)">apprendre à partir d'exemples</strong> et à <strong style="color:var(--accent)">prédire</strong> ou <strong style="color:var(--accent)">décider</strong> sur de nouvelles situations sans être explicitement programmée pour chaque cas.</p>
+  </div>
+
+  <div class="analogy reveal">
+    <strong>🧒 Analogie — L'enfant qui apprend</strong>
+    Quand tu montres 100 photos de chats à un enfant en disant "c'est un chat", il apprend ce qui caractérise un chat. Plus tard, il reconnaît un chat qu'il n'a jamais vu. L'IA fait exactement ça — mais avec des mathématiques.
+  </div>
+
+  <div class="cards reveal">
+    <div class="card">
+      <div class="card-icon">📊</div>
+      <h4>Données (Data)</h4>
+      <p>L'IA apprend à partir d'exemples qu'on lui donne. Plus il y a d'exemples, mieux elle apprend.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔢</div>
+      <h4>Algorithme</h4>
+      <p>La recette mathématique qui permet à la machine d'extraire des patterns dans les données.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎯</div>
+      <h4>Prédiction</h4>
+      <p>Le résultat : la machine prédit une valeur ou prend une décision sur une nouvelle situation.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔁</div>
+      <h4>Entraînement</h4>
+      <p>Le processus où l'algorithme ajuste ses paramètres pour être de plus en plus précis.</p>
+    </div>
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">Les deux grandes familles</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1rem">
+      <div>
+        <h4 style="color:var(--accent3);font-family:'JetBrains Mono',monospace;font-size:0.85rem;margin-bottom:0.5rem">📈 RÉGRESSION</h4>
+        <p style="font-size:0.9rem;color:rgba(245,240,232,0.7)">Prédire un <strong>nombre continu</strong>.<br>Exemples : prix d'une maison, température de demain, IMC d'une personne.</p>
+      </div>
+      <div>
+        <h4 style="color:var(--accent4);font-family:'JetBrains Mono',monospace;font-size:0.85rem;margin-bottom:0.5rem">🏷️ CLASSIFICATION</h4>
+        <p style="font-size:0.9rem;color:rgba(245,240,232,0.7)">Prédire une <strong>catégorie</strong>.<br>Exemples : spam/pas spam, malade/sain, chat/chien.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ LINEAR REGRESSION ════════════════ -->
+<section id="linear" style="border-top:1px solid var(--border)">
+  <div class="section-header reveal">
+    <span class="section-number">01 — ALGORITHME</span>
+    <h2 class="section-title">Régression Linéaire</h2>
+    <p class="section-subtitle">Le plus simple. Trouver la meilleure droite qui passe à travers des points.</p>
+  </div>
+
+  <div class="analogy reveal">
+    <strong>🎯 Analogie — La règle graduée</strong>
+    Imagine que tu veux prédire le poids d'un enfant selon son âge. Tu as les données de 50 enfants. Tu traces ces points sur un graphe et tu cherches la droite qui passe "au mieux" à travers tous ces points. Cette droite est ton modèle. Pour un nouvel enfant de 8 ans, tu lis le poids correspondant sur la droite.
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">Le concept fondamental</div>
+    <p>La régression linéaire suppose qu'il existe une <span class="highlight">relation linéaire</span> entre une variable d'entrée <strong style="color:var(--accent)">X</strong> (appelée feature ou caractéristique) et une variable de sortie <strong style="color:var(--accent)">Y</strong> (ce qu'on veut prédire).</p>
+  </div>
+
+  <div class="formula reveal">
+    Y = <span style="color:#ff9f7c">a</span> · X + <span style="color:#a8f0c8">b</span>
+    <span class="label">Y = prédiction | a = pente | X = entrée | b = ordonnée à l'origine</span>
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">Exemple concret — Poids selon l'âge</div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Âge (X)</th>
+          <th>Poids réel (Y)</th>
+          <th>Prédiction Y = 3X + 5</th>
+          <th>Erreur</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>2 ans</td><td>12 kg</td><td>3×2+5 = <strong style="color:var(--accent)">11 kg</strong></td><td>-1 kg</td></tr>
+        <tr><td>5 ans</td><td>20 kg</td><td>3×5+5 = <strong style="color:var(--accent)">20 kg</strong></td><td>0 kg ✓</td></tr>
+        <tr><td>8 ans</td><td>27 kg</td><td>3×8+5 = <strong style="color:var(--accent)">29 kg</strong></td><td>+2 kg</td></tr>
+        <tr><td>10 ans</td><td>35 kg</td><td>3×10+5 = <strong style="color:var(--accent)">35 kg</strong></td><td>0 kg ✓</td></tr>
+        <tr><td style="color:var(--accent4)">12 ans (nouveau)</td><td style="color:var(--accent4)">?</td><td style="color:var(--accent4)">3×12+5 = <strong>41 kg</strong></td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="canvas-wrap reveal">
+    <div class="canvas-header">
+      <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+      VISUALISATION — Régression Linéaire
+    </div>
+    <div style="padding:1rem">
+      <div class="demo-controls">
+        <button class="demo-btn" onclick="addLinearPoint()">+ Ajouter un point</button>
+        <button class="demo-btn secondary" onclick="resetLinear()">Réinitialiser</button>
+        <label>Points : <span id="pt-count">8</span></label>
+      </div>
+    </div>
+    <canvas id="linearCanvas" height="300"></canvas>
+  </div>
+
+  <div class="steps reveal">
+    <h3 style="font-family:'Playfair Display',serif;margin-bottom:1.5rem;color:var(--accent)">Comment l'algorithme trouve a et b ?</h3>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Commencer avec des valeurs aléatoires</h4>
+        <p>L'algorithme commence avec a=0 et b=0 (ou des valeurs aléatoires). La droite est mauvaise au départ.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Calculer l'erreur (MSE)</h4>
+        <p>Pour chaque point, on calcule la différence entre la vraie valeur Y et la valeur prédite. On élève au carré et on fait la moyenne. C'est l'erreur quadratique moyenne (MSE).</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Ajuster a et b (Gradient Descent)</h4>
+        <p>On ajuste légèrement a et b dans la direction qui réduit l'erreur. C'est comme descendre une colline en cherchant le point le plus bas.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Répéter jusqu'à convergence</h4>
+        <p>On répète les étapes 2 et 3 des milliers de fois jusqu'à ce que l'erreur soit minimale. L'algorithme a "appris".</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="formula reveal">
+    MSE = (1/n) × Σ(Yréel − Yprédiction)²
+    <span class="label">Erreur Quadratique Moyenne — plus elle est proche de 0, meilleur est le modèle</span>
+  </div>
+
+  <div class="pros-cons reveal">
+    <div class="pros">
+      <h4>✦ AVANTAGES</h4>
+      <ul>
+        <li>Très simple à comprendre</li>
+        <li>Rapide à entraîner</li>
+        <li>Interprétable (on peut lire a et b)</li>
+        <li>Bon point de départ</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>✦ LIMITES</h4>
+      <ul>
+        <li>Ne marche que si la relation est linéaire</li>
+        <li>Sensible aux valeurs aberrantes</li>
+        <li>Ne peut pas modéliser des courbes</li>
+        <li>Une seule variable ? Trop simple.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ K-NN ════════════════ -->
+<section id="knn" style="border-top:1px solid var(--border)">
+  <div class="section-header reveal">
+    <span class="section-number">02 — ALGORITHME</span>
+    <h2 class="section-title">K-Nearest Neighbors</h2>
+    <p class="section-subtitle">Dis-moi qui sont tes voisins, je te dirai qui tu es.</p>
+  </div>
+
+  <div class="analogy reveal">
+    <strong>🏘️ Analogie — Le quartier</strong>
+    Tu arrives dans une nouvelle ville et tu veux savoir si un quartier est "riche" ou "pauvre". Tu regardes les 5 maisons les plus proches : 4 sont grandes et luxueuses, 1 est petite. Tu conclus que le quartier est probablement riche. C'est exactement K-NN avec K=5 !
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">Le principe</div>
+    <p>Pour classer un nouveau point <strong style="color:var(--accent)">X</strong>, on cherche les <strong style="color:var(--accent)">K points les plus proches</strong> dans les données d'entraînement. On regarde leur classe majoritaire et on attribue cette classe à X.</p>
+    <br>
+    <p><strong style="color:var(--accent4)">K</strong> est un paramètre qu'on choisit nous-même. C'est un <em>hyperparamètre</em>.</p>
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">Exemple — Malade ou sain ?</div>
+    <p style="margin-bottom:1rem">Un patient a : Température = 39°C, Pouls = 95 bpm. Est-il malade ?</p>
+    <table class="data-table">
+      <thead>
+        <tr><th>Patient</th><th>Température</th><th>Pouls</th><th>Distance</th><th>Statut</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>A</td><td>38.5°C</td><td>92</td><td><span style="color:var(--accent)">~0.6</span></td><td>🔴 Malade</td></tr>
+        <tr><td>B</td><td>36.6°C</td><td>70</td><td>~3.2</td><td>🟢 Sain</td></tr>
+        <tr><td>C</td><td>39.2°C</td><td>98</td><td><span style="color:var(--accent)">~0.4</span></td><td>🔴 Malade</td></tr>
+        <tr><td>D</td><td>37.0°C</td><td>80</td><td>~2.5</td><td>🟢 Sain</td></tr>
+        <tr><td>E</td><td>38.8°C</td><td>90</td><td><span style="color:var(--accent)">~1.0</span></td><td>🔴 Malade</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:1rem">Avec <span class="highlight">K=3</span>, les 3 voisins les plus proches sont A, C, E → tous <strong>MALADES</strong>. Verdict : <strong style="color:var(--accent2)">le patient est probablement malade.</strong></p>
+  </div>
+
+  <div class="formula reveal">
+    Distance Euclidienne = √[(X₁−X₂)² + (Y₁−Y₂)²]
+    <span class="label">Formule pour mesurer la distance entre deux points dans l'espace</span>
+  </div>
+
+  <div class="canvas-wrap reveal">
+    <div class="canvas-header">
+      <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+      VISUALISATION INTERACTIVE — K-NN
+    </div>
+    <div style="padding:1rem">
+      <div class="demo-controls">
+        <label>K = <span id="k-val">3</span> <input type="range" min="1" max="7" value="3" step="2" oninput="document.getElementById('k-val').textContent=this.value;drawKNN(parseInt(this.value))"></label>
+        <button class="demo-btn" onclick="resetKNN()">Nouveau jeu de données</button>
+        <small style="color:rgba(245,240,232,0.4);font-size:0.7rem">Cliquez sur le canvas pour tester un point</small>
+      </div>
+    </div>
+    <canvas id="knnCanvas" height="300"></canvas>
+  </div>
+
+  <div class="steps reveal">
+    <h3 style="font-family:'Playfair Display',serif;margin-bottom:1.5rem;color:var(--accent)">Choisir K : l'art de l'équilibre</h3>
+    <div class="step">
+      <div class="step-num">K=1</div>
+      <div class="step-body">
+        <h4>Trop sensible (overfitting)</h4>
+        <p>Le modèle suit chaque point exactement. Parfait sur les données d'entraînement, mauvais sur les nouvelles données.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">K=3</div>
+      <div class="step-body">
+        <h4>Bon équilibre</h4>
+        <p>Généralement un bon choix de départ. Suffisamment robuste sans trop lisser les frontières.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">K=N</div>
+      <div class="step-body">
+        <h4>Trop lisse (underfitting)</h4>
+        <p>Si K = nombre total de données, tout le monde reçoit la même classe (la majoritaire). Le modèle n'apprend rien.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="pros-cons reveal">
+    <div class="pros">
+      <h4>✦ AVANTAGES</h4>
+      <ul>
+        <li>Très simple à comprendre</li>
+        <li>Aucun entraînement nécessaire</li>
+        <li>Marche pour classification ET régression</li>
+        <li>Naturellement multi-classes</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>✦ LIMITES</h4>
+      <ul>
+        <li>Lent à prédire (calcule toutes les distances)</li>
+        <li>Mauvais avec beaucoup de variables</li>
+        <li>Sensible à la mise à l'échelle</li>
+        <li>Toutes les données en mémoire</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ NAIVE BAYES ════════════════ -->
+<section id="bayes" style="border-top:1px solid var(--border)">
+  <div class="section-header reveal">
+    <span class="section-number">03 — ALGORITHME</span>
+    <h2 class="section-title">Naive Bayes</h2>
+    <p class="section-subtitle">Probabilités conditionnelles et raisonnement bayésien.</p>
+  </div>
+
+  <div class="analogy reveal">
+    <strong>📧 Analogie — Le filtre spam</strong>
+    Tu reçois un email contenant les mots "argent gratuit gagner maintenant". Tu sais que dans le passé, 95% des emails avec ces mots étaient des spams. Naive Bayes fait exactement ça : il calcule la probabilité qu'un email soit spam en se basant sur les mots qu'il contient.
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">Le Théorème de Bayes</div>
+    <p>Tout repose sur cette formule qui calcule la probabilité d'une cause sachant un effet observé :</p>
+  </div>
+
+  <div class="formula reveal">
+    P(Classe | Données) = P(Données | Classe) × P(Classe) / P(Données)
+    <span class="label">Probabilité a posteriori = Vraisemblance × Probabilité a priori / Evidence</span>
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">Exemple pas à pas — Spam ou Ham ?</div>
+    <p style="margin-bottom:1.25rem">On a reçu 100 emails. 40 sont des spams, 60 sont normaux (ham).</p>
+
+    <table class="data-table" style="margin-bottom:1.5rem">
+      <thead>
+        <tr><th>Mot</th><th>P(mot | SPAM)</th><th>P(mot | HAM)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>"argent"</td><td>0.85</td><td>0.10</td></tr>
+        <tr><td>"gratuit"</td><td>0.80</td><td>0.05</td></tr>
+        <tr><td>"félicitations"</td><td>0.70</td><td>0.20</td></tr>
+        <tr><td>"réunion"</td><td>0.05</td><td>0.60</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-bottom:0.75rem">Nouvel email : <span class="highlight">"argent gratuit"</span></p>
+
+    <p style="margin-bottom:0.5rem">Score SPAM = P(SPAM) × P("argent"|SPAM) × P("gratuit"|SPAM)</p>
+    <p style="margin-bottom:0.5rem">Score SPAM = 0.40 × 0.85 × 0.80 = <strong style="color:var(--accent2)">0.272</strong></p>
+
+    <p style="margin-bottom:0.5rem">Score HAM = 0.60 × 0.10 × 0.05 = <strong style="color:var(--accent3)">0.003</strong></p>
+
+    <p style="margin-top:1rem">0.272 >> 0.003 → <strong style="color:var(--accent2)">C'est un SPAM !</strong></p>
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">Pourquoi "Naive" (Naïf) ?</div>
+    <p>L'algorithme suppose que toutes les variables sont <strong style="color:var(--accent)">indépendantes</strong> les unes des autres. C'est "naïf" parce que c'est rarement vrai en pratique (les mots "Paris" et "France" sont liés), mais ça marche étonnamment bien malgré tout !</p>
+  </div>
+
+  <div class="pros-cons reveal">
+    <div class="pros">
+      <h4>✦ AVANTAGES</h4>
+      <ul>
+        <li>Très rapide à entraîner</li>
+        <li>Fonctionne bien avec peu de données</li>
+        <li>Excellent pour le texte (NLP)</li>
+        <li>Gère naturellement plusieurs classes</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>✦ LIMITES</h4>
+      <ul>
+        <li>Hypothèse d'indépendance irréaliste</li>
+        <li>Mauvais si variables très corrélées</li>
+        <li>Problème si un mot n'est jamais vu</li>
+        <li>Probabilités parfois mal calibrées</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ LOGISTIC REGRESSION ════════════════ -->
+<section id="logistic" style="border-top:1px solid var(--border)">
+  <div class="section-header reveal">
+    <span class="section-number">04 — ALGORITHME</span>
+    <h2 class="section-title">Régression Logistique</h2>
+    <p class="section-subtitle">Malgré son nom, c'est un algorithme de CLASSIFICATION. Il prédit une probabilité entre 0 et 1.</p>
+  </div>
+
+  <div class="analogy reveal">
+    <strong>🩺 Analogie — Diagnostic médical</strong>
+    Un médecin veut savoir si un patient a un diabète (Oui/Non). Il regarde son taux de glucose. Plus le taux est élevé, plus la probabilité de diabète augmente. Mais pas de façon linéaire ! À partir d'un certain seuil, la probabilité monte très vite. C'est la courbe en S de la régression logistique.
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">La différence avec la régression linéaire</div>
+    <p>La régression linéaire prédit un nombre quelconque (peut donner -500 ou 1000). Pour classifier, on a besoin d'un nombre entre <strong style="color:var(--accent)">0 et 1</strong> (une probabilité). La régression logistique résout ce problème avec la fonction <strong style="color:var(--accent4)">Sigmoïde</strong>.</p>
+  </div>
+
+  <div class="formula reveal">
+    σ(z) = 1 / (1 + e⁻ᶻ)
+    <span class="label">Fonction Sigmoïde — transforme n'importe quel nombre en valeur entre 0 et 1</span>
+  </div>
+
+  <div class="canvas-wrap reveal">
+    <div class="canvas-header">
+      <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+      LA COURBE SIGMOÏDE — De −∞ à +∞ → de 0 à 1
+    </div>
+    <canvas id="sigmoidCanvas" height="250"></canvas>
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">Exemple — Prédire le diabète</div>
+    <table class="data-table">
+      <thead>
+        <tr><th>Glucose (X)</th><th>z = 0.05×X − 5</th><th>σ(z) = Probabilité diabète</th><th>Décision (seuil 0.5)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>80 mg/dL</td><td>−1</td><td>σ(−1) = <strong style="color:var(--accent3)">27%</strong></td><td>🟢 Pas diabétique</td></tr>
+        <tr><td>100 mg/dL</td><td>0</td><td>σ(0) = <strong>50%</strong></td><td>⚠️ Limite</td></tr>
+        <tr><td>120 mg/dL</td><td>+1</td><td>σ(+1) = <strong style="color:var(--accent)">73%</strong></td><td>🔴 Diabétique</td></tr>
+        <tr><td>160 mg/dL</td><td>+3</td><td>σ(+3) = <strong style="color:var(--accent2)">95%</strong></td><td>🔴🔴 Très probablement</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pros-cons reveal">
+    <div class="pros">
+      <h4>✦ AVANTAGES</h4>
+      <ul>
+        <li>Donne une probabilité, pas juste une classe</li>
+        <li>Rapide et facile à interpréter</li>
+        <li>Bon pour données linéairement séparables</li>
+        <li>Moins sujet à l'overfitting</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>✦ LIMITES</h4>
+      <ul>
+        <li>Suppose une frontière linéaire</li>
+        <li>Mauvais si relations complexes</li>
+        <li>Sensible aux valeurs aberrantes</li>
+        <li>Ne gère pas bien les corrélations</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ NEURAL NETWORK ════════════════ -->
+<section id="nn" style="border-top:1px solid var(--border)">
+  <div class="section-header reveal">
+    <span class="section-number">05 — ALGORITHME</span>
+    <h2 class="section-title">Réseau de Neurones</h2>
+    <p class="section-subtitle">Le cerveau artificiel. Des couches de "neurones" connectés qui apprennent n'importe quel pattern.</p>
+  </div>
+
+  <div class="analogy reveal">
+    <strong>🧠 Analogie — Le cerveau humain</strong>
+    Ton cerveau a ~86 milliards de neurones. Chaque neurone reçoit des signaux de ses voisins, les combine, et transmet un signal si c'est assez fort. Un réseau de neurones artificiel fait pareil, mais avec des nombres et des mathématiques, généralement avec quelques centaines à des millions de neurones simulés.
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">Architecture d'un réseau</div>
+    <p style="margin-bottom:1.5rem">Un réseau de neurones a <strong style="color:var(--accent)">3 types de couches</strong> :</p>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon" style="color:var(--accent3)">→</div>
+        <h4 style="color:var(--accent3)">Couche d'Entrée</h4>
+        <p>Reçoit les données brutes. 1 neurone par variable. Ex: âge, poids, taille → 3 neurones.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="color:var(--accent)">⚡</div>
+        <h4 style="color:var(--accent)">Couches Cachées</h4>
+        <p>Le cœur du réseau. Apprennent des patterns de plus en plus complexes. Peuvent être des dizaines de couches (Deep Learning).</p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="color:var(--accent4)">◎</div>
+        <h4 style="color:var(--accent4)">Couche de Sortie</h4>
+        <p>Produit la prédiction finale. 1 neurone pour régression, N neurones pour N classes.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="canvas-wrap reveal">
+    <div class="canvas-header">
+      <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+      VISUALISATION — Réseau de Neurones (3 → 4 → 4 → 2)
+    </div>
+    <canvas id="nnCanvas" height="320"></canvas>
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">Le neurone artificiel — calcul interne</div>
+    <p style="margin-bottom:1rem">Chaque neurone fait une opération simple :</p>
+  </div>
+
+  <div class="formula reveal">
+    sortie = σ( w₁·x₁ + w₂·x₂ + w₃·x₃ + ... + b )
+    <span class="label">w = poids | x = entrée | b = biais | σ = fonction d'activation</span>
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">Exemple concret — Reconnaître un chiffre</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">↓</div>
+        <div class="step-body">
+          <h4>Entrée : Image 28×28 pixels</h4>
+          <p>Chaque pixel = 1 neurone d'entrée. Donc 784 neurones d'entrée. La valeur = niveau de gris (0 à 255).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">⚙</div>
+        <div class="step-body">
+          <h4>Couches cachées : extraire les features</h4>
+          <p>Couche 1 : détecte les bords et les lignes.<br>Couche 2 : détecte les courbes et angles.<br>Couche 3 : détecte des formes complètes (cercle, trait vertical...).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">↑</div>
+        <div class="step-body">
+          <h4>Sortie : 10 neurones (chiffres 0 à 9)</h4>
+          <p>Chaque neurone de sortie donne une probabilité. Le chiffre avec la probabilité la plus haute gagne.</p>
+          <p style="margin-top:0.5rem;font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--accent)">
+            [0.02, 0.01, 0.95, 0.01, 0.0, ...] → C'est le chiffre 2 !
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">Comment le réseau apprend ? La Rétropropagation</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Forward Pass (aller)</h4>
+          <p>Les données traversent le réseau de gauche à droite. On obtient une prédiction.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>Calculer l'erreur (Loss)</h4>
+          <p>On compare la prédiction avec la vraie réponse. On calcule l'erreur.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Backward Pass (retour)</h4>
+          <p>L'erreur est propagée en arrière de droite à gauche. Chaque poids est ajusté pour réduire l'erreur (gradient descent).</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>Répéter des milliers de fois</h4>
+          <p>Sur des milliers d'exemples, le réseau ajuste tous ses poids et devient de plus en plus précis.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">Fonctions d'activation courantes</div>
+    <div class="cards">
+      <div class="card">
+        <h4>ReLU</h4>
+        <div class="formula" style="padding:0.5rem;font-size:0.85rem;margin:0.5rem 0">f(x) = max(0, x)</div>
+        <p>La plus utilisée. Simple et efficace. Met les valeurs négatives à 0.</p>
+      </div>
+      <div class="card">
+        <h4>Sigmoïde</h4>
+        <div class="formula" style="padding:0.5rem;font-size:0.85rem;margin:0.5rem 0">σ(x) = 1/(1+e⁻ˣ)</div>
+        <p>Sortie entre 0 et 1. Utilisée en sortie pour classification binaire.</p>
+      </div>
+      <div class="card">
+        <h4>Softmax</h4>
+        <div class="formula" style="padding:0.5rem;font-size:0.85rem;margin:0.5rem 0">eˣᵢ / Σeˣⱼ</div>
+        <p>Sortie entre 0 et 1. Somme = 1. Parfaite pour multi-classes.</p>
+      </div>
+      <div class="card">
+        <h4>Tanh</h4>
+        <div class="formula" style="padding:0.5rem;font-size:0.85rem;margin:0.5rem 0">tanh(x)</div>
+        <p>Sortie entre -1 et 1. Utilisée dans les RNN pour séquences.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="pros-cons reveal">
+    <div class="pros">
+      <h4>✦ AVANTAGES</h4>
+      <ul>
+        <li>Peut apprendre n'importe quelle fonction</li>
+        <li>Excellent sur images, texte, son</li>
+        <li>Très précis avec beaucoup de données</li>
+        <li>Base du Deep Learning</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>✦ LIMITES</h4>
+      <ul>
+        <li>Nécessite beaucoup de données</li>
+        <li>Boîte noire — difficile à interpréter</li>
+        <li>Long à entraîner (GPU nécessaire)</li>
+        <li>Hyperparamètres nombreux à régler</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ IMC ════════════════ -->
+<section id="imc" style="border-top:1px solid var(--border)">
+  <div class="section-header reveal">
+    <span class="section-number">06 — PROJET PRATIQUE</span>
+    <h2 class="section-title">IMC Santé</h2>
+    <p class="section-subtitle">Un exemple réel qui illustre tous les algorithmes précédents appliqués à la santé.</p>
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">L'Indice de Masse Corporelle (IMC)</div>
+    <p>L'IMC est un indicateur de santé qui met en relation le poids et la taille d'une personne. C'est un exemple parfait pour illustrer différents algorithmes ML.</p>
+  </div>
+
+  <div class="formula reveal">
+    IMC = Poids (kg) / Taille² (m²)
+    <span class="label">Exemple : 70 kg / (1.75)² = 70 / 3.0625 = 22.86 → Normal</span>
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">Calculer votre IMC maintenant</div>
+    <div class="imc-form">
+      <div class="imc-input-group">
+        <label>Poids (kg)</label>
+        <input type="number" class="imc-input" id="imc-poids" placeholder="70" min="30" max="200">
+      </div>
+      <div class="imc-input-group">
+        <label>Taille (cm)</label>
+        <input type="number" class="imc-input" id="imc-taille" placeholder="175" min="100" max="220">
+      </div>
+    </div>
+    <button class="demo-btn" onclick="calcIMC()" style="width:100%;padding:0.8rem">Calculer l'IMC</button>
+    <div class="imc-result" id="imc-result">
+      <div class="imc-value" id="imc-value">—</div>
+      <div class="imc-label" id="imc-label">—</div>
+      <div id="imc-bars" style="margin-top:1.5rem"></div>
+    </div>
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">Comment l'IA utilise l'IMC</div>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>Catégorie IMC</th><th>Valeur</th><th>Algorithme adapté</th><th>Usage</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>🔵 Sous-poids</td>
+          <td>&lt; 18.5</td>
+          <td><span class="algo-badge">Régression Logistique</span></td>
+          <td>Classer Oui/Non risque nutritionnel</td>
+        </tr>
+        <tr>
+          <td>🟢 Normal</td>
+          <td>18.5 – 24.9</td>
+          <td><span class="algo-badge">K-NN</span></td>
+          <td>Trouver profils similaires</td>
+        </tr>
+        <tr>
+          <td>🟡 Surpoids</td>
+          <td>25 – 29.9</td>
+          <td><span class="algo-badge">Naive Bayes</span></td>
+          <td>Probabilité de développer diabète</td>
+        </tr>
+        <tr>
+          <td>🔴 Obésité</td>
+          <td>≥ 30</td>
+          <td><span class="algo-badge">Neural Network</span></td>
+          <td>Prédire risques cardiovasculaires</td>
+        </tr>
+        <tr>
+          <td>📈 Prédire l'IMC futur</td>
+          <td>—</td>
+          <td><span class="algo-badge">Régression Linéaire</span></td>
+          <td>Estimer l'évolution selon régime</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="concept reveal">
+    <div class="concept-title">Cas pratique — Dataset IMC</div>
+    <p style="margin-bottom:1rem">Supposons qu'on a les données de 1000 patients. Voici comment chaque algorithme serait appliqué :</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">📊</div>
+        <div class="step-body">
+          <h4>Régression Linéaire</h4>
+          <p><strong>Question :</strong> "Si une personne réduit ses calories de 500/jour, quel sera son IMC dans 3 mois ?"<br>
+          <strong>Entrée X :</strong> Déficit calorique | <strong>Sortie Y :</strong> IMC futur (nombre continu)</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">🏘</div>
+        <div class="step-body">
+          <h4>K-NN</h4>
+          <p><strong>Question :</strong> "Des patients similaires à celui-ci, quelle catégorie de santé ont-ils ?"<br>
+          <strong>Variables :</strong> IMC, âge, activité physique, régime. K=5 voisins les plus proches.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">🎲</div>
+        <div class="step-body">
+          <h4>Naive Bayes</h4>
+          <p><strong>Question :</strong> "Sachant IMC=28, âge=45, fumeur=oui, quel est le risque de diabète ?"<br>
+          <strong>Calcul :</strong> P(diabète | IMC=28) × P(diabète | âge=45) × P(diabète | fumeur)</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">🧠</div>
+        <div class="step-body">
+          <h4>Neural Network</h4>
+          <p><strong>Question :</strong> "En combinant IMC, génétique, habitudes alimentaires, activité, stress, sommeil — quel est le risque complet de maladie ?"<br>
+          <strong>Avantage :</strong> Capture les interactions complexes entre toutes ces variables.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ COMPARISON ════════════════ -->
+<div class="comparison-section" id="compare">
+  <section style="padding:0">
+    <div class="section-header reveal">
+      <span class="section-number">07 — SYNTHÈSE</span>
+      <h2 class="section-title">Quel algorithme choisir ?</h2>
+      <p class="section-subtitle">Un guide de décision rapide.</p>
+    </div>
+
+    <table class="data-table reveal">
+      <thead>
+        <tr>
+          <th>Algorithme</th>
+          <th>Type</th>
+          <th>Données nécessaires</th>
+          <th>Interprétabilité</th>
+          <th>Idéal pour</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong style="color:var(--accent)">Régression Linéaire</strong></td>
+          <td>Régression</td>
+          <td>Peu (50+)</td>
+          <td>⭐⭐⭐⭐⭐</td>
+          <td>Relations simples, prédictions numériques</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--accent4)">K-NN</strong></td>
+          <td>Les deux</td>
+          <td>Moyen (100+)</td>
+          <td>⭐⭐⭐⭐</td>
+          <td>Peu de données, débutant</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--accent3)">Naive Bayes</strong></td>
+          <td>Classification</td>
+          <td>Peu (50+)</td>
+          <td>⭐⭐⭐⭐</td>
+          <td>Texte, spam, NLP</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--accent5)">Rég. Logistique</strong></td>
+          <td>Classification</td>
+          <td>Moyen (200+)</td>
+          <td>⭐⭐⭐⭐</td>
+          <td>Classification binaire, médical</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--accent2)">Neural Network</strong></td>
+          <td>Les deux</td>
+          <td>Beaucoup (10 000+)</td>
+          <td>⭐</td>
+          <td>Images, audio, texte, tout !</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="concept reveal" style="margin-top:2rem">
+      <div class="concept-title">La règle d'or du ML</div>
+      <p>Commence toujours par l'algorithme <strong style="color:var(--accent)">le plus simple</strong>. Si la régression linéaire fonctionne bien, inutile d'utiliser un réseau de neurones. La complexité a un coût : plus de données, plus de temps, moins d'interprétabilité. <br><br><em style="color:rgba(245,240,232,0.5)">"Everything should be made as simple as possible, but not simpler." — Albert Einstein</em></p>
+    </div>
+
+    <div class="cards reveal">
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <h4>Overfitting</h4>
+        <p>Le modèle apprend trop bien les données d'entraînement et échoue sur les nouvelles données. Comme réviser uniquement les annales et rater un examen différent.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌊</div>
+        <h4>Underfitting</h4>
+        <p>Le modèle est trop simple et n'apprend rien de utile. Comme répondre "je ne sais pas" à chaque question.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚖️</div>
+        <h4>Bias-Variance</h4>
+        <p>L'équilibre parfait entre un modèle trop simple (biais élevé) et trop complexe (variance élevée).</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔀</div>
+        <h4>Cross-Validation</h4>
+        <p>Technique pour évaluer un modèle en divisant les données en train/test pour éviter le surapprentissage.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <p>Guide IA — Comprendre les Algorithmes de Machine Learning</p>
+  <p style="margin-top:0.5rem;opacity:0.5">Régression Linéaire · K-NN · Naive Bayes · Régression Logistique · Neural Network · IMC</p>
+</footer>
+
+<!-- ════════════════ SCRIPTS ════════════════ -->
+<script>
+// ── REVEAL ON SCROLL ──────────────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── LINEAR REGRESSION CANVAS ──────────────────────
+const lc = document.getElementById('linearCanvas');
+const lctx = lc.getContext('2d');
+let linearPoints = [];
+
+function initLinear() {
+  lc.width = lc.offsetWidth * window.devicePixelRatio || 800;
+  lc.height = 300 * window.devicePixelRatio || 300;
+  lc.style.height = '300px';
+  // seed data: age vs weight approximate
+  linearPoints = [];
+  const ages = [2,3,4,5,6,7,8,9,10,11,12,14,16];
+  ages.forEach(a => {
+    const noise = (Math.random()-0.5)*4;
+    linearPoints.push({x: a, y: 3*a + 10 + noise});
+  });
+  drawLinear();
+}
+
+function calcRegression(points) {
+  const n = points.length;
+  const mx = points.reduce((s,p)=>s+p.x,0)/n;
+  const my = points.reduce((s,p)=>s+p.y,0)/n;
+  const num = points.reduce((s,p)=>s+(p.x-mx)*(p.y-my),0);
+  const den = points.reduce((s,p)=>s+(p.x-mx)**2,0);
+  const a = den ? num/den : 0;
+  const b = my - a*mx;
+  return {a, b};
+}
+
+function drawLinear() {
+  const W = lc.width, H = lc.height;
+  const dpr = window.devicePixelRatio || 1;
+  lctx.clearRect(0,0,W,H);
+
+  const pad = 50 * dpr;
+  const minX=0, maxX=18, minY=0, maxY=60;
+
+  function toCanvas(x,y) {
+    return {
+      cx: pad + (x-minX)/(maxX-minX)*(W-2*pad),
+      cy: H-pad - (y-minY)/(maxY-minY)*(H-2*pad)
+    };
+  }
+
+  // grid
+  lctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  lctx.lineWidth = dpr;
+  for(let i=0;i<=6;i++) {
+    const {cx} = toCanvas(i*3,0);
+    lctx.beginPath(); lctx.moveTo(cx,pad); lctx.lineTo(cx,H-pad); lctx.stroke();
+  }
+  for(let i=0;i<=6;i++) {
+    const {cy} = toCanvas(0,i*10);
+    lctx.beginPath(); lctx.moveTo(pad,cy); lctx.lineTo(W-pad,cy); lctx.stroke();
+  }
+
+  // axes
+  lctx.strokeStyle = 'rgba(245,240,232,0.2)';
+  lctx.lineWidth = dpr;
+  const orig = toCanvas(0,0);
+  lctx.beginPath(); lctx.moveTo(pad,H-pad); lctx.lineTo(W-pad,H-pad); lctx.stroke();
+  lctx.beginPath(); lctx.moveTo(pad,pad); lctx.lineTo(pad,H-pad); lctx.stroke();
+
+  // labels
+  lctx.fillStyle = 'rgba(245,240,232,0.4)';
+  lctx.font = `${11*dpr}px JetBrains Mono, monospace`;
+  lctx.textAlign = 'center';
+  [0,3,6,9,12,15,18].forEach(v => {
+    const {cx} = toCanvas(v,0);
+    lctx.fillText(v+'a', cx, H-pad+15*dpr);
+  });
+  lctx.textAlign = 'right';
+  [0,20,40,60].forEach(v => {
+    const {cy} = toCanvas(0,v);
+    lctx.fillText(v+'kg', pad-8*dpr, cy+4*dpr);
+  });
+
+  // axis titles
+  lctx.fillStyle = 'rgba(232,168,85,0.6)';
+  lctx.font = `${10*dpr}px JetBrains Mono, monospace`;
+  lctx.textAlign = 'center';
+  lctx.fillText('ÂGE', W/2, H-5*dpr);
+  lctx.save(); lctx.translate(12*dpr, H/2); lctx.rotate(-Math.PI/2);
+  lctx.fillText('POIDS', 0, 0);
+  lctx.restore();
+
+  // regression line
+  if(linearPoints.length >= 2) {
+    const {a, b} = calcRegression(linearPoints);
+    const p1 = toCanvas(minX, a*minX+b);
+    const p2 = toCanvas(maxX, a*maxX+b);
+    const grad = lctx.createLinearGradient(p1.cx,p1.cy,p2.cx,p2.cy);
+    grad.addColorStop(0,'rgba(232,168,85,0.3)');
+    grad.addColorStop(1,'rgba(232,168,85,0.9)');
+    lctx.strokeStyle = grad;
+    lctx.lineWidth = 2.5*dpr;
+    lctx.setLineDash([]);
+    lctx.beginPath(); lctx.moveTo(p1.cx,p1.cy); lctx.lineTo(p2.cx,p2.cy); lctx.stroke();
+
+    // equation
+    lctx.fillStyle = 'rgba(232,168,85,0.8)';
+    lctx.font = `bold ${11*dpr}px JetBrains Mono, monospace`;
+    lctx.textAlign = 'left';
+    lctx.fillText(`Y = ${a.toFixed(2)}X + ${b.toFixed(2)}`, pad+8*dpr, pad+20*dpr);
+  }
+
+  // error lines
+  if(linearPoints.length >= 2) {
+    const {a, b} = calcRegression(linearPoints);
+    linearPoints.forEach(p => {
+      const pred = a*p.x+b;
+      const {cx:x1, cy:y1} = toCanvas(p.x, p.y);
+      const {cx:x2, cy:y2} = toCanvas(p.x, pred);
+      lctx.strokeStyle = 'rgba(201,111,58,0.35)';
+      lctx.lineWidth = dpr;
+      lctx.setLineDash([3*dpr,3*dpr]);
+      lctx.beginPath(); lctx.moveTo(x1,y1); lctx.lineTo(x2,y2); lctx.stroke();
+    });
+    lctx.setLineDash([]);
+  }
+
+  // points
+  linearPoints.forEach(p => {
+    const {cx,cy} = toCanvas(p.x, p.y);
+    lctx.fillStyle = 'rgba(107,158,120,0.8)';
+    lctx.strokeStyle = 'rgba(107,158,120,0.4)';
+    lctx.lineWidth = dpr;
+    lctx.beginPath(); lctx.arc(cx, cy, 5*dpr, 0, Math.PI*2); lctx.fill(); lctx.stroke();
+  });
+
+  document.getElementById('pt-count').textContent = linearPoints.length;
+}
+
+function addLinearPoint() {
+  const x = 1 + Math.random()*15;
+  const noise = (Math.random()-0.5)*6;
+  linearPoints.push({x, y: Math.max(0, 3*x+10+noise)});
+  drawLinear();
+}
+
+function resetLinear() {
+  initLinear();
+}
+
+// ── KNN CANVAS ──────────────────────────────────
+const kc = document.getElementById('knnCanvas');
+const kctx = kc.getContext('2d');
+let knnData = [];
+let knnTest = null;
+let currentK = 3;
+
+function initKNN() {
+  kc.width = kc.offsetWidth * window.devicePixelRatio || 800;
+  kc.height = 300 * window.devicePixelRatio || 300;
+  kc.style.height = '300px';
+  knnData = [];
+  knnTest = null;
+  const dpr = window.devicePixelRatio || 1;
+  const W = kc.width, H = kc.height;
+  // Class 0 (blue) — cluster 1
+  for(let i=0;i<15;i++) knnData.push({x:0.15+Math.random()*0.3, y:0.15+Math.random()*0.35, cls:0});
+  // Class 1 (orange) — cluster 2
+  for(let i=0;i<15;i++) knnData.push({x:0.55+Math.random()*0.35, y:0.5+Math.random()*0.35, cls:1});
+  // Some overlap
+  for(let i=0;i<6;i++) knnData.push({x:0.35+Math.random()*0.3, y:0.35+Math.random()*0.3, cls:Math.random()>0.5?0:1});
+  drawKNN(currentK);
+}
+
+function dist(a, b) {
+  return Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2);
+}
+
+function knnPredict(pt, k, data) {
+  const sorted = data.map(d=>({...d, d:dist(pt,d)})).sort((a,b)=>a.d-b.d);
+  const neighbors = sorted.slice(0,k);
+  const cls0 = neighbors.filter(n=>n.cls===0).length;
+  const cls1 = neighbors.filter(n=>n.cls===1).length;
+  return {cls: cls0>=cls1?0:1, neighbors};
+}
+
+function drawKNN(k) {
+  currentK = k;
+  const W = kc.width, H = kc.height;
+  const dpr = window.devicePixelRatio||1;
+  kctx.clearRect(0,0,W,H);
+
+  function toC(x,y){ return {cx:x*W, cy:y*H}; }
+
+  // Decision boundary background (approximate by sampling)
+  const step = 4*dpr;
+  for(let px=0;px<W;px+=step) {
+    for(let py=0;py<H;py+=step) {
+      const pt = {x:px/W, y:py/H};
+      if(knnData.length>0) {
+        const {cls} = knnPredict(pt, k, knnData);
+        kctx.fillStyle = cls===0 ? 'rgba(123,142,200,0.08)' : 'rgba(232,168,85,0.08)';
+        kctx.fillRect(px, py, step, step);
+      }
+    }
+  }
+
+  // Neighbor connections if test point exists
+  if(knnTest) {
+    const {neighbors} = knnPredict(knnTest, k, knnData);
+    neighbors.forEach(n => {
+      const {cx:x1,cy:y1} = toC(knnTest.x, knnTest.y);
+      const {cx:x2,cy:y2} = toC(n.x, n.y);
+      kctx.strokeStyle = 'rgba(255,255,255,0.3)';
+      kctx.lineWidth = dpr;
+      kctx.setLineDash([4*dpr,4*dpr]);
+      kctx.beginPath(); kctx.moveTo(x1,y1); kctx.lineTo(x2,y2); kctx.stroke();
+      kctx.setLineDash([]);
+    });
+  }
+
+  // Data points
+  knnData.forEach(p => {
+    const {cx,cy} = toC(p.x,p.y);
+    kctx.fillStyle = p.cls===0 ? 'rgba(123,142,200,0.85)' : 'rgba(232,168,85,0.85)';
+    kctx.strokeStyle = p.cls===0 ? 'rgba(123,142,200,0.4)' : 'rgba(232,168,85,0.4)';
+    kctx.lineWidth = dpr;
+    kctx.beginPath();
+    if(p.cls===0) { kctx.arc(cx,cy,5*dpr,0,Math.PI*2); }
+    else { kctx.rect(cx-4*dpr,cy-4*dpr,8*dpr,8*dpr); }
+    kctx.fill(); kctx.stroke();
+  });
+
+  // Test point
+  if(knnTest) {
+    const {cx,cy} = toC(knnTest.x, knnTest.y);
+    const {cls} = knnPredict(knnTest, k, knnData);
+    kctx.fillStyle = cls===0 ? 'rgba(123,142,200,0.5)' : 'rgba(232,168,85,0.5)';
+    kctx.strokeStyle = '#fff';
+    kctx.lineWidth = 2*dpr;
+    kctx.beginPath(); kctx.arc(cx,cy,9*dpr,0,Math.PI*2); kctx.fill(); kctx.stroke();
+    kctx.fillStyle = '#fff';
+    kctx.font = `bold ${9*dpr}px JetBrains Mono, monospace`;
+    kctx.textAlign = 'center';
+    kctx.textBaseline = 'middle';
+    kctx.fillText('?', cx, cy);
+    kctx.textBaseline = 'alphabetic';
+
+    // label
+    kctx.fillStyle = 'rgba(245,240,232,0.9)';
+    kctx.font = `${11*dpr}px JetBrains Mono, monospace`;
+    kctx.textAlign = 'center';
+    kctx.fillText(cls===0?'● Classe A':'■ Classe B', cx, cy+18*dpr);
+  }
+
+  // Legend
+  kctx.font = `${11*dpr}px JetBrains Mono, monospace`;
+  kctx.fillStyle = 'rgba(123,142,200,0.85)';
+  kctx.fillText('● Classe A', 60*dpr, 20*dpr);
+  kctx.fillStyle = 'rgba(232,168,85,0.85)';
+  kctx.fillText('■ Classe B', 160*dpr, 20*dpr);
+  kctx.fillStyle = 'rgba(245,240,232,0.4)';
+  kctx.fillText(`K = ${k}`, W-50*dpr, 20*dpr);
+}
+
+kc.addEventListener('click', (e) => {
+  const rect = kc.getBoundingClientRect();
+  const dpr = window.devicePixelRatio||1;
+  knnTest = {
+    x: (e.clientX - rect.left) / rect.width,
+    y: (e.clientY - rect.top) / rect.height
+  };
+  drawKNN(currentK);
+});
+
+function resetKNN() { initKNN(); }
+
+// ── SIGMOID CANVAS ─────────────────────────────
+const sc = document.getElementById('sigmoidCanvas');
+const sctx = sc.getContext('2d');
+
+function drawSigmoid() {
+  const dpr = window.devicePixelRatio || 1;
+  sc.width = sc.offsetWidth * dpr;
+  sc.height = 250 * dpr;
+  sc.style.height = '250px';
+  const W = sc.width, H = sc.height;
+  sctx.clearRect(0,0,W,H);
+
+  const pad = 40*dpr;
+  function toC(x,y) {
+    return {
+      cx: pad + (x+6)/12*(W-2*pad),
+      cy: H-pad - y*(H-2*pad)
+    };
+  }
+
+  // Grid
+  sctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  sctx.lineWidth = dpr;
+  [-4,-2,0,2,4].forEach(x => {
+    const {cx} = toC(x,0);
+    sctx.beginPath(); sctx.moveTo(cx,pad); sctx.lineTo(cx,H-pad); sctx.stroke();
+  });
+  [0,0.25,0.5,0.75,1].forEach(y => {
+    const {cy} = toC(0,y);
+    sctx.beginPath(); sctx.moveTo(pad,cy); sctx.lineTo(W-pad,cy); sctx.stroke();
+  });
+
+  // Axes
+  sctx.strokeStyle = 'rgba(245,240,232,0.2)';
+  const {cy:cy0} = toC(0,0.5);
+  sctx.beginPath(); sctx.moveTo(pad,cy0); sctx.lineTo(W-pad,cy0); sctx.stroke();
+  const {cx:cx0} = toC(0,0);
+  sctx.beginPath(); sctx.moveTo(cx0,pad); sctx.lineTo(cx0,H-pad); sctx.stroke();
+
+  // Labels
+  sctx.fillStyle = 'rgba(245,240,232,0.35)';
+  sctx.font = `${10*dpr}px JetBrains Mono, monospace`;
+  sctx.textAlign = 'center';
+  [-4,-2,0,2,4].forEach(x => {
+    const {cx} = toC(x,0);
+    sctx.fillText(x, cx, H-pad+14*dpr);
+  });
+  sctx.textAlign = 'right';
+  [0,0.25,0.5,0.75,1].forEach(y => {
+    const {cy} = toC(0,y);
+    sctx.fillText(y, pad-6*dpr, cy+4*dpr);
+  });
+
+  // 0.5 threshold line
+  const {cy:cyHalf} = toC(0,0.5);
+  sctx.strokeStyle = 'rgba(201,111,58,0.4)';
+  sctx.lineWidth = dpr;
+  sctx.setLineDash([4*dpr,4*dpr]);
+  sctx.beginPath(); sctx.moveTo(pad,cyHalf); sctx.lineTo(W-pad,cyHalf); sctx.stroke();
+  sctx.setLineDash([]);
+  sctx.fillStyle = 'rgba(201,111,58,0.7)';
+  sctx.font = `${9*dpr}px JetBrains Mono, monospace`;
+  sctx.textAlign = 'left';
+  sctx.fillText('seuil = 0.5', pad+4*dpr, cyHalf-4*dpr);
+
+  // Sigmoid curve
+  const grad = sctx.createLinearGradient(pad, H-pad, W-pad, pad);
+  grad.addColorStop(0,'rgba(107,158,120,0.8)');
+  grad.addColorStop(0.5,'rgba(232,168,85,0.9)');
+  grad.addColorStop(1,'rgba(201,111,58,0.8)');
+  sctx.strokeStyle = grad;
+  sctx.lineWidth = 3*dpr;
+  sctx.beginPath();
+  for(let i=0;i<=200;i++) {
+    const x = -6 + i*12/200;
+    const y = 1/(1+Math.exp(-x));
+    const {cx,cy} = toC(x,y);
+    if(i===0) sctx.moveTo(cx,cy); else sctx.lineTo(cx,cy);
+  }
+  sctx.stroke();
+
+  // Region labels
+  sctx.font = `bold ${11*dpr}px JetBrains Mono, monospace`;
+  sctx.fillStyle = 'rgba(107,158,120,0.7)';
+  sctx.textAlign = 'center';
+  sctx.fillText('🟢 NON (< 0.5)', pad+(W-2*pad)*0.2, H-pad-8*dpr);
+  sctx.fillStyle = 'rgba(201,111,58,0.7)';
+  sctx.fillText('🔴 OUI (> 0.5)', pad+(W-2*pad)*0.8, pad+16*dpr);
+}
+
+// ── NEURAL NETWORK VIZ ────────────────────────
+const nc = document.getElementById('nnCanvas');
+const nctx = nc.getContext('2d');
+
+function drawNN() {
+  const dpr = window.devicePixelRatio || 1;
+  nc.width = nc.offsetWidth * dpr;
+  nc.height = 320 * dpr;
+  nc.style.height = '320px';
+  const W = nc.width, H = nc.height;
+  nctx.clearRect(0,0,W,H);
+
+  const layers = [
+    {nodes: 3, label: 'Entrée', color: 'rgba(107,158,120,0.8)', names: ['Poids', 'Taille', 'Âge']},
+    {nodes: 5, label: 'Cachée 1', color: 'rgba(123,142,200,0.8)', names: null},
+    {nodes: 4, label: 'Cachée 2', color: 'rgba(123,142,200,0.6)', names: null},
+    {nodes: 2, label: 'Sortie', color: 'rgba(232,168,85,0.8)', names: ['Normal', 'Risque']},
+  ];
+
+  const xPositions = layers.map((_,i) => (i+1) / (layers.length+1) * W);
+  const pad = 40*dpr;
+
+  // Draw connections
+  layers.forEach((layer, li) => {
+    if(li >= layers.length-1) return;
+    const next = layers[li+1];
+    const x1 = xPositions[li], x2 = xPositions[li+1];
+
+    for(let i=0;i<layer.nodes;i++) {
+      for(let j=0;j<next.nodes;j++) {
+        const y1 = H/2 + (i - (layer.nodes-1)/2) * (H*0.6/layer.nodes);
+        const y2 = H/2 + (j - (next.nodes-1)/2) * (H*0.6/next.nodes);
+        const alpha = 0.05 + Math.random()*0.15;
+        nctx.strokeStyle = `rgba(232,168,85,${alpha})`;
+        nctx.lineWidth = (0.5 + Math.random()*1.5) * dpr;
+        nctx.beginPath(); nctx.moveTo(x1,y1); nctx.lineTo(x2,y2); nctx.stroke();
+      }
+    }
+  });
+
+  // Draw neurons
+  layers.forEach((layer, li) => {
+    const x = xPositions[li];
+    for(let i=0;i<layer.nodes;i++) {
+      const y = H/2 + (i - (layer.nodes-1)/2) * (H*0.6/layer.nodes);
+      const r = 14*dpr;
+
+      // Glow
+      const grd = nctx.createRadialGradient(x,y,0,x,y,r*2);
+      grd.addColorStop(0, layer.color.replace('0.8','0.2'));
+      grd.addColorStop(1, 'transparent');
+      nctx.fillStyle = grd;
+      nctx.beginPath(); nctx.arc(x,y,r*2,0,Math.PI*2); nctx.fill();
+
+      // Circle
+      nctx.fillStyle = layer.color;
+      nctx.strokeStyle = 'rgba(255,255,255,0.2)';
+      nctx.lineWidth = dpr;
+      nctx.beginPath(); nctx.arc(x,y,r,0,Math.PI*2); nctx.fill(); nctx.stroke();
+
+      // Label inside
+      nctx.fillStyle = 'rgba(26,22,18,0.9)';
+      nctx.font = `bold ${8*dpr}px JetBrains Mono, monospace`;
+      nctx.textAlign = 'center';
+      nctx.textBaseline = 'middle';
+      nctx.fillText('σ', x, y);
+
+      // Name label
+      if(layer.names && layer.names[i]) {
+        nctx.fillStyle = 'rgba(245,240,232,0.5)';
+        nctx.font = `${9*dpr}px Lato, sans-serif`;
+        nctx.textAlign = li===0 ? 'right' : 'left';
+        nctx.fillText(layer.names[i], x + (li===0 ? -r-6*dpr : r+6*dpr), y);
+      }
+    }
+
+    // Layer label
+    nctx.fillStyle = layer.color;
+    nctx.font = `${10*dpr}px JetBrains Mono, monospace`;
+    nctx.textAlign = 'center';
+    nctx.textBaseline = 'alphabetic';
+    nctx.fillText(layer.label, x, H-8*dpr);
+    nctx.fillText(layer.nodes + (layer.nodes>1?' neurones':' neurone'), x, H+8*dpr);
+  });
+
+  nctx.textBaseline = 'alphabetic';
+}
+
+// ── IMC CALC ─────────────────────────────────
+function calcIMC() {
+  const poids = parseFloat(document.getElementById('imc-poids').value);
+  const taille = parseFloat(document.getElementById('imc-taille').value);
+  if(isNaN(poids)||isNaN(taille)||poids<=0||taille<=0) return;
+
+  const imc = poids / ((taille/100)**2);
+  const result = document.getElementById('imc-result');
+  const val = document.getElementById('imc-value');
+  const lbl = document.getElementById('imc-label');
+  const bars = document.getElementById('imc-bars');
+
+  let cat, color, emoji;
+  if(imc < 18.5)      { cat='SOUS-POIDS'; color='#7bb8f0'; emoji='🔵'; }
+  else if(imc < 25)   { cat='POIDS NORMAL'; color='#6b9e78'; emoji='🟢'; }
+  else if(imc < 30)   { cat='SURPOIDS'; color='#e8a855'; emoji='🟡'; }
+  else                 { cat='OBÉSITÉ'; color='#c96f3a'; emoji='🔴'; }
+
+  result.style.display = 'block';
+  result.style.background = `rgba(${color.replace('#','').match(/.{2}/g).map(h=>parseInt(h,16)).join(',')},0.08)`;
+  result.style.border = `1px solid ${color}55`;
+  val.textContent = imc.toFixed(1);
+  val.style.color = color;
+  lbl.textContent = emoji + ' ' + cat;
+  lbl.style.color = color;
+
+  const categories = [
+    {label:'Sous-poids', range:'< 18.5', color:'#7bb8f0', max:18.5},
+    {label:'Normal', range:'18.5–24.9', color:'#6b9e78', max:25},
+    {label:'Surpoids', range:'25–29.9', color:'#e8a855', max:30},
+    {label:'Obésité', range:'≥ 30', color:'#c96f3a', max:45},
+  ];
+
+  bars.innerHTML = '';
+  categories.forEach(c => {
+    const isActive = cat === c.label.toUpperCase().replace('-','').replace('É','E').replace('È','E') ||
+                     (cat===c.label.toUpperCase()) ||
+                     lbl.textContent.includes(c.label.toUpperCase());
+    const active = emoji+''.includes(c.color.includes('7bb')?'🔵':c.color.includes('6b9')?'🟢':c.color.includes('e8a')?'🟡':'🔴');
+    const pct = Math.min(100, Math.max(10, ((imc)/(c.max)*100)));
+    const isThis = (imc < 18.5 && c.max===18.5) || (imc>=18.5&&imc<25&&c.max===25)||(imc>=25&&imc<30&&c.max===30)||(imc>=30&&c.max===45);
+
+    bars.innerHTML += `
+      <div style="margin:0.5rem 0;display:flex;align-items:center;gap:1rem">
+        <div style="width:80px;font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:${c.color};text-align:right">${c.label}</div>
+        <div style="flex:1;background:rgba(255,255,255,0.05);border-radius:100px;height:8px;overflow:hidden">
+          <div style="height:100%;width:${isThis?Math.min(100,(imc/45*100)):0}%;background:${c.color};border-radius:100px;transition:width 1s;box-shadow:0 0 8px ${c.color}44"></div>
+        </div>
+        <div style="width:60px;font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:rgba(245,240,232,0.4)">${c.range}</div>
+        ${isThis?`<div style="color:${c.color}">◀ Vous</div>`:''}
+      </div>
+    `;
+  });
+
+  // Trigger bar animation
+  setTimeout(() => {
+    bars.querySelectorAll('[style*="width:0%"]').forEach(b => {
+      b.style.width = b.parentElement.nextElementSibling ? '' : '';
+    });
+  }, 100);
+}
+
+// ── INIT ─────────────────────────────────────
+window.addEventListener('load', () => {
+  initLinear();
+  initKNN();
+  drawSigmoid();
+  drawNN();
+});
+
+window.addEventListener('resize', () => {
+  initLinear();
+  initKNN();
+  drawSigmoid();
+  drawNN();
+});
+</script>
+</body>
+</html>

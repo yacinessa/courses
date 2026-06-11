@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f9a825;
+            --secondary: #ff6f00;
+            --accent: #ffca28;
+            --bg-dark: #0d1117;
+            --bg-card: #161b22;
+            --bg-code: #1a1f26;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --border: #30363d;
+            --success: #3fb950;
+            --warning: #d29922;
+            --error: #f85149;
+            --ch1: #f9a825;
+            --ch2: #42a5f5;
+            --ch3: #66bb6a;
+            --ch4: #ab47bc;
+            --ch5: #ef5350;
+            --ch6: #26c6da;
+            --ch7: #ffa726;
+            --ch8: #ec407a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-size: 17px;
+        }
+        .bg-pattern {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(249, 168, 37, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(255, 111, 0, 0.08) 0%, transparent 50%);
+        }
+        .header {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(22, 27, 34, 0.98) 100%);
+            border-bottom: 5px solid var(--primary);
+            padding: 50px 20px;
+            text-align: center;
+        }
+        .logo { font-size: 2rem; margin-bottom: 15px; text-shadow: 0 0 40px rgba(249, 168, 37, 0.5); }
+        .header h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header .subtitle { font-size: 1.3rem; color: var(--text-secondary); margin-bottom: 20px; }
+        .badges { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .badge { padding: 10px 22px; border-radius: 25px; font-size: 0.95rem; font-weight: 600; }
+        .badge.linux { background: var(--primary); color: var(--bg-dark); }
+        .badge.terminal { background: var(--secondary); color: white; }
+        .badge.bts { background: var(--success); color: var(--bg-dark); }
+        .nav {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .nav-link {
+            padding: 10px 18px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .nav-link:hover { transform: translateY(-2px); }
+        .nav-link.ch1 { color: var(--ch1); } .nav-link.ch1:hover { border-color: var(--ch1); background: rgba(249, 168, 37, 0.1); }
+        .nav-link.ch2 { color: var(--ch2); } .nav-link.ch2:hover { border-color: var(--ch2); background: rgba(66, 165, 245, 0.1); }
+        .nav-link.ch3 { color: var(--ch3); } .nav-link.ch3:hover { border-color: var(--ch3); background: rgba(102, 187, 106, 0.1); }
+        .nav-link.ch4 { color: var(--ch4); } .nav-link.ch4:hover { border-color: var(--ch4); background: rgba(171, 71, 188, 0.1); }
+        .nav-link.ch5 { color: var(--ch5); } .nav-link.ch5:hover { border-color: var(--ch5); background: rgba(239, 83, 80, 0.1); }
+        .nav-link.ch6 { color: var(--ch6); } .nav-link.ch6:hover { border-color: var(--ch6); background: rgba(38, 198, 218, 0.1); }
+        .nav-link.ch7 { color: var(--ch7); } .nav-link.ch7:hover { border-color: var(--ch7); background: rgba(255, 167, 38, 0.1); }
+        .nav-link.ch8 { color: var(--ch8); } .nav-link.ch8:hover { border-color: var(--ch8); background: rgba(236, 64, 122, 0.1); }
+        .main { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        .chapter { margin-bottom: 50px; scroll-margin-top: 80px; }
+        .chapter-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 25px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            margin-bottom: 25px;
+            border-left: 6px solid;
+        }
+        .chapter-header.ch1 { border-color: var(--ch1); }
+        .chapter-header.ch2 { border-color: var(--ch2); }
+        .chapter-header.ch3 { border-color: var(--ch3); }
+        .chapter-header.ch4 { border-color: var(--ch4); }
+        .chapter-header.ch5 { border-color: var(--ch5); }
+        .chapter-header.ch6 { border-color: var(--ch6); }
+        .chapter-header.ch7 { border-color: var(--ch7); }
+        .chapter-header.ch8 { border-color: var(--ch8); }
+        .chapter-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+        }
+        .chapter-header.ch1 .chapter-icon { background: rgba(249, 168, 37, 0.15); }
+        .chapter-header.ch2 .chapter-icon { background: rgba(66, 165, 245, 0.15); }
+        .chapter-header.ch3 .chapter-icon { background: rgba(102, 187, 106, 0.15); }
+        .chapter-header.ch4 .chapter-icon { background: rgba(171, 71, 188, 0.15); }
+        .chapter-header.ch5 .chapter-icon { background: rgba(239, 83, 80, 0.15); }
+        .chapter-header.ch6 .chapter-icon { background: rgba(38, 198, 218, 0.15); }
+        .chapter-header.ch7 .chapter-icon { background: rgba(255, 167, 38, 0.15); }
+        .chapter-header.ch8 .chapter-icon { background: rgba(236, 64, 122, 0.15); }
+        .chapter-info h2 { font-size: 1.7rem; font-weight: 700; margin-bottom: 5px; }
+        .chapter-header.ch1 h2 { color: var(--ch1); }
+        .chapter-header.ch2 h2 { color: var(--ch2); }
+        .chapter-header.ch3 h2 { color: var(--ch3); }
+        .chapter-header.ch4 h2 { color: var(--ch4); }
+        .chapter-header.ch5 h2 { color: var(--ch5); }
+        .chapter-header.ch6 h2 { color: var(--ch6); }
+        .chapter-header.ch7 h2 { color: var(--ch7); }
+        .chapter-header.ch8 h2 { color: var(--ch8); }
+        .chapter-info p { color: var(--text-secondary); font-size: 1rem; }
+        .content-card {
+            background: var(--bg-card);
+            border-radius: 14px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+        .content-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .content-card h3::before { content: '\25B8'; color: var(--secondary); }
+        .content-card p { color: var(--text-secondary); margin-bottom: 12px; }
+        .content-card ul { list-style: none; padding-left: 0; }
+        .content-card li { padding: 8px 0 8px 28px; position: relative; color: var(--text-secondary); }
+        .content-card li::before { content: '✦'; position: absolute; left: 0; color: var(--primary); }
+        .code-block {
+            background: var(--bg-code);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+        }
+        .code-block pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.92rem;
+            color: var(--text-primary);
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        .code-block .comment { color: #6a737d; }
+        .code-block .cmd { color: #79c0ff; }
+        .code-block .opt { color: #ffa657; }
+        .code-block .path { color: #a5d6ff; }
+        .code-block .prompt { color: #3fb950; }
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(249, 168, 37, 0.15);
+            color: var(--primary);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        .table-container { overflow-x: auto; margin: 15px 0; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+        th { background: var(--bg-code); color: var(--primary); padding: 14px 15px; text-align: left; font-weight: 600; }
+        td { padding: 14px 15px; border-bottom: 1px solid var(--border); color: var(--text-secondary); }
+        tr:hover td { background: rgba(249, 168, 37, 0.05); }
+        .info-box {
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        .info-box.tip { background: rgba(63, 185, 80, 0.1); border-left: 4px solid var(--success); }
+        .info-box.warning { background: rgba(210, 153, 34, 0.1); border-left: 4px solid var(--warning); }
+        .info-box.important { background: rgba(248, 81, 73, 0.1); border-left: 4px solid var(--error); }
+        .info-box-icon { font-size: 1.5rem; }
+        .info-box-content { flex: 1; }
+        .info-box-content strong { display: block; margin-bottom: 5px; color: var(--text-primary); }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
+        .cmd-card {
+            background: var(--bg-code);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid var(--border);
+        }
+        .cmd-card .cmd-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        .cmd-card .cmd-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            margin-top: 50px;
+        }
+        .footer .author { color: var(--primary); font-weight: 600; }
+        @media print {
+            .nav { display: none; }
+            .bg-pattern { display: none; }
+            body { background: white; color: black; font-size: 12pt; }
+            .chapter-header, .content-card { break-inside: avoid; }
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.2rem; }
+            .logo { font-size: 2rem; }
+            .chapter-header { flex-direction: column; text-align: center; }
+            .nav-inner { justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    <header class="header">
+        <div class="logo">🐧</div>
+        <h1>Linux & Commandes Shell</h1>
+        <p class="subtitle">Administration Systeme | Resume de Cours Complet</p>
+        <div class="badges">
+            <span class="badge linux">🐧 GNU/Linux</span>
+            <span class="badge terminal">💻 Terminal Bash</span>
+        </div>
+    </header>
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="#ch1" class="nav-link ch1">1. Introduction</a>
+            <a href="#ch2" class="nav-link ch2">2. Navigation</a>
+            <a href="#ch3" class="nav-link ch3">3. Fichiers</a>
+            <a href="#ch4" class="nav-link ch4">4. Permissions</a>
+            <a href="#ch5" class="nav-link ch5">5. Processus</a>
+            <a href="#ch6" class="nav-link ch6">6. Reseau</a>
+            <a href="#ch7" class="nav-link ch7">7. Paquets</a>
+            <a href="#ch8" class="nav-link ch8">8. Scripts</a>
+        </div>
+    </nav>
+    <main class="main">
+        <!-- Chapter 1: Introduction -->
+        <section class="chapter" id="ch1">
+            <div class="chapter-header ch1">
+                <div class="chapter-icon">🐧</div>
+                <div class="chapter-info">
+                    <h2>Chapitre 1 : Introduction a Linux</h2>
+                    <p>Histoire, distributions et concepts fondamentaux</p>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Qu'est-ce que Linux ?</h3>
+                <p>Linux est un <strong>systeme d'exploitation libre et open source</strong> cree en 1991 par <strong>Linus Torvalds</strong>. Il est base sur le noyau Linux et suit la philosophie Unix.</p>
+                <div class="info-box tip">
+                    <div class="info-box-icon">💡</div>
+                    <div class="info-box-content">
+                        <strong>GNU/Linux</strong>
+                        Le systeme complet est souvent appele GNU/Linux car il combine le noyau Linux avec les outils GNU developpes par Richard Stallman.
+                    </div>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Distributions Populaires</h3>
+                <div class="table-container">
+                    <table>
+                        <tr><th>Distribution</th><th>Base</th><th>Usage</th><th>Gestionnaire</th></tr>
+                        <tr><td><strong>Ubuntu</strong></td><td>Debian</td><td>Desktop, Serveur</td><td>apt</td></tr>
+                        <tr><td><strong>Debian</strong></td><td>-</td><td>Serveur, Stabilite</td><td>apt</td></tr>
+                        <tr><td><strong>Raspberry Pi OS</strong></td><td>Debian</td><td>Raspberry Pi</td><td>apt</td></tr>
+                        <tr><td><strong>Fedora</strong></td><td>Red Hat</td><td>Desktop, Dev</td><td>dnf</td></tr>
+                        <tr><td><strong>CentOS / Rocky</strong></td><td>Red Hat</td><td>Serveur Enterprise</td><td>dnf/yum</td></tr>
+                        <tr><td><strong>Arch Linux</strong></td><td>-</td><td>Avance, Rolling</td><td>pacman</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Structure du Systeme de Fichiers</h3>
+                <div class="code-block">
+                    <pre><span class="path">/</span>                 <span class="comment"># Racine du systeme</span>
+├── <span class="path">/bin</span>           <span class="comment"># Binaires essentiels (ls, cp, mv...)</span>
+├── <span class="path">/boot</span>          <span class="comment"># Fichiers de demarrage, noyau</span>
+├── <span class="path">/dev</span>           <span class="comment"># Fichiers de peripheriques</span>
+├── <span class="path">/etc</span>           <span class="comment"># Fichiers de configuration</span>
+├── <span class="path">/home</span>          <span class="comment"># Repertoires utilisateurs</span>
+├── <span class="path">/lib</span>           <span class="comment"># Bibliotheques partagees</span>
+├── <span class="path">/mnt</span>           <span class="comment"># Points de montage temporaires</span>
+├── <span class="path">/opt</span>           <span class="comment"># Logiciels optionnels</span>
+├── <span class="path">/proc</span>          <span class="comment"># Informations processus (virtuel)</span>
+├── <span class="path">/root</span>          <span class="comment"># Home de l'utilisateur root</span>
+├── <span class="path">/tmp</span>           <span class="comment"># Fichiers temporaires</span>
+├── <span class="path">/usr</span>           <span class="comment"># Programmes utilisateurs</span>
+└── <span class="path">/var</span>           <span class="comment"># Donnees variables (logs, cache)</span></pre>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Le Terminal et le Shell</h3>
+                <p>Le <strong>terminal</strong> est l'interface texte pour interagir avec le systeme. Le <strong>shell</strong> (generalement <strong>Bash</strong>) est l'interpreteur de commandes.</p>
+                <div class="code-block">
+                    <pre><span class="prompt">user@hostname</span>:<span class="path">~</span>$ <span class="cmd">commande</span> <span class="opt">-options</span> <span class="path">arguments</span>
+
+<span class="comment"># Exemples de prompts :</span>
+<span class="prompt">pi@raspberrypi</span>:<span class="path">~</span>$     <span class="comment"># Utilisateur normal</span>
+<span class="prompt">root@server</span>:<span class="path">/etc</span>#      <span class="comment"># Utilisateur root (#)</span></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 2: Navigation -->
+        <section class="chapter" id="ch2">
+            <div class="chapter-header ch2">
+                <div class="chapter-icon">📂</div>
+                <div class="chapter-info">
+                    <h2>Chapitre 2 : Navigation dans le Systeme</h2>
+                    <p>Se deplacer et explorer l'arborescence</p>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Commandes de Navigation</h3>
+                <div class="code-block">
+                    <pre><span class="cmd">pwd</span>                    <span class="comment"># Print Working Directory - affiche le chemin actuel</span>
+<span class="cmd">cd</span> <span class="path">/chemin</span>             <span class="comment"># Change Directory - se deplacer</span>
+<span class="cmd">cd</span> <span class="path">..</span>                  <span class="comment"># Remonter d'un niveau</span>
+<span class="cmd">cd</span> <span class="path">~</span>                   <span class="comment"># Aller au repertoire home</span>
+<span class="cmd">cd</span> <span class="path">-</span>                   <span class="comment"># Retourner au repertoire precedent</span>
+<span class="cmd">cd</span>                     <span class="comment"># Sans argument = retour au home</span></pre>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Lister les Fichiers (ls)</h3>
+                <div class="code-block">
+                    <pre><span class="cmd">ls</span>                     <span class="comment"># Liste simple</span>
+<span class="cmd">ls</span> <span class="opt">-l</span>                  <span class="comment"># Liste detaillee (permissions, taille, date)</span>
+<span class="cmd">ls</span> <span class="opt">-a</span>                  <span class="comment"># Afficher les fichiers caches (commencent par .)</span>
+<span class="cmd">ls</span> <span class="opt">-la</span>                 <span class="comment"># Combinaison -l et -a</span>
+<span class="cmd">ls</span> <span class="opt">-lh</span>                 <span class="comment"># Tailles lisibles (Ko, Mo, Go)</span>
+<span class="cmd">ls</span> <span class="opt">-R</span>                  <span class="comment"># Liste recursive (sous-dossiers)</span>
+<span class="cmd">ls</span> <span class="opt">-lt</span>                 <span class="comment"># Trier par date de modification</span>
+<span class="cmd">ls</span> <span class="opt">-lS</span>                 <span class="comment"># Trier par taille</span></pre>
+                </div>
+                <div class="info-box tip">
+                    <div class="info-box-icon">📖</div>
+                    <div class="info-box-content">
+                        <strong>Lecture de ls -l</strong>
+                        <code>-rw-r--r-- 1 user group 1024 Jan 15 10:30 fichier.txt</code><br>
+                        Permissions | Liens | Proprietaire | Groupe | Taille | Date | Nom
+                    </div>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Chemins Absolus vs Relatifs</h3>
+                <div class="table-container">
+                    <table>
+                        <tr><th>Type</th><th>Description</th><th>Exemple</th></tr>
+                        <tr><td><strong>Absolu</strong></td><td>Commence par / (racine)</td><td><code>/home/pi/documents</code></td></tr>
+                        <tr><td><strong>Relatif</strong></td><td>Depuis le repertoire actuel</td><td><code>./documents</code> ou <code>documents</code></td></tr>
+                    </table>
+                </div>
+                <div class="code-block">
+                    <pre><span class="comment"># Symboles speciaux</span>
+<span class="path">.</span>    <span class="comment"># Repertoire actuel</span>
+<span class="path">..</span>   <span class="comment"># Repertoire parent</span>
+<span class="path">~</span>    <span class="comment"># Home de l'utilisateur (/home/user)</span>
+<span class="path">-</span>    <span class="comment"># Repertoire precedent (cd -)</span></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 3: Fichiers -->
+        <section class="chapter" id="ch3">
+            <div class="chapter-header ch3">
+                <div class="chapter-icon">📄</div>
+                <div class="chapter-info">
+                    <h2>Chapitre 3 : Gestion des Fichiers</h2>
+                    <p>Creer, copier, deplacer, supprimer</p>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Creer des Fichiers et Dossiers</h3>
+                <div class="code-block">
+                    <pre><span class="cmd">touch</span> <span class="path">fichier.txt</span>      <span class="comment"># Creer un fichier vide (ou MAJ date)</span>
+<span class="cmd">mkdir</span> <span class="path">dossier</span>           <span class="comment"># Creer un repertoire</span>
+<span class="cmd">mkdir</span> <span class="opt">-p</span> <span class="path">a/b/c</span>         <span class="comment"># Creer une arborescence complete</span>
+<span class="cmd">echo</span> "texte" > <span class="path">fichier</span> <span class="comment"># Creer avec contenu (ecrase)</span>
+<span class="cmd">echo</span> "texte" >> <span class="path">fichier</span> <span class="comment"># Ajouter a la fin (append)</span></pre>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Copier et Deplacer</h3>
+                <div class="code-block">
+                    <pre><span class="cmd">cp</span> <span class="path">source destination</span>       <span class="comment"># Copier un fichier</span>
+<span class="cmd">cp</span> <span class="opt">-r</span> <span class="path">dossier/ dest/</span>        <span class="comment"># Copier recursivement (dossiers)</span>
+<span class="cmd">cp</span> <span class="opt">-i</span> <span class="path">source dest</span>           <span class="comment"># Demander confirmation si existe</span>
+<span class="cmd">cp</span> <span class="opt">-v</span> <span class="path">source dest</span>           <span class="comment"># Mode verbose (affiche les actions)</span>
+
+<span class="cmd">mv</span> <span class="path">source destination</span>       <span class="comment"># Deplacer ou renommer</span>
+<span class="cmd">mv</span> <span class="path">ancien.txt nouveau.txt</span>   <span class="comment"># Renommer un fichier</span>
+<span class="cmd">mv</span> <span class="opt">-i</span> <span class="path">source dest</span>           <span class="comment"># Confirmation si ecrasement</span></pre>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Supprimer</h3>
+                <div class="code-block">
+                    <pre><span class="cmd">rm</span> <span class="path">fichier</span>              <span class="comment"># Supprimer un fichier</span>
+<span class="cmd">rm</span> <span class="opt">-r</span> <span class="path">dossier/</span>          <span class="comment"># Supprimer recursivement</span>
+<span class="cmd">rm</span> <span class="opt">-f</span> <span class="path">fichier</span>           <span class="comment"># Forcer (sans confirmation)</span>
+<span class="cmd">rm</span> <span class="opt">-rf</span> <span class="path">dossier/</span>         <span class="comment"># Forcer recursivement ⚠️ DANGEREUX</span>
+<span class="cmd">rm</span> <span class="opt">-i</span> <span class="path">fichier</span>           <span class="comment"># Demander confirmation</span>
+<span class="cmd">rmdir</span> <span class="path">dossier</span>           <span class="comment"># Supprimer dossier VIDE uniquement</span></pre>
+                </div>
+                <div class="info-box important">
+                    <div class="info-box-icon">⚠️</div>
+                    <div class="info-box-content">
+                        <strong>Attention !</strong>
+                        <code>rm -rf /</code> ou <code>rm -rf *</code> peut detruire tout le systeme ! Toujours verifier avant d'executer.
+                    </div>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Afficher le Contenu</h3>
+                <div class="code-block">
+                    <pre><span class="cmd">cat</span> <span class="path">fichier</span>             <span class="comment"># Afficher tout le contenu</span>
+<span class="cmd">less</span> <span class="path">fichier</span>            <span class="comment"># Afficher avec pagination (q pour quitter)</span>
+<span class="cmd">more</span> <span class="path">fichier</span>            <span class="comment"># Pagination simple</span>
+<span class="cmd">head</span> <span class="path">fichier</span>            <span class="comment"># Premieres 10 lignes</span>
+<span class="cmd">head</span> <span class="opt">-n 20</span> <span class="path">fichier</span>     <span class="comment"># Premieres 20 lignes</span>
+<span class="cmd">tail</span> <span class="path">fichier</span>            <span class="comment"># Dernieres 10 lignes</span>
+<span class="cmd">tail</span> <span class="opt">-f</span> <span class="path">fichier</span>         <span class="comment"># Suivre en temps reel (logs)</span>
+<span class="cmd">wc</span> <span class="path">fichier</span>              <span class="comment"># Compter lignes, mots, caracteres</span>
+<span class="cmd">wc</span> <span class="opt">-l</span> <span class="path">fichier</span>           <span class="comment"># Compter uniquement les lignes</span></pre>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Rechercher</h3>
+                <div class="code-block">
+                    <pre><span class="cmd">find</span> <span class="path">/chemin</span> <span class="opt">-name</span> "*.txt"    <span class="comment"># Chercher par nom</span>
+<span class="cmd">find</span> <span class="path">.</span> <span class="opt">-type f</span>                  <span class="comment"># Chercher fichiers uniquement</span>
+<span class="cmd">find</span> <span class="path">.</span> <span class="opt">-type d</span>                  <span class="comment"># Chercher dossiers uniquement</span>
+<span class="cmd">find</span> <span class="path">.</span> <span class="opt">-size +10M</span>               <span class="comment"># Fichiers > 10 Mo</span>
+
+<span class="cmd">grep</span> "motif" <span class="path">fichier</span>           <span class="comment"># Chercher dans un fichier</span>
+<span class="cmd">grep</span> <span class="opt">-r</span> "motif" <span class="path">dossier/</span>      <span class="comment"># Chercher recursivement</span>
+<span class="cmd">grep</span> <span class="opt">-i</span> "motif" <span class="path">fichier</span>       <span class="comment"># Ignorer la casse</span>
+<span class="cmd">grep</span> <span class="opt">-n</span> "motif" <span class="path">fichier</span>       <span class="comment"># Afficher numeros de ligne</span>
+<span class="cmd">grep</span> <span class="opt">-v</span> "motif" <span class="path">fichier</span>       <span class="comment"># Inverser (lignes SANS motif)</span></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 4: Permissions -->
+        <section class="chapter" id="ch4">
+            <div class="chapter-header ch4">
+                <div class="chapter-icon">🔐</div>
+                <div class="chapter-info">
+                    <h2>Chapitre 4 : Permissions et Propriete</h2>
+                    <p>Droits d'acces et gestion des utilisateurs</p>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Comprendre les Permissions</h3>
+                <div class="code-block">
+                    <pre><span class="comment"># Format : -rwxrwxrwx</span>
+<span class="comment">#          │└┬┘└┬┘└┬┘</span>
+<span class="comment">#          │ │  │  └── Autres (o)</span>
+<span class="comment">#          │ │  └───── Groupe (g)</span>
+<span class="comment">#          │ └──────── Proprietaire (u)</span>
+<span class="comment">#          └────────── Type (- fichier, d dossier, l lien)</span>
+
+<span class="comment"># Signification :</span>
+<span class="opt">r</span> = read (lecture)     = <span class="cmd">4</span>
+<span class="opt">w</span> = write (ecriture)   = <span class="cmd">2</span>
+<span class="opt">x</span> = execute (execut.)  = <span class="cmd">1</span>
+<span class="opt">-</span> = pas de permission  = <span class="cmd">0</span></pre>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <tr><th>Octal</th><th>Binaire</th><th>Permissions</th><th>Description</th></tr>
+                        <tr><td><code>7</code></td><td>111</td><td>rwx</td><td>Lecture + Ecriture + Execution</td></tr>
+                        <tr><td><code>6</code></td><td>110</td><td>rw-</td><td>Lecture + Ecriture</td></tr>
+                        <tr><td><code>5</code></td><td>101</td><td>r-x</td><td>Lecture + Execution</td></tr>
+                        <tr><td><code>4</code></td><td>100</td><td>r--</td><td>Lecture seule</td></tr>
+                        <tr><td><code>0</code></td><td>000</td><td>---</td><td>Aucune permission</td></tr>
+                    </table>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Modifier les Permissions (chmod)</h3>
+                <div class="code-block">
+                    <pre><span class="comment"># Mode symbolique</span>
+<span class="cmd">chmod</span> <span class="opt">u+x</span> <span class="path">script.sh</span>     <span class="comment"># Ajouter execution au proprietaire</span>
+<span class="cmd">chmod</span> <span class="opt">g-w</span> <span class="path">fichier</span>       <span class="comment"># Retirer ecriture au groupe</span>
+<span class="cmd">chmod</span> <span class="opt">o=r</span> <span class="path">fichier</span>       <span class="comment"># Definir lecture seule pour autres</span>
+<span class="cmd">chmod</span> <span class="opt">a+r</span> <span class="path">fichier</span>       <span class="comment"># Ajouter lecture a tous (all)</span>
+
+<span class="comment"># Mode octal (le plus courant)</span>
+<span class="cmd">chmod</span> <span class="opt">755</span> <span class="path">script.sh</span>     <span class="comment"># rwxr-xr-x (scripts executables)</span>
+<span class="cmd">chmod</span> <span class="opt">644</span> <span class="path">fichier.txt</span>   <span class="comment"># rw-r--r-- (fichiers normaux)</span>
+<span class="cmd">chmod</span> <span class="opt">700</span> <span class="path">secret/</span>       <span class="comment"># rwx------ (prive)</span>
+<span class="cmd">chmod</span> <span class="opt">777</span> <span class="path">fichier</span>       <span class="comment"># rwxrwxrwx (tout le monde) ⚠️</span>
+<span class="cmd">chmod</span> <span class="opt">-R 755</span> <span class="path">dossier/</span>  <span class="comment"># Recursif sur dossier</span></pre>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Propriete (chown, chgrp)</h3>
+                <div class="code-block">
+                    <pre><span class="cmd">chown</span> <span class="opt">user</span> <span class="path">fichier</span>           <span class="comment"># Changer le proprietaire</span>
+<span class="cmd">chown</span> <span class="opt">user:group</span> <span class="path">fichier</span>     <span class="comment"># Changer proprietaire et groupe</span>
+<span class="cmd">chown</span> <span class="opt">-R user</span> <span class="path">dossier/</span>      <span class="comment"># Recursivement</span>
+<span class="cmd">chgrp</span> <span class="opt">group</span> <span class="path">fichier</span>          <span class="comment"># Changer uniquement le groupe</span></pre>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Commande sudo</h3>
+                <p><code>sudo</code> (SuperUser DO) permet d'executer des commandes avec les privileges root (administrateur).</p>
+                <div class="code-block">
+                    <pre><span class="cmd">sudo</span> <span class="path">commande</span>           <span class="comment"># Executer en tant que root</span>
+<span class="cmd">sudo</span> <span class="opt">-i</span>                  <span class="comment"># Ouvrir un shell root</span>
+<span class="cmd">sudo</span> <span class="opt">-u user</span> <span class="path">commande</span>  <span class="comment"># Executer en tant qu'autre utilisateur</span>
+<span class="cmd">sudo</span> <span class="opt">!!</span>                 <span class="comment"># Repeter derniere commande avec sudo</span></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 5: Processus -->
+        <section class="chapter" id="ch5">
+            <div class="chapter-header ch5">
+                <div class="chapter-icon">⚙️</div>
+                <div class="chapter-info">
+                    <h2>Chapitre 5 : Gestion des Processus</h2>
+                    <p>Surveiller et controler les programmes</p>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Afficher les Processus</h3>
+                <div class="code-block">
+                    <pre><span class="cmd">ps</span>                      <span class="comment"># Processus du terminal actuel</span>
+<span class="cmd">ps</span> <span class="opt">aux</span>                  <span class="comment"># Tous les processus (format BSD)</span>
+<span class="cmd">ps</span> <span class="opt">-ef</span>                  <span class="comment"># Tous les processus (format System V)</span>
+<span class="cmd">ps</span> <span class="opt">aux | grep</span> <span class="path">nom</span>      <span class="comment"># Filtrer par nom</span>
+
+<span class="cmd">top</span>                     <span class="comment"># Moniteur temps reel (q pour quitter)</span>
+<span class="cmd">htop</span>                    <span class="comment"># Moniteur ameliore (si installe)</span>
+
+<span class="cmd">pgrep</span> <span class="path">nom</span>               <span class="comment"># Trouver PID par nom</span>
+<span class="cmd">pidof</span> <span class="path">programme</span>         <span class="comment"># PID d'un programme</span></pre>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Controler les Processus</h3>
+                <div class="code-block">
+                    <pre><span class="cmd">kill</span> <span class="opt">PID</span>                <span class="comment"># Terminer un processus (SIGTERM)</span>
+<span class="cmd">kill</span> <span class="opt">-9 PID</span>             <span class="comment"># Forcer l'arret (SIGKILL)</span>
+<span class="cmd">killall</span> <span class="path">nom</span>             <span class="comment"># Tuer par nom</span>
+<span class="cmd">pkill</span> <span class="path">motif</span>             <span class="comment"># Tuer par motif de nom</span>
+
+<span class="comment"># En arriere-plan</span>
+<span class="cmd">commande</span> <span class="opt">&</span>              <span class="comment"># Lancer en arriere-plan</span>
+<span class="cmd">jobs</span>                    <span class="comment"># Lister les jobs en arriere-plan</span>
+<span class="cmd">fg</span>                      <span class="comment"># Ramener au premier plan</span>
+<span class="cmd">bg</span>                      <span class="comment"># Continuer en arriere-plan</span>
+<span class="opt">Ctrl+Z</span>                  <span class="comment"># Suspendre le processus actuel</span>
+<span class="opt">Ctrl+C</span>                  <span class="comment"># Interrompre le processus actuel</span></pre>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Services (systemd)</h3>
+                <div class="code-block">
+                    <pre><span class="cmd">sudo systemctl</span> <span class="opt">start</span> <span class="path">service</span>    <span class="comment"># Demarrer</span>
+<span class="cmd">sudo systemctl</span> <span class="opt">stop</span> <span class="path">service</span>     <span class="comment"># Arreter</span>
+<span class="cmd">sudo systemctl</span> <span class="opt">restart</span> <span class="path">service</span>  <span class="comment"># Redemarrer</span>
+<span class="cmd">sudo systemctl</span> <span class="opt">status</span> <span class="path">service</span>   <span class="comment"># Etat du service</span>
+<span class="cmd">sudo systemctl</span> <span class="opt">enable</span> <span class="path">service</span>   <span class="comment"># Activer au demarrage</span>
+<span class="cmd">sudo systemctl</span> <span class="opt">disable</span> <span class="path">service</span>  <span class="comment"># Desactiver au demarrage</span></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 6: Reseau -->
+        <section class="chapter" id="ch6">
+            <div class="chapter-header ch6">
+                <div class="chapter-icon">🌐</div>
+                <div class="chapter-info">
+                    <h2>Chapitre 6 : Commandes Reseau</h2>
+                    <p>Configuration et diagnostic reseau</p>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Configuration IP</h3>
+                <div class="code-block">
+                    <pre><span class="cmd">ip addr</span>                 <span class="comment"># Afficher les interfaces (moderne)</span>
+<span class="cmd">ip a</span>                    <span class="comment"># Alias court</span>
+<span class="cmd">ifconfig</span>                <span class="comment"># Afficher interfaces (ancien)</span>
+<span class="cmd">hostname</span> <span class="opt">-I</span>             <span class="comment"># Adresse IP locale uniquement</span>
+
+<span class="cmd">ip link set</span> <span class="path">eth0</span> <span class="opt">up</span>    <span class="comment"># Activer une interface</span>
+<span class="cmd">ip link set</span> <span class="path">eth0</span> <span class="opt">down</span>  <span class="comment"># Desactiver une interface</span></pre>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Diagnostic Reseau</h3>
+                <div class="code-block">
+                    <pre><span class="cmd">ping</span> <span class="path">google.com</span>         <span class="comment"># Tester la connectivite</span>
+<span class="cmd">ping</span> <span class="opt">-c 4</span> <span class="path">192.168.1.1</span>   <span class="comment"># 4 pings seulement</span>
+
+<span class="cmd">traceroute</span> <span class="path">google.com</span>   <span class="comment"># Tracer le chemin reseau</span>
+<span class="cmd">tracepath</span> <span class="path">google.com</span>    <span class="comment"># Alternative sans root</span>
+
+<span class="cmd">netstat</span> <span class="opt">-tuln</span>           <span class="comment"># Ports en ecoute</span>
+<span class="cmd">ss</span> <span class="opt">-tuln</span>                <span class="comment"># Alternative moderne a netstat</span>
+
+<span class="cmd">nslookup</span> <span class="path">google.com</span>     <span class="comment"># Resolution DNS</span>
+<span class="cmd">dig</span> <span class="path">google.com</span>          <span class="comment"># Requete DNS detaillee</span>
+
+<span class="cmd">curl</span> <span class="path">https://example.com</span> <span class="comment"># Telecharger une page</span>
+<span class="cmd">wget</span> <span class="path">https://example.com/file</span> <span class="comment"># Telecharger un fichier</span></pre>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>SSH (Secure Shell)</h3>
+                <div class="code-block">
+                    <pre><span class="cmd">ssh</span> <span class="opt">user@</span><span class="path">192.168.1.10</span>        <span class="comment"># Connexion SSH</span>
+<span class="cmd">ssh</span> <span class="opt">-p 2222 user@</span><span class="path">host</span>        <span class="comment"># Port personnalise</span>
+<span class="cmd">ssh-keygen</span>                       <span class="comment"># Generer cles SSH</span>
+<span class="cmd">ssh-copy-id</span> <span class="opt">user@</span><span class="path">host</span>         <span class="comment"># Copier cle publique</span>
+
+<span class="cmd">scp</span> <span class="path">fichier user@host:/chemin</span>   <span class="comment"># Copier vers serveur</span>
+<span class="cmd">scp</span> <span class="path">user@host:/chemin local</span>    <span class="comment"># Copier depuis serveur</span>
+<span class="cmd">scp</span> <span class="opt">-r</span> <span class="path">dossier/ user@host:</span>    <span class="comment"># Copier dossier</span></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 7: Paquets -->
+        <section class="chapter" id="ch7">
+            <div class="chapter-header ch7">
+                <div class="chapter-icon">📦</div>
+                <div class="chapter-info">
+                    <h2>Chapitre 7 : Gestion des Paquets</h2>
+                    <p>Installation et mise a jour des logiciels</p>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>APT (Debian/Ubuntu/Raspberry Pi OS)</h3>
+                <div class="code-block">
+                    <pre><span class="cmd">sudo apt update</span>              <span class="comment"># Mettre a jour la liste des paquets</span>
+<span class="cmd">sudo apt upgrade</span>             <span class="comment"># Mettre a jour les paquets installes</span>
+<span class="cmd">sudo apt full-upgrade</span>        <span class="comment"># Mise a jour complete (peut supprimer)</span>
+
+<span class="cmd">sudo apt install</span> <span class="path">paquet</span>     <span class="comment"># Installer un paquet</span>
+<span class="cmd">sudo apt remove</span> <span class="path">paquet</span>      <span class="comment"># Desinstaller (garde config)</span>
+<span class="cmd">sudo apt purge</span> <span class="path">paquet</span>       <span class="comment"># Desinstaller + supprimer config</span>
+<span class="cmd">sudo apt autoremove</span>          <span class="comment"># Supprimer paquets orphelins</span>
+
+<span class="cmd">apt search</span> <span class="path">mot-cle</span>           <span class="comment"># Rechercher un paquet</span>
+<span class="cmd">apt show</span> <span class="path">paquet</span>              <span class="comment"># Informations sur un paquet</span>
+<span class="cmd">apt list --installed</span>         <span class="comment"># Lister les paquets installes</span></pre>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Autres Gestionnaires</h3>
+                <div class="table-container">
+                    <table>
+                        <tr><th>Distribution</th><th>Gestionnaire</th><th>Installer</th><th>Mettre a jour</th></tr>
+                        <tr><td>Debian/Ubuntu</td><td><code>apt</code></td><td><code>apt install pkg</code></td><td><code>apt update && apt upgrade</code></td></tr>
+                        <tr><td>Fedora/RHEL</td><td><code>dnf</code></td><td><code>dnf install pkg</code></td><td><code>dnf upgrade</code></td></tr>
+                        <tr><td>Arch Linux</td><td><code>pacman</code></td><td><code>pacman -S pkg</code></td><td><code>pacman -Syu</code></td></tr>
+                        <tr><td>Alpine</td><td><code>apk</code></td><td><code>apk add pkg</code></td><td><code>apk upgrade</code></td></tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 8: Scripts -->
+        <section class="chapter" id="ch8">
+            <div class="chapter-header ch8">
+                <div class="chapter-icon">📜</div>
+                <div class="chapter-info">
+                    <h2>Chapitre 8 : Scripts Bash</h2>
+                    <p>Automatisation et programmation shell</p>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Structure d'un Script</h3>
+                <div class="code-block">
+                    <pre><span class="comment">#!/bin/bash</span>
+<span class="comment"># Mon premier script</span>
+
+<span class="comment"># Variables</span>
+NOM=<span class="path">"Linux"</span>
+VERSION=<span class="cmd">$(uname -r)</span>
+
+<span class="comment"># Affichage</span>
+<span class="cmd">echo</span> <span class="path">"Bienvenue sur $NOM"</span>
+<span class="cmd">echo</span> <span class="path">"Version du noyau: $VERSION"</span>
+
+<span class="comment"># Condition</span>
+<span class="opt">if</span> [ -f /etc/passwd ]; <span class="opt">then</span>
+    <span class="cmd">echo</span> <span class="path">"Le fichier existe"</span>
+<span class="opt">fi</span>
+
+<span class="comment"># Boucle</span>
+<span class="opt">for</span> i <span class="opt">in</span> 1 2 3; <span class="opt">do</span>
+    <span class="cmd">echo</span> <span class="path">"Iteration $i"</span>
+<span class="opt">done</span></pre>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Variables et Arguments</h3>
+                <div class="code-block">
+                    <pre><span class="comment"># Variables</span>
+VAR=<span class="path">"valeur"</span>           <span class="comment"># Pas d'espace autour de =</span>
+<span class="cmd">echo</span> <span class="path">$VAR</span>              <span class="comment"># Utiliser la variable</span>
+<span class="cmd">echo</span> <span class="path">"${VAR}_suite"</span>    <span class="comment"># Avec accolades</span>
+
+<span class="comment"># Arguments du script</span>
+<span class="opt">$0</span>                     <span class="comment"># Nom du script</span>
+<span class="opt">$1, $2, $3...</span>          <span class="comment"># Arguments positionnels</span>
+<span class="opt">$#</span>                     <span class="comment"># Nombre d'arguments</span>
+<span class="opt">$@</span>                     <span class="comment"># Tous les arguments</span>
+<span class="opt">$?</span>                     <span class="comment"># Code retour derniere commande</span>
+
+<span class="comment"># Substitution de commande</span>
+DATE=<span class="cmd">$(date +%Y-%m-%d)</span>
+FILES=<span class="cmd">$(ls -1 | wc -l)</span></pre>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Tests et Conditions</h3>
+                <div class="code-block">
+                    <pre><span class="comment"># Tests sur fichiers</span>
+[ -f fichier ]    <span class="comment"># Fichier existe</span>
+[ -d dossier ]    <span class="comment"># Dossier existe</span>
+[ -r fichier ]    <span class="comment"># Fichier lisible</span>
+[ -w fichier ]    <span class="comment"># Fichier modifiable</span>
+[ -x fichier ]    <span class="comment"># Fichier executable</span>
+
+<span class="comment"># Tests sur chaines</span>
+[ -z "$VAR" ]     <span class="comment"># Chaine vide</span>
+[ -n "$VAR" ]     <span class="comment"># Chaine non vide</span>
+[ "$A" = "$B" ]   <span class="comment"># Egalite</span>
+[ "$A" != "$B" ]  <span class="comment"># Difference</span>
+
+<span class="comment"># Tests numeriques</span>
+[ $A <span class="opt">-eq</span> $B ]    <span class="comment"># Egal (equal)</span>
+[ $A <span class="opt">-ne</span> $B ]    <span class="comment"># Different (not equal)</span>
+[ $A <span class="opt">-lt</span> $B ]    <span class="comment"># Inferieur (less than)</span>
+[ $A <span class="opt">-gt</span> $B ]    <span class="comment"># Superieur (greater than)</span>
+[ $A <span class="opt">-le</span> $B ]    <span class="comment"># Inferieur ou egal</span>
+[ $A <span class="opt">-ge</span> $B ]    <span class="comment"># Superieur ou egal</span></pre>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Redirections et Pipes</h3>
+                <div class="code-block">
+                    <pre><span class="comment"># Redirections</span>
+<span class="cmd">commande</span> > fichier     <span class="comment"># Sortie vers fichier (ecrase)</span>
+<span class="cmd">commande</span> >> fichier    <span class="comment"># Sortie vers fichier (ajoute)</span>
+<span class="cmd">commande</span> < fichier     <span class="comment"># Entree depuis fichier</span>
+<span class="cmd">commande</span> 2> erreurs    <span class="comment"># Erreurs vers fichier</span>
+<span class="cmd">commande</span> &> tout       <span class="comment"># Sortie + erreurs</span>
+<span class="cmd">commande</span> 2>/dev/null   <span class="comment"># Ignorer les erreurs</span>
+
+<span class="comment"># Pipes (chainer les commandes)</span>
+<span class="cmd">cat</span> fichier | <span class="cmd">grep</span> motif | <span class="cmd">wc</span> -l
+<span class="cmd">ps</span> aux | <span class="cmd">grep</span> apache | <span class="cmd">awk</span> '{print $2}'
+<span class="cmd">ls</span> -la | <span class="cmd">sort</span> -k5 -n   <span class="comment"># Trier par taille</span></pre>
+                </div>
+            </div>
+            <div class="content-card">
+                <h3>Executer un Script</h3>
+                <div class="code-block">
+                    <pre><span class="comment"># Rendre executable</span>
+<span class="cmd">chmod</span> <span class="opt">+x</span> <span class="path">script.sh</span>
+
+<span class="comment"># Executer</span>
+<span class="cmd">./script.sh</span>            <span class="comment"># Depuis le repertoire actuel</span>
+<span class="cmd">bash</span> <span class="path">script.sh</span>         <span class="comment"># Avec bash explicite</span>
+<span class="cmd">source</span> <span class="path">script.sh</span>       <span class="comment"># Dans le shell actuel</span>
+<span class="cmd">.</span> <span class="path">script.sh</span>            <span class="comment"># Alias de source</span></pre>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="footer">
+        <p style="margin-top: 10px; font-size: 0.9rem;">8 Chapitres | Administration Systeme Linux</p>
+    </footer>
+</body>
+</html>
