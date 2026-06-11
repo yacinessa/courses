@@ -273,40 +273,40 @@
 ]; // ← vos codes d'accès
 
   const BASE = "";   // dossier dans le repo
-
-  const CONTENT = [
+ const CONTENT = [
     // ── Cours HTML ──
-    { id:1,  title:"Cours Intelligence Artificielle",  desc:"Introduction et concepts fondamentaux de l'IA",                     type:"html", category:"Cours HTML",   url: BASE+"COURS AI .html",              icon:"🤖" },
-    { id:2,  title:"Cours IA (version réduite)",        desc:"Résumé condensé du cours IA",                                       type:"html", category:"Cours HTML",   url: BASE+"COURS AI REDUIT .html",        icon:"🤖" },
-    { id:3,  title:"Cours IoT",                         desc:"Internet des Objets — architectures et protocoles",                  type:"html", category:"Cours HTML",   url: BASE+"Cours_IoT_.html",              icon:"📡" },
-    { id:4,  title:"Cours Linux (Résumé)",              desc:"Commandes essentielles et administration Linux",                     type:"html", category:"Cours HTML",   url: BASE+"Cours_Linux_Resume.html",      icon:"🐧" },
-    { id:5,  title:"STM32 — Cours CAN Bus",             desc:"Protocole CAN sur microcontrôleur STM32",                           type:"html", category:"Cours HTML",   url: BASE+"stm32-can-course(1).html",     icon:"🔌" },
+    { id:1,  title:"Cours Intelligence Artificielle",       desc:"Introduction et concepts fondamentaux de l'IA",            type:"html", category:"Cours HTML",  url:"COURS AI .html",              icon:"🤖" },
+    { id:2,  title:"Cours IA (version réduite)",            desc:"Résumé condensé du cours IA",                              type:"html", category:"Cours HTML",  url:"COURS AI REDUIT .html",       icon:"🤖" },
+    { id:3,  title:"Cours IoT",                             desc:"Internet des Objets — architectures et protocoles",        type:"html", category:"Cours HTML",  url:"Cours_IoT_.html",             icon:"📡" },
+    { id:4,  title:"Cours Linux (Résumé)",                  desc:"Commandes essentielles et administration Linux",           type:"html", category:"Cours HTML",  url:"Cours_Linux_Resume.html",     icon:"🐧" },
+    { id:5,  title:"STM32 — Cours CAN Bus",                 desc:"Protocole CAN sur microcontrôleur STM32",                  type:"html", category:"Cours HTML",  url:"stm32-can-course(1).html",    icon:"🔌" },
 
     // ── QCM ──
-    { id:6,  title:"QCM Intelligence Artificielle",     desc:"Questions à choix multiples — IA",                                  type:"html", category:"QCM",          url: BASE+"QCM_IA_.html",                 icon:"✅" },
-    { id:7,  title:"QCM IoT",                           desc:"Questions à choix multiples — Internet des Objets",                 type:"html", category:"QCM",          url: BASE+"QCM_IoT_.html",                icon:"✅" },
-    { id:8,  title:"QCM Linux (100 questions)",         desc:"Entraînement intensif sur Linux",                                    type:"html", category:"QCM",          url: BASE+"QCM_Linux_100.html",           icon:"✅" },
-    { id:9,  title:"QCM Raspberry Pi",                  desc:"Questions à choix multiples — Raspberry Pi",                        type:"html", category:"QCM",          url: BASE+"QCM_Raspberry_.html",          icon:"✅" },
+    { id:6,  title:"QCM Intelligence Artificielle",         desc:"Questions à choix multiples — IA",                        type:"html", category:"QCM",         url:"QCM_IA_.html",                icon:"✅" },
+    { id:7,  title:"QCM IoT",                               desc:"Questions à choix multiples — Internet des Objets",       type:"html", category:"QCM",         url:"QCM_IoT_.html",               icon:"✅" },
+    { id:8,  title:"QCM Linux (100 questions)",             desc:"Entraînement intensif sur Linux",                         type:"html", category:"QCM",         url:"QCM_Linux_100.html",          icon:"✅" },
+    { id:9,  title:"QCM Raspberry Pi",                      desc:"Questions à choix multiples — Raspberry Pi",              type:"html", category:"QCM",         url:"QCM_Raspberry_.html",         icon:"✅" },
 
-    // ── Exercices & Corrections ──
-    { id:10, title:"Exercices C — Tableaux & Fonctions",desc:"Pratique du langage C : tableaux, fonctions",                       type:"html", category:"Exercices",    url: BASE+"exercices_c_tableaux_fonctions.html",     icon:"💻" },
-    { id:11, title:"Exercices Cryptographie Avancée",   desc:"Chiffrement, hachage et sécurité",                                  type:"html", category:"Exercices",    url: BASE+"exercices_cryptographie_avancee.html",    icon:"🔐" },
-    { id:12, title:"Exercice 1 — LED Blinking",         desc:"Faire clignoter une LED (Raspberry / STM32)",                       type:"html", category:"Exercices",    url: BASE+"exercise1_led_blinking.html",             icon:"💡" },
-    { id:13, title:"Exercice 2 — Feu de circulation",   desc:"Simulation d'un feu tricolore",                                     type:"html", category:"Exercices",    url: BASE+"exercise2_traffic_light.html",            icon:"🚦" },
-    { id:14, title:"Exercice 3 — Compteur bouton",      desc:"Compteur d'impulsions sur bouton poussoir",                         type:"html", category:"Exercices",    url: BASE+"exercise3_button_counter.html",           icon:"🔢" },
-    { id:15, title:"Corrections — Protocoles (polycopié)",desc:"Corrigés des exercices sur les protocoles de communication",      type:"html", category:"Corrections",  url: BASE+"corrections_exercices_protocoles polycope.html", icon:"📝" },
-    { id:16, title:"Corrections — Protocoles Communication",desc:"Corrigés détaillés des protocoles RS232 SPI I2C CAN",          type:"html", category:"Corrections",  url: BASE+"corrections_protocoles_communication.html",      icon:"📝" },
+    // ── Exercices ──
+    { id:10, title:"Exercices C — Tableaux & Fonctions",    desc:"Pratique du langage C : tableaux, fonctions",             type:"html", category:"Exercices",   url:"exercices_c_tableaux_fonctions.html",    icon:"💻" },
+    { id:11, title:"Exercices Cryptographie Avancée",       desc:"Chiffrement, hachage et sécurité",                        type:"html", category:"Exercices",   url:"exercices_cryptographie_avancee.html",   icon:"🔐" },
+    { id:12, title:"Exercice 1 — LED Blinking",             desc:"Faire clignoter une LED",                                 type:"html", category:"Exercices",   url:"exercise1_led_blinking.html",            icon:"💡" },
+    { id:13, title:"Exercice 2 — Feu de circulation",       desc:"Simulation d'un feu tricolore",                           type:"html", category:"Exercices",   url:"exercise2_traffic_light.html",           icon:"🚦" },
+    { id:14, title:"Exercice 3 — Compteur bouton",          desc:"Compteur d'impulsions sur bouton poussoir",               type:"html", category:"Exercices",   url:"exercise3_button_counter.html",          icon:"🔢" },
+
+    // ── Corrections ──
+    { id:15, title:"Corrections Protocoles (polycopié)",    desc:"Corrigés des exercices sur les protocoles",               type:"html", category:"Corrections", url:"corrections_exercices_protocoles polycope.html", icon:"📝" },
+    { id:16, title:"Corrections Protocoles Communication",  desc:"Corrigés détaillés RS232 SPI I2C CAN",                    type:"html", category:"Corrections", url:"corrections_protocoles_communication.html",      icon:"📝" },
 
     // ── PDF ──
-    { id:17, title:"STM32 Chapitre 2 (Complet)",        desc:"Cours STM32 — partie 2, version complète",                          type:"pdf",  category:"PDF",          url: BASE+"CHAPITRE 2 cours STM 32 COMPLET .pdf", icon:"📕" },
-    { id:18, title:"STM32 Chapitre 2 (Suite)",          desc:"Cours STM32 — suite du chapitre 2",                                 type:"pdf",  category:"PDF",          url: BASE+"CHAPITRE 2 cours stm 32 suite.pdf",    icon:"📕" },
-    { id:19, title:"Raspberry Pi Chapitre 4",           desc:"Cours Raspberry Pi — chapitre 4",                                   type:"pdf",  category:"PDF",          url: BASE+"CHAPITRE 4 Cours_RaspberryPi.pdf",     icon:"🍓" },
-    { id:20, title:"Chapitre 1 — Bases programmation",  desc:"Notions fondamentales de la programmation embarquée",               type:"pdf",  category:"PDF",          url: BASE+"chapitre 1 Notions de base de la programmatio....pdf", icon:"📗" },
-    { id:21, title:"Chapitre 3 — Protocoles RS232 SPI I2C CAN", desc:"Protocoles de communication série embarquée",               type:"pdf",  category:"PDF",          url: BASE+"chapitre 3 les protocoles rs232 spi i2c bus can ....pdf", icon:"📘" },
-  ];
-
-  /* ─────────────────────────────────────────
-     LOGIQUE — ne pas modifier en dessous
+    { id:17, title:"Raspberry Pi Chapitre 4",               desc:"Cours Raspberry Pi — chapitre 4",                         type:"pdf",  category:"PDF",         url:"CHAPITRE 4 Cours_RaspberryPi.pdf",              icon:"🍓" },
+    { id:18, title:"Cours BTS Chap 4-5-6",                  desc:"Cours BTS complet pour impression",                       type:"pdf",  category:"PDF",         url:"Cours_BTS_Chap4_5_6-1 FOR PRINTING.pdf",        icon:"📘" },
+    { id:19, title:"Programmation C",                       desc:"Cours complet de programmation en C",                     type:"pdf",  category:"PDF",         url:"programmation-C.pdf",                           icon:"💻" },
+    { id:20, title:"Protocoles de communication",           desc:"RS232, SPI, I2C, CAN — cours complet",                    type:"pdf",  category:"PDF",         url:"protocoles .pdf",                               icon:"📡" },
+    { id:21, title:"STM32 — Partie 1",                      desc:"Cours STM32 première partie",                             type:"pdf",  category:"PDF",         url:"STM-32-1.pdf",                                  icon:"📕" },
+    { id:22, title:"STM32 — Partie 2",                      desc:"Cours STM32 deuxième partie",                             type:"pdf",  category:"PDF",         url:"STM-32-2.pdf",                                  icon:"📕" },
+    { id:23, title:"TP Android Studio",                     desc:"Travaux pratiques Android Studio complet",                type:"pdf",  category:"PDF",         url:"TP_Android_Studio_Complet.pdf",                 icon:"📱" },
+];
   ───────────────────────────────────────── */
 
   const SESSION_KEY = "courses_auth";
