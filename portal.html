@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -234,63 +234,92 @@ const USERS = {
 /* Catégories visibles dans les onglets */
 const CATEGORIES = ["Tout", "Cours HTML", "PDF", "Vidéos", "Audio"];
 
-/* Contenu — remplacez les liens Google Drive par les vôtres
-   Pour Google Drive :
-     - Fichier HTML/PDF : clic droit → Partager → "Tout le monde avec le lien" → copier l'URL
-     - Vidéo Drive : récupérez l'ID du fichier et utilisez : https://drive.google.com/file/d/ID/preview
-     - Audio Drive : même principe                                                                    */
+/* ══════════════════════════════════════════════════════════
+   CONTENU — GUIDE DES LIENS
+   ──────────────────────────────────────────────────────────
+   HTML local  → "cours/nom-du-fichier.html"
+   PDF local   → "pdf/nom-du-fichier.pdf"
+   Vidéo Drive → "https://drive.google.com/file/d/ID/preview"
+   Audio Drive → "https://drive.google.com/file/d/ID/preview"
+
+   Structure de dossiers dans votre dépôt GitHub :
+     courses/
+     ├── index.html          ← ce fichier
+     ├── cours/
+     │   ├── stm32-adc.html
+     │   ├── vhdl-intro.html
+     │   └── arduino-pwm.html
+     ├── pdf/
+     │   ├── protocoles.pdf
+     │   └── filtres.pdf
+     └── (vidéos/audios → Drive uniquement, trop lourds)
+   ══════════════════════════════════════════════════════════ */
 const CONTENT = [
   {
     id: 1, title: "Introduction au STM32F4",
     desc: "Cours interactif HTML — Architecture, GPIO, horloges.",
     type: "html", category: "Cours HTML",
-    url: "https://drive.google.com/file/d/VOTRE_ID_ICI/preview",
+    url: "cours/stm32-intro.html",
     icon: "📄"
   },
   {
     id: 2, title: "TP Arduino — PWM & ADC",
     desc: "Feuille de TP complète avec exercices guidés.",
     type: "html", category: "Cours HTML",
-    url: "https://drive.google.com/file/d/VOTRE_ID_ICI/preview",
+    url: "cours/arduino-pwm-adc.html",
     icon: "📄"
   },
   {
     id: 3, title: "Cours VHDL — Logique combinatoire",
-    desc: "Document PDF — opérateurs, structures, exemples.",
-    type: "pdf", category: "PDF",
-    url: "https://drive.google.com/file/d/VOTRE_ID_ICI/preview",
-    icon: "📕"
+    desc: "Cours interactif HTML — opérateurs, structures, exemples.",
+    type: "html", category: "Cours HTML",
+    url: "cours/vhdl-combinatoire.html",
+    icon: "📄"
   },
   {
-    id: 4, title: "Protocoles de communication",
+    id: 4, title: "ESP32 & IoT",
+    desc: "Cours HTML — MQTT, WiFi, capteurs connectés.",
+    type: "html", category: "Cours HTML",
+    url: "cours/esp32-iot.html",
+    icon: "📄"
+  },
+  {
+    id: 5, title: "Protocoles de communication",
     desc: "Résumé UART / I2C / SPI / CAN en PDF.",
     type: "pdf", category: "PDF",
-    url: "https://drive.google.com/file/d/VOTRE_ID_ICI/preview",
+    url: "pdf/protocoles-communication.pdf",
     icon: "📕"
   },
   {
-    id: 5, title: "Vidéo — Introduction IoT & MQTT",
+    id: 6, title: "Filtres analogiques",
+    desc: "Cours PDF — passe-bas, passe-haut, passe-bande, résonance.",
+    type: "pdf", category: "PDF",
+    url: "pdf/filtres-analogiques.pdf",
+    icon: "📕"
+  },
+  {
+    id: 7, title: "Systèmes numériques",
+    desc: "PDF — codage binaire, BCD, complément à 2, arithmétique.",
+    type: "pdf", category: "PDF",
+    url: "pdf/systemes-numeriques.pdf",
+    icon: "📕"
+  },
+  {
+    id: 8, title: "Vidéo — Introduction IoT & MQTT",
     desc: "Explication du protocole MQTT avec démonstration ESP32.",
     type: "video", category: "Vidéos",
     url: "https://drive.google.com/file/d/VOTRE_ID_ICI/preview",
     icon: "🎬"
   },
   {
-    id: 6, title: "Vidéo — Programmation STM32 HAL",
+    id: 9, title: "Vidéo — Programmation STM32 HAL",
     desc: "Démarrage avec STM32CubeIDE et la bibliothèque HAL.",
     type: "video", category: "Vidéos",
     url: "https://drive.google.com/file/d/VOTRE_ID_ICI/preview",
     icon: "🎬"
   },
   {
-    id: 7, title: "Podcast — Systèmes embarqués",
-    desc: "Épisode audio sur les architectures temps réel (RTOS).",
-    type: "audio", category: "Audio",
-    url: "https://drive.google.com/file/d/VOTRE_ID_ICI/preview",
-    icon: "🎧"
-  },
-  {
-    id: 8, title: "Audio — Révision Filtres Analogiques",
+    id: 10, title: "Audio — Révision Filtres Analogiques",
     desc: "Résumé audio — filtres passe-bas, passe-haut, résonance.",
     type: "audio", category: "Audio",
     url: "https://drive.google.com/file/d/VOTRE_ID_ICI/preview",
@@ -390,6 +419,9 @@ function renderContent(category) {
   const items = category === 'Tout' ? CONTENT : CONTENT.filter(c => c.category === category);
 
   items.forEach(item => {
+    const isLocal  = !item.url.startsWith('http');
+    const srcLabel = isLocal ? '💾 Local' : '☁️ Drive';
+    const srcColor = isLocal ? 'var(--accent2)' : '#bf91f3';
     const a = document.createElement('a');
     a.href = item.url;
     a.target = '_blank';
@@ -403,7 +435,8 @@ function renderContent(category) {
       <div class="card-title">${item.title}</div>
       <div class="card-desc">${item.desc}</div>
       <div class="card-footer">
-        <span>📁 ${item.category}</span>
+        <span style="color:${srcColor};font-size:.75rem;font-weight:600">${srcLabel}</span>
+        <span style="margin-left:.5rem;color:var(--muted)">· ${item.category}</span>
         <span style="margin-left:auto;color:var(--accent);font-size:.75rem">Ouvrir →</span>
       </div>`;
     grid.appendChild(a);
