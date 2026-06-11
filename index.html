@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cours & Ressources</title>
+  <title>Espace Cours</title>
   <style>
     :root {
       --bg: #0f1117;
@@ -19,215 +19,44 @@
       --tag-html-t: #6cb0ff;
       --tag-pdf-t: #f87171;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      min-height: 100vh;
-    }
-
-    /* ── LOGIN SCREEN ── */
-    #login-screen {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      gap: 1.5rem;
-      padding: 2rem;
-    }
-
-    #login-screen h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      letter-spacing: -0.5px;
-    }
-
+    /* LOGIN */
+    #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 1.5rem; padding: 2rem; }
+    #login-screen h1 { font-size: 2rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
     #login-screen p { color: var(--muted); font-size: 0.95rem; }
-
-    #login-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 2.5rem 2rem;
-      width: 100%;
-      max-width: 360px;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
+    #login-box { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 2.5rem 2rem; width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 1rem; }
     #login-box label { font-size: 0.85rem; color: var(--muted); margin-bottom: -0.5rem; }
-
-    #code-input {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      color: var(--text);
-      font-size: 1.1rem;
-      letter-spacing: 0.15em;
-      text-align: center;
-      outline: none;
-      transition: border-color 0.2s;
-    }
+    #code-input { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; color: var(--text); font-size: 1.1rem; letter-spacing: 0.15em; text-align: center; outline: none; transition: border-color 0.2s; }
     #code-input:focus { border-color: var(--accent); }
-
-    #login-btn {
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border: none;
-      border-radius: 8px;
-      padding: 0.8rem;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
+    #login-btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: 8px; padding: 0.8rem; color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
     #login-btn:hover { opacity: 0.88; }
+    #login-error { color: #f87171; font-size: 0.85rem; text-align: center; display: none; }
 
-    #login-error {
-      color: #f87171;
-      font-size: 0.85rem;
-      text-align: center;
-      display: none;
-    }
-
-    /* ── MAIN PORTAL ── */
+    /* PORTAL */
     #portal { display: none; }
-
-    header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 1rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    header .logo {
-      font-size: 1.2rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    #logout-btn {
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--muted);
-      padding: 0.4rem 1rem;
-      cursor: pointer;
-      font-size: 0.85rem;
-      transition: border-color 0.2s, color 0.2s;
-    }
+    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+    header .logo { font-size: 1.2rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    #logout-btn { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--muted); padding: 0.4rem 1rem; cursor: pointer; font-size: 0.85rem; transition: border-color 0.2s, color 0.2s; }
     #logout-btn:hover { border-color: var(--accent); color: var(--text); }
+    .filters { display: flex; gap: 0.5rem; flex-wrap: wrap; padding: 1.5rem 2rem 0; }
+    .filter-btn { background: var(--card); border: 1px solid var(--border); border-radius: 20px; color: var(--muted); padding: 0.4rem 1rem; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; }
+    .filter-btn:hover, .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem; padding: 1.5rem 2rem 3rem; }
 
-    .filters {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      padding: 1.5rem 2rem 0;
-    }
-
-    .filter-btn {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      color: var(--muted);
-      padding: 0.4rem 1rem;
-      font-size: 0.82rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .filter-btn:hover, .filter-btn.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 1.2rem;
-      padding: 1.5rem 2rem 3rem;
-    }
-
-    /* ── CARD ── */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.4rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      text-decoration: none;
-      color: var(--text);
-      transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
-      cursor: pointer;
-    }
-    .card:hover {
-      transform: translateY(-3px);
-      border-color: var(--accent);
-      box-shadow: 0 8px 24px rgba(108, 142, 247, 0.15);
-    }
-
-    .card-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 0.5rem;
-    }
-
-    .card-icon {
-      font-size: 1.8rem;
-      line-height: 1;
-    }
-
-    .card-tag {
-      font-size: 0.72rem;
-      font-weight: 600;
-      border-radius: 4px;
-      padding: 0.2rem 0.5rem;
-      letter-spacing: 0.04em;
-    }
+    /* CARD */
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.4rem; display: flex; flex-direction: column; gap: 0.75rem; text-decoration: none; color: var(--text); transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s; cursor: pointer; }
+    .card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 8px 24px rgba(108,142,247,0.15); }
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem; }
+    .card-icon { font-size: 1.8rem; line-height: 1; }
+    .card-tag { font-size: 0.72rem; font-weight: 600; border-radius: 4px; padding: 0.2rem 0.5rem; letter-spacing: 0.04em; }
     .tag-html { background: var(--tag-html); color: var(--tag-html-t); }
-    .tag-pdf  { background: var(--tag-pdf);  color: var(--tag-pdf-t);  }
-
-    .card-title {
-      font-size: 0.97rem;
-      font-weight: 600;
-      line-height: 1.35;
-    }
-
-    .card-desc {
-      font-size: 0.82rem;
-      color: var(--muted);
-      line-height: 1.5;
-      flex: 1;
-    }
-
-    .card-cat {
-      font-size: 0.75rem;
-      color: var(--accent2);
-      font-weight: 500;
-    }
-
-    .empty {
-      grid-column: 1/-1;
-      text-align: center;
-      color: var(--muted);
-      padding: 3rem;
-    }
+    .tag-pdf  { background: var(--tag-pdf);  color: var(--tag-pdf-t); }
+    .card-title { font-size: 0.97rem; font-weight: 600; line-height: 1.35; }
+    .card-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; flex: 1; }
+    .card-cat { font-size: 0.75rem; color: var(--accent2); font-weight: 500; }
+    .empty { grid-column: 1/-1; text-align: center; color: var(--muted); padding: 3rem; }
 
     @media (max-width: 600px) {
       header { padding: 1rem; }
@@ -238,7 +67,7 @@
 </head>
 <body>
 
-<!-- ══════════ LOGIN ══════════ -->
+<!-- LOGIN -->
 <div id="login-screen">
   <h1>📚 Espace Cours</h1>
   <p>Entrez votre code d'accès pour continuer</p>
@@ -246,135 +75,170 @@
     <label for="code-input">Code d'accès</label>
     <input id="code-input" type="password" placeholder="••••••" autocomplete="off" />
     <button id="login-btn">Entrer</button>
-    <span id="login-error">Code incorrect. Réessayez.</span>
+    <span id="login-error"></span>
   </div>
 </div>
 
-<!-- ══════════ PORTAL ══════════ -->
+<!-- PORTAL -->
 <div id="portal">
   <header>
     <span class="logo">📚 Cours & Ressources</span>
     <button id="logout-btn">Déconnexion</button>
   </header>
-
   <div class="filters" id="filters"></div>
   <div class="grid" id="grid"></div>
 </div>
 
 <script>
- const ACCESS_CODES = [
-  { code: "1234",      days: 30 },
-  { code: "cours2025", days: 7  },
-  { code: "stm32",     days: 1  },
-];
+  /* ── CODES D'ACCÈS — modifiez ici ── */
+  const ACCESS_CODES = [
+    { code: "1234",      days: 30 },
+    { code: "cours2025", days: 7  },
+    { code: "stm32",     days: 1  },
+    { code: "iot2025",   days: 90 },
+  ];
 
-const BASE = "";
+  /* ── BASE URL — laisser "" si fichiers à la racine ── */
+  const BASE = "";
 
-const CONTENT = [
-  // ── paste your CONTENT array here (unchanged) ──
-];
+  /* ── CONTENU ── */
+  const CONTENT = [
+    // Cours HTML
+    { id:1,  title:"Cours Intelligence Artificielle",        desc:"Introduction et concepts fondamentaux de l'IA",       type:"html", category:"Cours HTML",  url:"COURS AI .html",              icon:"🤖" },
+    { id:2,  title:"Cours IA (version réduite)",             desc:"Résumé condensé du cours IA",                         type:"html", category:"Cours HTML",  url:"COURS AI REDUIT .html",       icon:"🤖" },
+    { id:3,  title:"Cours IoT",                              desc:"Internet des Objets — architectures et protocoles",   type:"html", category:"Cours HTML",  url:"Cours_IoT_.html",             icon:"📡" },
+    { id:4,  title:"Cours Linux (Résumé)",                   desc:"Commandes essentielles et administration Linux",      type:"html", category:"Cours HTML",  url:"Cours_Linux_Resume.html",     icon:"🐧" },
+    { id:5,  title:"STM32 — Cours CAN Bus",                  desc:"Protocole CAN sur microcontrôleur STM32",             type:"html", category:"Cours HTML",  url:"stm32-can-course(1).html",    icon:"🔌" },
 
-const SESSION_KEY = "courses_auth";
+    // QCM
+    { id:6,  title:"QCM Intelligence Artificielle",          desc:"Questions à choix multiples — IA",                   type:"html", category:"QCM",         url:"QCM_IA_.html",                icon:"✅" },
+    { id:7,  title:"QCM IoT",                                desc:"Questions à choix multiples — Internet des Objets",  type:"html", category:"QCM",         url:"QCM_IoT_.html",               icon:"✅" },
+    { id:8,  title:"QCM Linux (100 questions)",              desc:"Entraînement intensif sur Linux",                    type:"html", category:"QCM",         url:"QCM_Linux_100.html",          icon:"✅" },
+    { id:9,  title:"QCM Raspberry Pi",                       desc:"Questions à choix multiples — Raspberry Pi",         type:"html", category:"QCM",         url:"QCM_Raspberry_.html",         icon:"✅" },
 
-function login(code) {
-  const trimmed = code.trim();
-  const now = Date.now();
-  const match = ACCESS_CODES.find(c => c.code === trimmed);
-  const err = document.getElementById("login-error");
+    // Exercices
+    { id:10, title:"Exercices C — Tableaux & Fonctions",     desc:"Pratique du langage C : tableaux, fonctions",        type:"html", category:"Exercices",   url:"exercices_c_tableaux_fonctions.html",   icon:"💻" },
+    { id:11, title:"Exercices Cryptographie Avancée",        desc:"Chiffrement, hachage et sécurité",                   type:"html", category:"Exercices",   url:"exercices_cryptographie_avancee.html",  icon:"🔐" },
+    { id:12, title:"Exercice 1 — LED Blinking",              desc:"Faire clignoter une LED",                            type:"html", category:"Exercices",   url:"exercise1_led_blinking.html",           icon:"💡" },
+    { id:13, title:"Exercice 2 — Feu de circulation",        desc:"Simulation d'un feu tricolore",                      type:"html", category:"Exercices",   url:"exercise2_traffic_light.html",          icon:"🚦" },
+    { id:14, title:"Exercice 3 — Compteur bouton",           desc:"Compteur d'impulsions sur bouton poussoir",          type:"html", category:"Exercices",   url:"exercise3_button_counter.html",         icon:"🔢" },
 
-  if (!match) {
-    err.textContent = "❌ Code incorrect.";
-    err.style.display = "block";
-    return;
+    // Corrections
+    { id:15, title:"Corrections Protocoles (polycopié)",     desc:"Corrigés des exercices sur les protocoles",          type:"html", category:"Corrections", url:"corrections_exercices_protocoles polycope.html", icon:"📝" },
+    { id:16, title:"Corrections Protocoles Communication",   desc:"Corrigés détaillés RS232 SPI I2C CAN",               type:"html", category:"Corrections", url:"corrections_protocoles_communication.html",      icon:"📝" },
+
+    // PDF
+    { id:17, title:"Raspberry Pi Chapitre 4",                desc:"Cours Raspberry Pi — chapitre 4",                    type:"pdf",  category:"PDF",         url:"CHAPITRE 4 Cours_RaspberryPi.pdf",              icon:"🍓" },
+    { id:18, title:"Cours BTS Chapitres 4-5-6",              desc:"Cours BTS complet pour impression",                  type:"pdf",  category:"PDF",         url:"Cours_BTS_Chap4_5_6-1 FOR PRINTING.pdf",        icon:"📘" },
+    { id:19, title:"Programmation C",                        desc:"Cours complet de programmation en C",                type:"pdf",  category:"PDF",         url:"programmation-C.pdf",                           icon:"💻" },
+    { id:20, title:"Protocoles de communication",            desc:"RS232, SPI, I2C, CAN — cours complet",               type:"pdf",  category:"PDF",         url:"protocoles .pdf",                               icon:"📡" },
+    { id:21, title:"STM32 — Partie 1",                       desc:"Cours STM32 première partie",                        type:"pdf",  category:"PDF",         url:"STM-32-1.pdf",                                  icon:"📕" },
+    { id:22, title:"STM32 — Partie 2",                       desc:"Cours STM32 deuxième partie",                        type:"pdf",  category:"PDF",         url:"STM-32-2.pdf",                                  icon:"📕" },
+    { id:23, title:"TP Android Studio",                      desc:"Travaux pratiques Android Studio complet",           type:"pdf",  category:"PDF",         url:"TP_Android_Studio_Complet.pdf",                 icon:"📱" },
+  ];
+
+  /* ── LOGIQUE ── */
+  const SESSION_KEY = "courses_auth";
+
+  function login(code) {
+    const trimmed = code.trim();
+    const now = Date.now();
+    const match = ACCESS_CODES.find(c => c.code === trimmed);
+    const err = document.getElementById("login-error");
+
+    if (!match) {
+      err.textContent = "❌ Code incorrect.";
+      err.style.display = "block";
+      return;
+    }
+
+    const stored = JSON.parse(localStorage.getItem("code_expiry") || "{}");
+
+    if (!stored[trimmed]) {
+      stored[trimmed] = now + match.days * 86400000;
+      localStorage.setItem("code_expiry", JSON.stringify(stored));
+    }
+
+    if (now > stored[trimmed]) {
+      err.textContent = "❌ Code expiré.";
+      err.style.display = "block";
+      return;
+    }
+
+    sessionStorage.setItem(SESSION_KEY, "ok");
+    showPortal();
   }
 
-  const stored = JSON.parse(localStorage.getItem("code_expiry") || "{}");
-
-  if (!stored[trimmed]) {
-    stored[trimmed] = now + match.days * 86400000;
-    localStorage.setItem("code_expiry", JSON.stringify(stored));
+  function logout() {
+    sessionStorage.removeItem(SESSION_KEY);
+    document.getElementById("portal").style.display = "none";
+    document.getElementById("login-screen").style.display = "flex";
+    document.getElementById("code-input").value = "";
   }
 
-  if (now > stored[trimmed]) {
-    err.textContent = "❌ Code expiré.";
-    err.style.display = "block";
-    return;
+  function showPortal() {
+    document.getElementById("login-screen").style.display = "none";
+    document.getElementById("portal").style.display = "block";
+    buildFilters();
+    buildGrid("Tous");
   }
 
-  sessionStorage.setItem(SESSION_KEY, "ok");
-  showPortal();
-}
-
-function logout() {
-  sessionStorage.removeItem(SESSION_KEY);
-  document.getElementById("portal").style.display = "none";
-  document.getElementById("login-screen").style.display = "flex";
-  document.getElementById("code-input").value = "";
-}
-
-function showPortal() {
-  document.getElementById("login-screen").style.display = "none";
-  document.getElementById("portal").style.display = "block";
-  buildFilters();
-  buildGrid("Tous");
-}
-
-function buildFilters() {
-  const cats = ["Tous", ...new Set(CONTENT.map(c => c.category))];
-  const container = document.getElementById("filters");
-  container.innerHTML = "";
-  cats.forEach(cat => {
-    const btn = document.createElement("button");
-    btn.className = "filter-btn" + (cat === "Tous" ? " active" : "");
-    btn.textContent = cat;
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      buildGrid(cat);
+  function buildFilters() {
+    const cats = ["Tous", ...new Set(CONTENT.map(c => c.category))];
+    const container = document.getElementById("filters");
+    container.innerHTML = "";
+    cats.forEach(cat => {
+      const btn = document.createElement("button");
+      btn.className = "filter-btn" + (cat === "Tous" ? " active" : "");
+      btn.textContent = cat;
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        buildGrid(cat);
+      });
+      container.appendChild(btn);
     });
-    container.appendChild(btn);
-  });
-}
-
-function buildGrid(cat) {
-  const filtered = cat === "Tous" ? CONTENT : CONTENT.filter(c => c.category === cat);
-  const grid = document.getElementById("grid");
-  grid.innerHTML = "";
-  if (!filtered.length) {
-    grid.innerHTML = '<p class="empty">Aucun contenu.</p>';
-    return;
   }
-  filtered.forEach(item => {
-    const a = document.createElement("a");
-    a.className = "card";
-    a.href = BASE + item.url;
-    a.target = "_blank";
-    a.rel = "noopener noreferrer";
-    a.innerHTML = `
-      <div class="card-top">
-        <span class="card-icon">${item.icon}</span>
-        <span class="card-tag tag-${item.type}">${item.type.toUpperCase()}</span>
-      </div>
-      <div class="card-title">${item.title}</div>
-      <div class="card-desc">${item.desc}</div>
-      <div class="card-cat">${item.category}</div>
-    `;
-    grid.appendChild(a);
+
+  function buildGrid(cat) {
+    const filtered = cat === "Tous" ? CONTENT : CONTENT.filter(c => c.category === cat);
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+    if (!filtered.length) {
+      grid.innerHTML = '<p class="empty">Aucun contenu.</p>';
+      return;
+    }
+    filtered.forEach(item => {
+      const a = document.createElement("a");
+      a.className = "card";
+      a.href = BASE + item.url;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.innerHTML = `
+        <div class="card-top">
+          <span class="card-icon">${item.icon}</span>
+          <span class="card-tag tag-${item.type}">${item.type.toUpperCase()}</span>
+        </div>
+        <div class="card-title">${item.title}</div>
+        <div class="card-desc">${item.desc}</div>
+        <div class="card-cat">${item.category}</div>
+      `;
+      grid.appendChild(a);
+    });
+  }
+
+  document.getElementById("login-btn").addEventListener("click", () => {
+    login(document.getElementById("code-input").value);
   });
-}
 
-document.getElementById("login-btn").addEventListener("click", () => {
-  login(document.getElementById("code-input").value);
-});
+  document.getElementById("code-input").addEventListener("keydown", e => {
+    if (e.key === "Enter") login(e.target.value);
+    document.getElementById("login-error").style.display = "none";
+  });
 
-document.getElementById("code-input").addEventListener("keydown", e => {
-  if (e.key === "Enter") login(e.target.value);
-  document.getElementById("login-error").style.display = "none";
-});
+  document.getElementById("logout-btn").addEventListener("click", logout);
 
-document.getElementById("logout-btn").addEventListener("click", logout);
-
-if (sessionStorage.getItem(SESSION_KEY) === "ok") showPortal();
- 
+  if (sessionStorage.getItem(SESSION_KEY) === "ok") showPortal();
+</script>
 </body>
 </html>
