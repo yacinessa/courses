@@ -262,144 +262,119 @@
 </div>
 
 <script>
-  /* ─────────────────────────────────────────
-     CONFIGURATION — modifiez ici uniquement
-  ───────────────────────────────────────── */
  const ACCESS_CODES = [
-  { code: "1234",      expiresInDays: 30  },
-  { code: "cours2025", expiresInDays: 7   },
-  { code: "stm32",     expiresInDays: 1   },
-  { code: "iot2025",   expiresInDays: 90  },
-]; // ← vos codes d'accès
-
-  const BASE = "";   // dossier dans le repo
- const CONTENT = [
-    // ── Cours HTML ──
-    { id:1,  title:"Cours Intelligence Artificielle",       desc:"Introduction et concepts fondamentaux de l'IA",            type:"html", category:"Cours HTML",  url:"COURS AI .html",              icon:"🤖" },
-    { id:2,  title:"Cours IA (version réduite)",            desc:"Résumé condensé du cours IA",                              type:"html", category:"Cours HTML",  url:"COURS AI REDUIT .html",       icon:"🤖" },
-    { id:3,  title:"Cours IoT",                             desc:"Internet des Objets — architectures et protocoles",        type:"html", category:"Cours HTML",  url:"Cours_IoT_.html",             icon:"📡" },
-    { id:4,  title:"Cours Linux (Résumé)",                  desc:"Commandes essentielles et administration Linux",           type:"html", category:"Cours HTML",  url:"Cours_Linux_Resume.html",     icon:"🐧" },
-    { id:5,  title:"STM32 — Cours CAN Bus",                 desc:"Protocole CAN sur microcontrôleur STM32",                  type:"html", category:"Cours HTML",  url:"stm32-can-course(1).html",    icon:"🔌" },
-
-    // ── QCM ──
-    { id:6,  title:"QCM Intelligence Artificielle",         desc:"Questions à choix multiples — IA",                        type:"html", category:"QCM",         url:"QCM_IA_.html",                icon:"✅" },
-    { id:7,  title:"QCM IoT",                               desc:"Questions à choix multiples — Internet des Objets",       type:"html", category:"QCM",         url:"QCM_IoT_.html",               icon:"✅" },
-    { id:8,  title:"QCM Linux (100 questions)",             desc:"Entraînement intensif sur Linux",                         type:"html", category:"QCM",         url:"QCM_Linux_100.html",          icon:"✅" },
-    { id:9,  title:"QCM Raspberry Pi",                      desc:"Questions à choix multiples — Raspberry Pi",              type:"html", category:"QCM",         url:"QCM_Raspberry_.html",         icon:"✅" },
-
-    // ── Exercices ──
-    { id:10, title:"Exercices C — Tableaux & Fonctions",    desc:"Pratique du langage C : tableaux, fonctions",             type:"html", category:"Exercices",   url:"exercices_c_tableaux_fonctions.html",    icon:"💻" },
-    { id:11, title:"Exercices Cryptographie Avancée",       desc:"Chiffrement, hachage et sécurité",                        type:"html", category:"Exercices",   url:"exercices_cryptographie_avancee.html",   icon:"🔐" },
-    { id:12, title:"Exercice 1 — LED Blinking",             desc:"Faire clignoter une LED",                                 type:"html", category:"Exercices",   url:"exercise1_led_blinking.html",            icon:"💡" },
-    { id:13, title:"Exercice 2 — Feu de circulation",       desc:"Simulation d'un feu tricolore",                           type:"html", category:"Exercices",   url:"exercise2_traffic_light.html",           icon:"🚦" },
-    { id:14, title:"Exercice 3 — Compteur bouton",          desc:"Compteur d'impulsions sur bouton poussoir",               type:"html", category:"Exercices",   url:"exercise3_button_counter.html",          icon:"🔢" },
-
-    // ── Corrections ──
-    { id:15, title:"Corrections Protocoles (polycopié)",    desc:"Corrigés des exercices sur les protocoles",               type:"html", category:"Corrections", url:"corrections_exercices_protocoles polycope.html", icon:"📝" },
-    { id:16, title:"Corrections Protocoles Communication",  desc:"Corrigés détaillés RS232 SPI I2C CAN",                    type:"html", category:"Corrections", url:"corrections_protocoles_communication.html",      icon:"📝" },
-
-    // ── PDF ──
-    { id:17, title:"Raspberry Pi Chapitre 4",               desc:"Cours Raspberry Pi — chapitre 4",                         type:"pdf",  category:"PDF",         url:"CHAPITRE 4 Cours_RaspberryPi.pdf",              icon:"🍓" },
-    { id:18, title:"Cours BTS Chap 4-5-6",                  desc:"Cours BTS complet pour impression",                       type:"pdf",  category:"PDF",         url:"Cours_BTS_Chap4_5_6-1 FOR PRINTING.pdf",        icon:"📘" },
-    { id:19, title:"Programmation C",                       desc:"Cours complet de programmation en C",                     type:"pdf",  category:"PDF",         url:"programmation-C.pdf",                           icon:"💻" },
-    { id:20, title:"Protocoles de communication",           desc:"RS232, SPI, I2C, CAN — cours complet",                    type:"pdf",  category:"PDF",         url:"protocoles .pdf",                               icon:"📡" },
-    { id:21, title:"STM32 — Partie 1",                      desc:"Cours STM32 première partie",                             type:"pdf",  category:"PDF",         url:"STM-32-1.pdf",                                  icon:"📕" },
-    { id:22, title:"STM32 — Partie 2",                      desc:"Cours STM32 deuxième partie",                             type:"pdf",  category:"PDF",         url:"STM-32-2.pdf",                                  icon:"📕" },
-    { id:23, title:"TP Android Studio",                     desc:"Travaux pratiques Android Studio complet",                type:"pdf",  category:"PDF",         url:"TP_Android_Studio_Complet.pdf",                 icon:"📱" },
+  { code: "1234",      days: 30 },
+  { code: "cours2025", days: 7  },
+  { code: "stm32",     days: 1  },
 ];
-  ───────────────────────────────────────── */
 
-  const SESSION_KEY = "courses_auth";
+const BASE = "";
 
-  function checkSession() {
-    return sessionStorage.getItem(SESSION_KEY) === "ok";
+const CONTENT = [
+  // ── paste your CONTENT array here (unchanged) ──
+];
+
+const SESSION_KEY = "courses_auth";
+
+function login(code) {
+  const trimmed = code.trim();
+  const now = Date.now();
+  const match = ACCESS_CODES.find(c => c.code === trimmed);
+  const err = document.getElementById("login-error");
+
+  if (!match) {
+    err.textContent = "❌ Code incorrect.";
+    err.style.display = "block";
+    return;
   }
 
-  function login(code) {
-    if (ACCESS_CODES.includes(code.trim())) {
-      sessionStorage.setItem(SESSION_KEY, "ok");
-      showPortal();
-    } else {
-      document.getElementById("login-error").style.display = "block";
-    }
+  const stored = JSON.parse(localStorage.getItem("code_expiry") || "{}");
+
+  if (!stored[trimmed]) {
+    stored[trimmed] = now + match.days * 86400000;
+    localStorage.setItem("code_expiry", JSON.stringify(stored));
   }
 
-  function logout() {
-    sessionStorage.removeItem(SESSION_KEY);
-    document.getElementById("portal").style.display = "none";
-    document.getElementById("login-screen").style.display = "flex";
-    document.getElementById("code-input").value = "";
+  if (now > stored[trimmed]) {
+    err.textContent = "❌ Code expiré.";
+    err.style.display = "block";
+    return;
   }
 
-  function showPortal() {
-    document.getElementById("login-screen").style.display = "none";
-    document.getElementById("portal").style.display = "block";
-    buildFilters();
-    buildGrid("Tous");
-  }
+  sessionStorage.setItem(SESSION_KEY, "ok");
+  showPortal();
+}
 
-  function buildFilters() {
-    const cats = ["Tous", ...new Set(CONTENT.map(c => c.category))];
-    const container = document.getElementById("filters");
-    container.innerHTML = "";
-    cats.forEach(cat => {
-      const btn = document.createElement("button");
-      btn.className = "filter-btn" + (cat === "Tous" ? " active" : "");
-      btn.textContent = cat;
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        buildGrid(cat);
-      });
-      container.appendChild(btn);
+function logout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  document.getElementById("portal").style.display = "none";
+  document.getElementById("login-screen").style.display = "flex";
+  document.getElementById("code-input").value = "";
+}
+
+function showPortal() {
+  document.getElementById("login-screen").style.display = "none";
+  document.getElementById("portal").style.display = "block";
+  buildFilters();
+  buildGrid("Tous");
+}
+
+function buildFilters() {
+  const cats = ["Tous", ...new Set(CONTENT.map(c => c.category))];
+  const container = document.getElementById("filters");
+  container.innerHTML = "";
+  cats.forEach(cat => {
+    const btn = document.createElement("button");
+    btn.className = "filter-btn" + (cat === "Tous" ? " active" : "");
+    btn.textContent = cat;
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      buildGrid(cat);
     });
-  }
-
-  function buildGrid(cat) {
-    const filtered = cat === "Tous" ? CONTENT : CONTENT.filter(c => c.category === cat);
-    const grid = document.getElementById("grid");
-    grid.innerHTML = "";
-
-    if (!filtered.length) {
-      grid.innerHTML = '<p class="empty">Aucun contenu dans cette catégorie.</p>';
-      return;
-    }
-
-    filtered.forEach(item => {
-      const a = document.createElement("a");
-      a.className = "card";
-      a.href = item.url;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-
-      a.innerHTML = `
-        <div class="card-top">
-          <span class="card-icon">${item.icon}</span>
-          <span class="card-tag tag-${item.type}">${item.type.toUpperCase()}</span>
-        </div>
-        <div class="card-title">${item.title}</div>
-        <div class="card-desc">${item.desc}</div>
-        <div class="card-cat">${item.category}</div>
-      `;
-
-      grid.appendChild(a);
-    });
-  }
-
-  // ── Event listeners ──
-  document.getElementById("login-btn").addEventListener("click", () => {
-    login(document.getElementById("code-input").value);
+    container.appendChild(btn);
   });
+}
 
-  document.getElementById("code-input").addEventListener("keydown", e => {
-    if (e.key === "Enter") login(e.target.value);
-    document.getElementById("login-error").style.display = "none";
+function buildGrid(cat) {
+  const filtered = cat === "Tous" ? CONTENT : CONTENT.filter(c => c.category === cat);
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  if (!filtered.length) {
+    grid.innerHTML = '<p class="empty">Aucun contenu.</p>';
+    return;
+  }
+  filtered.forEach(item => {
+    const a = document.createElement("a");
+    a.className = "card";
+    a.href = BASE + item.url;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.innerHTML = `
+      <div class="card-top">
+        <span class="card-icon">${item.icon}</span>
+        <span class="card-tag tag-${item.type}">${item.type.toUpperCase()}</span>
+      </div>
+      <div class="card-title">${item.title}</div>
+      <div class="card-desc">${item.desc}</div>
+      <div class="card-cat">${item.category}</div>
+    `;
+    grid.appendChild(a);
   });
+}
 
-  document.getElementById("logout-btn").addEventListener("click", logout);
+document.getElementById("login-btn").addEventListener("click", () => {
+  login(document.getElementById("code-input").value);
+});
 
-  // Auto-login si session active
-  if (checkSession()) showPortal();
-</script>
+document.getElementById("code-input").addEventListener("keydown", e => {
+  if (e.key === "Enter") login(e.target.value);
+  document.getElementById("login-error").style.display = "none";
+});
+
+document.getElementById("logout-btn").addEventListener("click", logout);
+
+if (sessionStorage.getItem(SESSION_KEY) === "ok") showPortal();
+ 
 </body>
 </html>
