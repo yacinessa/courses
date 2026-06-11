@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #9b59b6;
+            --secondary: #8e44ad;
+            --accent: #bb6bd9;
+            --bg-dark: #0d1117;
+            --bg-card: #161b22;
+            --bg-code: #1a1f26;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --border: #30363d;
+            --success: #3fb950;
+            --warning: #d29922;
+            --error: #f85149;
+            --ch1: #9b59b6;
+            --ch2: #3498db;
+            --ch3: #e74c3c;
+            --ch4: #2ecc71;
+            --ch5: #f39c12;
+            --ch6: #1abc9c;
+            --ch7: #e91e63;
+            --ch8: #00bcd4;
+            --ch9: #ff5722;
+            --ch10: #607d8b;
+            --ch11: #795548;
+            --ch12: #9c27b0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-size: 17px;
+        }
+        .bg-pattern {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(155, 89, 182, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(142, 68, 173, 0.08) 0%, transparent 50%);
+        }
+        .header {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(22, 27, 34, 0.98) 100%);
+            border-bottom: 5px solid var(--primary);
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .logo { font-size: 2rem; margin-bottom: 15px; text-shadow: 0 0 40px rgba(155, 89, 182, 0.5); }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header .subtitle { font-size: 1.4rem; color: var(--text-secondary); margin-bottom: 15px; }
+        .header .module-info { font-size: 1.1rem; color: var(--accent); margin-bottom: 20px; }
+        .badges { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .badge { padding: 10px 22px; border-radius: 25px; font-size: 0.95rem; font-weight: 600; }
+        .badge.ai { background: var(--primary); color: white; }
+        .badge.ml { background: var(--secondary); color: white; }
+        .badge.bts { background: var(--success); color: var(--bg-dark); }
+        .badge.hours { background: var(--warning); color: var(--bg-dark); }
+        .nav {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .nav-link {
+            padding: 8px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        .nav-link:hover { transform: translateY(-2px); }
+        .nav-link.ch1 { color: var(--ch1); } .nav-link.ch1:hover { border-color: var(--ch1); background: rgba(155, 89, 182, 0.1); }
+        .nav-link.ch2 { color: var(--ch2); } .nav-link.ch2:hover { border-color: var(--ch2); background: rgba(52, 152, 219, 0.1); }
+        .nav-link.ch3 { color: var(--ch3); } .nav-link.ch3:hover { border-color: var(--ch3); background: rgba(231, 76, 60, 0.1); }
+        .nav-link.ch4 { color: var(--ch4); } .nav-link.ch4:hover { border-color: var(--ch4); background: rgba(46, 204, 113, 0.1); }
+        .nav-link.ch5 { color: var(--ch5); } .nav-link.ch5:hover { border-color: var(--ch5); background: rgba(243, 156, 18, 0.1); }
+        .nav-link.ch6 { color: var(--ch6); } .nav-link.ch6:hover { border-color: var(--ch6); background: rgba(26, 188, 156, 0.1); }
+        .nav-link.ch7 { color: var(--ch7); } .nav-link.ch7:hover { border-color: var(--ch7); background: rgba(233, 30, 99, 0.1); }
+        .nav-link.ch8 { color: var(--ch8); } .nav-link.ch8:hover { border-color: var(--ch8); background: rgba(0, 188, 212, 0.1); }
+        .nav-link.ch9 { color: var(--ch9); } .nav-link.ch9:hover { border-color: var(--ch9); background: rgba(255, 87, 34, 0.1); }
+        .nav-link.ch10 { color: var(--ch10); } .nav-link.ch10:hover { border-color: var(--ch10); background: rgba(96, 125, 139, 0.1); }
+        .nav-link.ch11 { color: var(--ch11); } .nav-link.ch11:hover { border-color: var(--ch11); background: rgba(121, 85, 72, 0.1); }
+        .nav-link.ch12 { color: var(--ch12); } .nav-link.ch12:hover { border-color: var(--ch12); background: rgba(156, 39, 176, 0.1); }
+        .main { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+        .chapter { margin-bottom: 60px; scroll-margin-top: 80px; }
+        .chapter-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 30px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            margin-bottom: 30px;
+            border-left: 6px solid;
+        }
+        .chapter-header.ch1 { border-color: var(--ch1); }
+        .chapter-header.ch2 { border-color: var(--ch2); }
+        .chapter-header.ch3 { border-color: var(--ch3); }
+        .chapter-header.ch4 { border-color: var(--ch4); }
+        .chapter-header.ch5 { border-color: var(--ch5); }
+        .chapter-header.ch6 { border-color: var(--ch6); }
+        .chapter-header.ch7 { border-color: var(--ch7); }
+        .chapter-header.ch8 { border-color: var(--ch8); }
+        .chapter-header.ch9 { border-color: var(--ch9); }
+        .chapter-header.ch10 { border-color: var(--ch10); }
+        .chapter-header.ch11 { border-color: var(--ch11); }
+        .chapter-header.ch12 { border-color: var(--ch12); }
+        .chapter-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+        }
+        .chapter-header.ch1 .chapter-icon { background: rgba(155, 89, 182, 0.15); }
+        .chapter-header.ch2 .chapter-icon { background: rgba(52, 152, 219, 0.15); }
+        .chapter-header.ch3 .chapter-icon { background: rgba(231, 76, 60, 0.15); }
+        .chapter-header.ch4 .chapter-icon { background: rgba(46, 204, 113, 0.15); }
+        .chapter-header.ch5 .chapter-icon { background: rgba(243, 156, 18, 0.15); }
+        .chapter-header.ch6 .chapter-icon { background: rgba(26, 188, 156, 0.15); }
+        .chapter-header.ch7 .chapter-icon { background: rgba(233, 30, 99, 0.15); }
+        .chapter-header.ch8 .chapter-icon { background: rgba(0, 188, 212, 0.15); }
+        .chapter-header.ch9 .chapter-icon { background: rgba(255, 87, 34, 0.15); }
+        .chapter-header.ch10 .chapter-icon { background: rgba(96, 125, 139, 0.15); }
+        .chapter-header.ch11 .chapter-icon { background: rgba(121, 85, 72, 0.15); }
+        .chapter-header.ch12 .chapter-icon { background: rgba(156, 39, 176, 0.15); }
+        .chapter-info h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+        .chapter-header.ch1 h2 { color: var(--ch1); }
+        .chapter-header.ch2 h2 { color: var(--ch2); }
+        .chapter-header.ch3 h2 { color: var(--ch3); }
+        .chapter-header.ch4 h2 { color: var(--ch4); }
+        .chapter-header.ch5 h2 { color: var(--ch5); }
+        .chapter-header.ch6 h2 { color: var(--ch6); }
+        .chapter-header.ch7 h2 { color: var(--ch7); }
+        .chapter-header.ch8 h2 { color: var(--ch8); }
+        .chapter-header.ch9 h2 { color: var(--ch9); }
+        .chapter-header.ch10 h2 { color: var(--ch10); }
+        .chapter-header.ch11 h2 { color: var(--ch11); }
+        .chapter-header.ch12 h2 { color: var(--ch12); }
+        .chapter-info p { color: var(--text-secondary); font-size: 1.05rem; }
+        .content-card {
+            background: var(--bg-card);
+            border-radius: 14px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+        }
+        .content-card h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+        }
+        .content-card h3::before { content: '\25B8'; color: var(--secondary); }
+        .content-card h4 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 25px 0 15px 0;
+            color: var(--accent);
+        }
+        .content-card p { color: var(--text-secondary); margin-bottom: 15px; text-align: justify; }
+        .content-card ul, .content-card ol { padding-left: 25px; margin-bottom: 15px; }
+        .content-card li { padding: 8px 0; color: var(--text-secondary); }
+        .content-card li::marker { color: var(--primary); }
+        .code-block {
+            background: var(--bg-code);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+        }
+        .code-block pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin: 0;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+        .code-block .comment { color: #6a737d; }
+        .code-block .keyword { color: #ff7b72; }
+        .code-block .function { color: #d2a8ff; }
+        .code-block .string { color: #a5d6ff; }
+        .code-block .number { color: #79c0ff; }
+        .code-block .type { color: #ffa657; }
+        .code-block .macro { color: #f85149; }
+        .code-block .directive { color: #7ee787; }
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(155, 89, 182, 0.15);
+            color: var(--primary);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        .table-container { overflow-x: auto; margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+        th { background: var(--bg-code); color: var(--primary); padding: 15px; text-align: left; font-weight: 600; }
+        td { padding: 15px; border-bottom: 1px solid var(--border); color: var(--text-secondary); }
+        tr:hover td { background: rgba(155, 89, 182, 0.05); }
+        .info-box {
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+        }
+        .info-box.tip { background: rgba(63, 185, 80, 0.1); border-left: 4px solid var(--success); }
+        .info-box.warning { background: rgba(210, 153, 34, 0.1); border-left: 4px solid var(--warning); }
+        .info-box.important { background: rgba(248, 81, 73, 0.1); border-left: 4px solid var(--error); }
+        .info-box.definition { background: rgba(155, 89, 182, 0.1); border-left: 4px solid var(--primary); }
+        .info-box-icon { font-size: 1.6rem; }
+        .info-box-content { flex: 1; }
+        .info-box-content strong { display: block; margin-bottom: 8px; color: var(--text-primary); font-size: 1.05rem; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin: 20px 0; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin: 20px 0; }
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin: 20px 0; }
+        .feature-card {
+            background: var(--bg-code);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .feature-card .icon { font-size: 1.8rem; margin-bottom: 12px; }
+        .feature-card h4 { font-size: 1.1rem; color: var(--text-primary); margin-bottom: 10px; }
+        .feature-card p { font-size: 0.9rem; color: var(--text-secondary); margin: 0; }
+        .diagram-box {
+            background: var(--bg-code);
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .diagram-box pre {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent);
+            text-align: left;
+            display: inline-block;
+        }
+        .objectives {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(142, 68, 173, 0.1));
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        .objectives h4 { color: var(--primary); margin-bottom: 15px; }
+        .objectives ul { list-style: none; padding: 0; }
+        .objectives li { padding: 8px 0 8px 30px; position: relative; }
+        .objectives li::before { content: '\2713'; position: absolute; left: 0; color: var(--success); font-weight: bold; }
+        .formula-box {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(155, 89, 182, 0.1));
+            border: 2px solid var(--ch2);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .formula-box .formula {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            color: var(--ch2);
+            margin: 10px 0;
+        }
+        .formula-box .description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        .footer {
+            text-align: center;
+            padding: 50px 20px;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            margin-top: 60px;
+        }
+        .footer .author { color: var(--primary); font-weight: 600; }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .logo { font-size: 2rem; }
+            .chapter-header { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    <header class="header">
+        <div class="logo">🤖</div>
+        <h1>Intelligence Artificielle</h1>
+        <p class="subtitle">Initiation aux Algorithmes d'Apprentissage et de Decision</p>
+        <p class="module-info">Machine Learning - Deep Learning - TinyML pour Systemes Embarques</p>
+        <div class="badges">
+            <span class="badge ai">🤖 Intelligence Artificielle</span>
+            <span class="badge ml">🧠 Machine Learning</span>
+            <span class="badge hours">📚 12 Chapitres</span>
+        </div>
+    </header>
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="#ch1" class="nav-link ch1">1. Introduction IA</a>
+            <a href="#ch2" class="nav-link ch2">2. Types ML</a>
+            <a href="#ch3" class="nav-link ch3">3. Donnees</a>
+            <a href="#ch4" class="nav-link ch4">4. Regression</a>
+            <a href="#ch5" class="nav-link ch5">5. Classification</a>
+            <a href="#ch6" class="nav-link ch6">6. Arbres</a>
+            <a href="#ch7" class="nav-link ch7">7. Reseaux Neurones</a>
+            <a href="#ch8" class="nav-link ch8">8. Deep Learning</a>
+            <a href="#ch9" class="nav-link ch9">9. Python ML</a>
+            <a href="#ch10" class="nav-link ch10">10. TensorFlow</a>
+            <a href="#ch11" class="nav-link ch11">11. TinyML</a>
+            <a href="#ch12" class="nav-link ch12">12. Projets</a>
+        </div>
+    </nav>
+    <main class="main">
+
+        <!-- ==================== CHAPITRE 1 ==================== -->
+        <section class="chapter" id="ch1">
+            <div class="chapter-header ch1">
+                <div class="chapter-icon">🤖</div>
+                <div class="chapter-info">
+                    <h2>Chapitre 1 : Introduction a l'Intelligence Artificielle</h2>
+                    <p>Concepts fondamentaux et historique de l'IA</p>
+                </div>
+            </div>
+
+            <div class="objectives">
+                <h4>🎯 Objectifs du chapitre</h4>
+                <ul>
+                    <li>Definir l'Intelligence Artificielle et ses branches</li>
+                    <li>Connaitre l'historique et les evolutions de l'IA</li>
+                    <li>Distinguer IA faible et IA forte</li>
+                    <li>Identifier les applications de l'IA en electronique</li>
+                </ul>
+            </div>
+
+            <div class="content-card">
+                <h3>1.1 Definition de l'Intelligence Artificielle</h3>
+                
+                <div class="info-box definition">
+                    <div class="info-box-icon">📖</div>
+                    <div class="info-box-content">
+                        <strong>Intelligence Artificielle (IA)</strong>
+                        L'Intelligence Artificielle est un domaine de l'informatique qui vise a creer des systemes capables d'effectuer des taches necessitant normalement l'intelligence humaine : apprentissage, raisonnement, perception, comprehension du langage, prise de decision.
+                    </div>
+                </div>
+
+                <h4>Branches de l'Intelligence Artificielle</h4>
+                <div class="diagram-box">
+                    <pre>
+                        INTELLIGENCE ARTIFICIELLE
+                                  │
+        ┌─────────────┬───────────┼───────────┬─────────────┐
+        │             │           │           │             │
+        ▼             ▼           ▼           ▼             ▼
+   ┌─────────┐  ┌─────────┐ ┌─────────┐ ┌─────────┐  ┌─────────┐
+   │ Machine │  │  Deep   │ │  NLP    │ │ Vision  │  │Robotique│
+   │Learning │  │Learning │ │(Langage)│ │  par    │  │         │
+   │         │  │         │ │         │ │Ordinat. │  │         │
+   └─────────┘  └─────────┘ └─────────┘ └─────────┘  └─────────┘
+        │             │
+        │     ┌───────┴───────┐
+        │     │               │
+        ▼     ▼               ▼
+   ┌─────────────┐    ┌─────────────┐
+   │   Reseaux   │    │   Reseaux   │
+   │  de Neurones│    │Convolutifs  │
+   │   (ANN)     │    │   (CNN)     │
+   └─────────────┘    └─────────────┘
+                    </pre>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>1.2 Historique de l'IA</h3>
+                
+                <div class="table-container">
+                    <table>
+                        <tr><th>Annee</th><th>Evenement</th><th>Importance</th></tr>
+                        <tr><td>1943</td><td>McCulloch & Pitts : Neurone artificiel</td><td>Premier modele mathematique de neurone</td></tr>
+                        <tr><td>1950</td><td>Test de Turing</td><td>Critere d'intelligence machine</td></tr>
+                        <tr><td>1956</td><td>Conference de Dartmouth</td><td>Naissance officielle du terme "IA"</td></tr>
+                        <tr><td>1957</td><td>Perceptron (Rosenblatt)</td><td>Premier reseau de neurones</td></tr>
+                        <tr><td>1986</td><td>Retropropagation</td><td>Entrainement efficace des reseaux</td></tr>
+                        <tr><td>1997</td><td>Deep Blue bat Kasparov</td><td>IA bat champion d'echecs</td></tr>
+                        <tr><td>2012</td><td>AlexNet (ImageNet)</td><td>Revolution du Deep Learning</td></tr>
+                        <tr><td>2016</td><td>AlphaGo bat Lee Sedol</td><td>IA maitrise le jeu de Go</td></tr>
+                        <tr><td>2022</td><td>ChatGPT (OpenAI)</td><td>IA conversationnelle grand public</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>1.3 IA Faible vs IA Forte</h3>
+                
+                <div class="grid-2">
+                    <div class="feature-card">
+                        <div class="icon">🎯</div>
+                        <h4>IA Faible (Narrow AI)</h4>
+                        <p>Concue pour une tache specifique. Ex: reconnaissance faciale, traduction, recommandation. C'est l'IA actuelle.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🧠</div>
+                        <h4>IA Forte (General AI)</h4>
+                        <p>Intelligence comparable a l'humain, capable de raisonner, apprendre et s'adapter a toute tache. N'existe pas encore.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>1.4 Applications de l'IA en Electronique</h3>
+                
+                <div class="grid-3">
+                    <div class="feature-card"><div class="icon">🔧</div><h4>Maintenance Predictive</h4><p>Detection de pannes avant qu'elles surviennent</p></div>
+                    <div class="feature-card"><div class="icon">📊</div><h4>Controle Qualite</h4><p>Inspection automatique des circuits</p></div>
+                    <div class="feature-card"><div class="icon">🎤</div><h4>Reconnaissance Vocale</h4><p>Commandes vocales pour IoT</p></div>
+                    <div class="feature-card"><div class="icon">👁️</div><h4>Vision par Ordinateur</h4><p>Detection d'objets, de gestes</p></div>
+                    <div class="feature-card"><div class="icon">⚡</div><h4>Optimisation Energie</h4><p>Gestion intelligente de la consommation</p></div>
+                    <div class="feature-card"><div class="icon">🤖</div><h4>Robotique</h4><p>Navigation autonome, manipulation</p></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPITRE 2 ==================== -->
+        <section class="chapter" id="ch2">
+            <div class="chapter-header ch2">
+                <div class="chapter-icon">🧠</div>
+                <div class="chapter-info">
+                    <h2>Chapitre 2 : Types d'Apprentissage Automatique</h2>
+                    <p>Supervise, non supervise et par renforcement</p>
+                </div>
+            </div>
+
+            <div class="objectives">
+                <h4>🎯 Objectifs du chapitre</h4>
+                <ul>
+                    <li>Distinguer les trois types d'apprentissage machine</li>
+                    <li>Identifier les cas d'usage de chaque type</li>
+                    <li>Comprendre les notions de features et labels</li>
+                    <li>Connaitre les algorithmes principaux de chaque categorie</li>
+                </ul>
+            </div>
+
+            <div class="content-card">
+                <h3>2.1 Machine Learning : Vue d'ensemble</h3>
+                
+                <div class="info-box definition">
+                    <div class="info-box-icon">📖</div>
+                    <div class="info-box-content">
+                        <strong>Machine Learning (Apprentissage Automatique)</strong>
+                        Sous-domaine de l'IA ou les algorithmes <strong>apprennent a partir des donnees</strong> sans etre explicitement programmes pour chaque cas. Le systeme s'ameliore avec l'experience.
+                    </div>
+                </div>
+
+                <div class="diagram-box">
+                    <pre>
+    PROGRAMMATION TRADITIONNELLE          MACHINE LEARNING
+    
+    ┌──────────────┐                    ┌──────────────┐
+    │    REGLES    │                    │   DONNEES    │
+    │  (Humain)    │                    │  (Exemples)  │
+    └──────┬───────┘                    └──────┬───────┘
+           │                                   │
+           ▼                                   ▼
+    ┌──────────────┐                    ┌──────────────┐
+    │  PROGRAMME   │                    │  ALGORITHME  │
+    │              │                    │     ML       │
+    └──────┬───────┘                    └──────┬───────┘
+           │                                   │
+    ┌──────┴───────┐                    ┌──────┴───────┐
+    │   DONNEES    │                    │   MODELE     │
+    │   (Input)    │                    │  (Appris)    │
+    └──────┬───────┘                    └──────┬───────┘
+           │                                   │
+           ▼                                   ▼
+    ┌──────────────┐                    ┌──────────────┐
+    │   RESULTAT   │                    │   REGLES     │
+    │              │                    │  (Prediction)│
+    └──────────────┘                    └──────────────┘
+                    </pre>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>2.2 Apprentissage Supervise</h3>
+                
+                <p>L'algorithme apprend a partir de donnees <strong>etiquetees</strong> (avec les reponses connues).</p>
+
+                <div class="diagram-box">
+                    <pre>
+    APPRENTISSAGE SUPERVISE
+    
+    Donnees d'entrainement:
+    ┌─────────────────────────────────────────────┐
+    │  Features (X)           │    Label (Y)      │
+    ├─────────────────────────┼───────────────────┤
+    │  [taille, poids, age]   │    "Malade"       │
+    │  [taille, poids, age]   │    "Sain"         │
+    │  [taille, poids, age]   │    "Malade"       │
+    │         ...             │       ...         │
+    └─────────────────────────┴───────────────────┘
+                    │
+                    ▼
+            ┌───────────────┐
+            │   MODELE ML   │  ← Apprentissage
+            │   (Training)  │
+            └───────┬───────┘
+                    │
+                    ▼
+    Nouvelles donnees:
+    [taille, poids, age] → Modele → Prediction: "Sain"
+                    </pre>
+                </div>
+
+                <h4>Types de problemes supervises</h4>
+                <div class="table-container">
+                    <table>
+                        <tr><th>Type</th><th>Sortie</th><th>Exemples</th><th>Algorithmes</th></tr>
+                        <tr>
+                            <td><strong>Classification</strong></td>
+                            <td>Categorie discrete</td>
+                            <td>Spam/Non-spam, Malade/Sain</td>
+                            <td>KNN, SVM, Arbres de decision</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Regression</strong></td>
+                            <td>Valeur continue</td>
+                            <td>Prix maison, temperature</td>
+                            <td>Regression lineaire, polynomiale</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>2.3 Apprentissage Non Supervise</h3>
+                
+                <p>L'algorithme decouvre des <strong>structures cachees</strong> dans les donnees sans etiquettes.</p>
+
+                <div class="diagram-box">
+                    <pre>
+    APPRENTISSAGE NON SUPERVISE (Clustering)
+    
+    Donnees sans etiquettes:        Resultat (groupes decouverts):
+    
+         ●  ●                           ●  ●
+       ●  ●  ●                        ●  ●  ●   → Cluster 1
+                         ═══▶               
+              ○  ○                         ○  ○
+            ○  ○  ○                      ○  ○  ○ → Cluster 2
+                    
+                 △  △                       △  △
+               △  △                       △  △   → Cluster 3
+                    </pre>
+                </div>
+
+                <h4>Applications</h4>
+                <ul>
+                    <li><strong>Clustering :</strong> Segmentation clients, regroupement documents</li>
+                    <li><strong>Reduction de dimensions :</strong> PCA, compression de donnees</li>
+                    <li><strong>Detection d'anomalies :</strong> Fraudes, intrusions reseau</li>
+                </ul>
+            </div>
+
+            <div class="content-card">
+                <h3>2.4 Apprentissage par Renforcement</h3>
+                
+                <p>Un <strong>agent</strong> apprend en interagissant avec un environnement, recevant des <strong>recompenses</strong> ou <strong>penalites</strong>.</p>
+
+                <div class="diagram-box">
+                    <pre>
+    APPRENTISSAGE PAR RENFORCEMENT
+    
+              ┌─────────────────────────────────┐
+              │                                 │
+              ▼                                 │
+        ┌───────────┐      Action        ┌─────┴─────┐
+        │   AGENT   │ ──────────────────▶│ENVIRONNE- │
+        │ (Decideur)│                    │   MENT    │
+        └───────────┘                    └───────────┘
+              ▲                                 │
+              │     Etat + Recompense           │
+              └─────────────────────────────────┘
+    
+    Exemples:
+    - Jeux (AlphaGo, echecs)
+    - Robotique (navigation)
+    - Vehicules autonomes
+                    </pre>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>2.5 Resume des Types d'Apprentissage</h3>
+                
+                <div class="table-container">
+                    <table>
+                        <tr><th>Type</th><th>Donnees</th><th>Objectif</th><th>Exemple IoT</th></tr>
+                        <tr>
+                            <td><strong>Supervise</strong></td>
+                            <td>Etiquetees</td>
+                            <td>Predire une sortie</td>
+                            <td>Detection de chute (accelerometre)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Non supervise</strong></td>
+                            <td>Non etiquetees</td>
+                            <td>Decouvrir des patterns</td>
+                            <td>Detection d'anomalies capteurs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Renforcement</strong></td>
+                            <td>Recompenses</td>
+                            <td>Optimiser une strategie</td>
+                            <td>Regulation thermostat intelligent</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPITRE 3 ==================== -->
+        <section class="chapter" id="ch3">
+            <div class="chapter-header ch3">
+                <div class="chapter-icon">📊</div>
+                <div class="chapter-info">
+                    <h2>Chapitre 3 : Preparation des Donnees</h2>
+                    <p>Collecte, nettoyage et transformation des donnees</p>
+                </div>
+            </div>
+
+            <div class="objectives">
+                <h4>🎯 Objectifs du chapitre</h4>
+                <ul>
+                    <li>Comprendre l'importance de la qualite des donnees</li>
+                    <li>Maitriser les techniques de pretraitement</li>
+                    <li>Normaliser et standardiser les donnees</li>
+                    <li>Diviser les donnees en ensembles d'entrainement et de test</li>
+                </ul>
+            </div>
+
+            <div class="content-card">
+                <h3>3.1 Importance des Donnees</h3>
+                
+                <div class="info-box warning">
+                    <div class="info-box-icon">⚠️</div>
+                    <div class="info-box-content">
+                        <strong>Garbage In, Garbage Out</strong>
+                        La qualite du modele depend directement de la qualite des donnees. Un mauvais jeu de donnees produira un mauvais modele, peu importe l'algorithme utilise.
+                    </div>
+                </div>
+
+                <h4>Pipeline de donnees typique</h4>
+                <div class="diagram-box">
+                    <pre>
+    ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
+    │ Collecte │───▶│ Nettoyage│───▶│ Transform│───▶│ Division │───▶│ Modele   │
+    │ Donnees  │    │ Donnees  │    │ Features │    │Train/Test│    │ Training │
+    └──────────┘    └──────────┘    └──────────┘    └──────────┘    └──────────┘
+                    </pre>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>3.2 Nettoyage des Donnees</h3>
+                
+                <h4>Problemes courants et solutions</h4>
+                <ul>
+                    <li><strong>Valeurs manquantes :</strong> Supprimer, imputer (moyenne, mediane, mode)</li>
+                    <li><strong>Doublons :</strong> Identifier et supprimer les lignes identiques</li>
+                    <li><strong>Outliers (valeurs aberrantes) :</strong> Detecter (IQR, Z-score), supprimer ou corriger</li>
+                    <li><strong>Incoherences :</strong> Standardiser les formats (dates, unites)</li>
+                </ul>
+
+                <div class="code-block">
+                    <pre><span class="comment"># Nettoyage avec Pandas en Python</span>
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="comment"># Charger les donnees</span>
+df = pd.<span class="function">read_csv</span>(<span class="string">'capteurs.csv'</span>)
+
+<span class="comment"># Verifier les valeurs manquantes</span>
+<span class="function">print</span>(df.<span class="function">isnull</span>().<span class="function">sum</span>())
+
+<span class="comment"># Remplir les valeurs manquantes par la moyenne</span>
+df[<span class="string">'temperature'</span>].<span class="function">fillna</span>(df[<span class="string">'temperature'</span>].<span class="function">mean</span>(), inplace=<span class="keyword">True</span>)
+
+<span class="comment"># Supprimer les doublons</span>
+df.<span class="function">drop_duplicates</span>(inplace=<span class="keyword">True</span>)
+
+<span class="comment"># Detecter les outliers avec IQR</span>
+Q1 = df[<span class="string">'temperature'</span>].<span class="function">quantile</span>(<span class="number">0.25</span>)
+Q3 = df[<span class="string">'temperature'</span>].<span class="function">quantile</span>(<span class="number">0.75</span>)
+IQR = Q3 - Q1
+df = df[(df[<span class="string">'temperature'</span>] >= Q1 - <span class="number">1.5</span>*IQR) & 
+        (df[<span class="string">'temperature'</span>] <= Q3 + <span class="number">1.5</span>*IQR)]</pre>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>3.3 Normalisation et Standardisation</h3>
+                
+                <div class="grid-2">
+                    <div class="formula-box">
+                        <strong>Normalisation Min-Max</strong>
+                        <div class="formula">X' = (X - X_min) / (X_max - X_min)</div>
+                        <div class="description">Ramene les valeurs entre 0 et 1</div>
+                    </div>
+                    <div class="formula-box">
+                        <strong>Standardisation (Z-Score)</strong>
+                        <div class="formula">X' = (X - μ) / σ</div>
+                        <div class="description">Moyenne = 0, Ecart-type = 1</div>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    <pre><span class="comment"># Normalisation et Standardisation avec Scikit-Learn</span>
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> MinMaxScaler, StandardScaler
+
+<span class="comment"># Normalisation Min-Max (0-1)</span>
+scaler_minmax = <span class="function">MinMaxScaler</span>()
+X_normalized = scaler_minmax.<span class="function">fit_transform</span>(X)
+
+<span class="comment"># Standardisation (Z-score)</span>
+scaler_std = <span class="function">StandardScaler</span>()
+X_standardized = scaler_std.<span class="function">fit_transform</span>(X)</pre>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>3.4 Division Train/Test</h3>
+                
+                <p>Les donnees sont divisees pour <strong>entrainer</strong> le modele et <strong>evaluer</strong> sa performance sur des donnees inconnues.</p>
+
+                <div class="diagram-box">
+                    <pre>
+    DATASET COMPLET (100%)
+    ┌────────────────────────────────────────────────────────┐
+    │                                                        │
+    │   TRAIN SET (70-80%)          │   TEST SET (20-30%)   │
+    │   Apprentissage du modele     │   Evaluation finale   │
+    │                               │                       │
+    └───────────────────────────────┴───────────────────────┘
+    
+    Optionnel: Validation Set (pour tuning hyperparametres)
+    Train: 60% | Validation: 20% | Test: 20%
+                    </pre>
+                </div>
+
+                <div class="code-block">
+                    <pre><span class="comment"># Division des donnees avec Scikit-Learn</span>
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+
+<span class="comment"># X = features, y = labels</span>
+X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(
+    X, y, 
+    test_size=<span class="number">0.2</span>,      <span class="comment"># 20% pour le test</span>
+    random_state=<span class="number">42</span>,    <span class="comment"># Pour reproductibilite</span>
+    stratify=y          <span class="comment"># Maintenir la proportion des classes</span>
+)
+
+<span class="function">print</span>(<span class="string">f"Train: {len(X_train)}, Test: {len(X_test)}"</span>)</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPITRE 4 ==================== -->
+        <section class="chapter" id="ch4">
+            <div class="chapter-header ch4">
+                <div class="chapter-icon">📈</div>
+                <div class="chapter-info">
+                    <h2>Chapitre 4 : Algorithmes de Regression</h2>
+                    <p>Prediction de valeurs continues</p>
+                </div>
+            </div>
+
+            <div class="objectives">
+                <h4>🎯 Objectifs du chapitre</h4>
+                <ul>
+                    <li>Comprendre le principe de la regression</li>
+                    <li>Implementer une regression lineaire simple et multiple</li>
+                    <li>Evaluer les performances avec MSE, RMSE, R²</li>
+                    <li>Appliquer la regression a des donnees de capteurs</li>
+                </ul>
+            </div>
+
+            <div class="content-card">
+                <h3>4.1 Regression Lineaire Simple</h3>
+                
+                <p>Modelise la relation lineaire entre une variable d'entree X et une sortie Y.</p>
+
+                <div class="formula-box">
+                    <strong>Equation de la droite de regression</strong>
+                    <div class="formula">Y = aX + b</div>
+                    <div class="description">a = pente (coefficient), b = ordonnee a l'origine (intercept)</div>
+                </div>
+
+                <div class="diagram-box">
+                    <pre>
+        Y │
+          │                          ∗
+          │                     ∗  ─────── Droite de regression
+          │                ∗  /     Y = aX + b
+          │           ∗   /
+          │      ∗      /
+          │    ∗     /
+          │  ∗    /
+          │∗   /
+          │  /
+          └────────────────────────────▶ X
+                    </pre>
+                </div>
+
+                <div class="code-block">
+                    <pre><span class="comment"># Regression lineaire simple avec Scikit-Learn</span>
+<span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LinearRegression
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="comment"># Donnees: temperature vs consommation energetique</span>
+X = np.<span class="function">array</span>([[<span class="number">15</span>], [<span class="number">18</span>], [<span class="number">22</span>], [<span class="number">25</span>], [<span class="number">30</span>], [<span class="number">35</span>]])  <span class="comment"># Temperature °C</span>
+y = np.<span class="function">array</span>([<span class="number">120</span>, <span class="number">135</span>, <span class="number">150</span>, <span class="number">165</span>, <span class="number">190</span>, <span class="number">220</span>])         <span class="comment"># Consommation W</span>
+
+<span class="comment"># Creer et entrainer le modele</span>
+model = <span class="function">LinearRegression</span>()
+model.<span class="function">fit</span>(X, y)
+
+<span class="comment"># Coefficients</span>
+<span class="function">print</span>(<span class="string">f"Pente (a): {model.coef_[0]:.2f}"</span>)
+<span class="function">print</span>(<span class="string">f"Intercept (b): {model.intercept_:.2f}"</span>)
+
+<span class="comment"># Prediction pour 28°C</span>
+prediction = model.<span class="function">predict</span>([[<span class="number">28</span>]])
+<span class="function">print</span>(<span class="string">f"Consommation a 28°C: {prediction[0]:.1f} W"</span>)</pre>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>4.2 Regression Lineaire Multiple</h3>
+                
+                <p>Plusieurs variables d'entree pour predire une sortie :</p>
+
+                <div class="formula-box">
+                    <strong>Regression multiple</strong>
+                    <div class="formula">Y = a₁X₁ + a₂X₂ + ... + aₙXₙ + b</div>
+                    <div class="description">Plusieurs features contribuent a la prediction</div>
+                </div>
+
+                <div class="code-block">
+                    <pre><span class="comment"># Regression multiple: predire consommation selon temp, humidite, heure</span>
+X = np.<span class="function">array</span>([
+    [<span class="number">20</span>, <span class="number">60</span>, <span class="number">8</span>],   <span class="comment"># [temperature, humidite%, heure]</span>
+    [<span class="number">25</span>, <span class="number">55</span>, <span class="number">12</span>],
+    [<span class="number">30</span>, <span class="number">70</span>, <span class="number">14</span>],
+    [<span class="number">22</span>, <span class="number">65</span>, <span class="number">18</span>],
+    [<span class="number">28</span>, <span class="number">50</span>, <span class="number">20</span>]
+])
+y = np.<span class="function">array</span>([<span class="number">150</span>, <span class="number">180</span>, <span class="number">220</span>, <span class="number">160</span>, <span class="number">200</span>])  <span class="comment"># Consommation W</span>
+
+model = <span class="function">LinearRegression</span>()
+model.<span class="function">fit</span>(X, y)
+
+<span class="comment"># Coefficients pour chaque feature</span>
+<span class="function">print</span>(<span class="string">"Coefficients:"</span>, model.coef_)
+<span class="comment"># Ex: [5.2, 0.8, 2.1] → temp a plus d'impact que humidite</span></pre>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>4.3 Metriques d'Evaluation</h3>
+                
+                <div class="table-container">
+                    <table>
+                        <tr><th>Metrique</th><th>Formule</th><th>Interpretation</th></tr>
+                        <tr>
+                            <td><strong>MSE</strong><br>(Mean Squared Error)</td>
+                            <td>Σ(y - ŷ)² / n</td>
+                            <td>Erreur quadratique moyenne. Plus petit = meilleur</td>
+                        </tr>
+                        <tr>
+                            <td><strong>RMSE</strong><br>(Root MSE)</td>
+                            <td>√MSE</td>
+                            <td>Meme unite que Y. Interpretable</td>
+                        </tr>
+                        <tr>
+                            <td><strong>MAE</strong><br>(Mean Absolute Error)</td>
+                            <td>Σ|y - ŷ| / n</td>
+                            <td>Erreur absolue moyenne</td>
+                        </tr>
+                        <tr>
+                            <td><strong>R²</strong><br>(Coefficient determination)</td>
+                            <td>1 - SS_res/SS_tot</td>
+                            <td>0-1. Proche de 1 = bon modele</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="code-block">
+                    <pre><span class="comment"># Evaluation du modele</span>
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> mean_squared_error, mean_absolute_error, r2_score
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+y_pred = model.<span class="function">predict</span>(X_test)
+
+mse = <span class="function">mean_squared_error</span>(y_test, y_pred)
+rmse = np.<span class="function">sqrt</span>(mse)
+mae = <span class="function">mean_absolute_error</span>(y_test, y_pred)
+r2 = <span class="function">r2_score</span>(y_test, y_pred)
+
+<span class="function">print</span>(<span class="string">f"MSE: {mse:.2f}"</span>)
+<span class="function">print</span>(<span class="string">f"RMSE: {rmse:.2f}"</span>)
+<span class="function">print</span>(<span class="string">f"MAE: {mae:.2f}"</span>)
+<span class="function">print</span>(<span class="string">f"R²: {r2:.3f}"</span>)</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPITRE 5 ==================== -->
+        <section class="chapter" id="ch5">
+            <div class="chapter-header ch5">
+                <div class="chapter-icon">🏷️</div>
+                <div class="chapter-info">
+                    <h2>Chapitre 5 : Algorithmes de Classification</h2>
+                    <p>Prediction de categories</p>
+                </div>
+            </div>
+
+            <div class="objectives">
+                <h4>🎯 Objectifs du chapitre</h4>
+                <ul>
+                    <li>Comprendre la difference classification vs regression</li>
+                    <li>Implementer K-Nearest Neighbors (KNN)</li>
+                    <li>Implementer la regression logistique</li>
+                    <li>Evaluer avec accuracy, precision, recall, F1-score</li>
+                </ul>
+            </div>
+
+            <div class="content-card">
+                <h3>5.1 K-Nearest Neighbors (KNN)</h3>
+                
+                <p>Classe un point selon la <strong>majorite de ses K plus proches voisins</strong>.</p>
+
+                <div class="diagram-box">
+                    <pre>
+    K-NEAREST NEIGHBORS (K=3)
+    
+                 Classe A (●)
+                 Classe B (○)
+                 
+         ●  ●
+       ●         ★ ← Point a classifier
+         ●  ○      
+              ○  ○
+            ○
+    
+    Les 3 plus proches voisins de ★ :
+    - 2 sont de classe ● (A)
+    - 1 est de classe ○ (B)
+    
+    → ★ est classe comme A (majorite)
+                    </pre>
+                </div>
+
+                <div class="code-block">
+                    <pre><span class="comment"># Classification KNN</span>
+<span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KNeighborsClassifier
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score
+
+<span class="comment"># Donnees: [temperature, humidite] → Etat (0=Normal, 1=Alerte)</span>
+X = np.<span class="function">array</span>([[<span class="number">22</span>, <span class="number">45</span>], [<span class="number">25</span>, <span class="number">50</span>], [<span class="number">28</span>, <span class="number">55</span>], [<span class="number">35</span>, <span class="number">80</span>], 
+              [<span class="number">38</span>, <span class="number">85</span>], [<span class="number">40</span>, <span class="number">90</span>], [<span class="number">20</span>, <span class="number">40</span>], [<span class="number">42</span>, <span class="number">95</span>]])
+y = np.<span class="function">array</span>([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>])
+
+<span class="comment"># Division train/test</span>
+X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(X, y, test_size=<span class="number">0.25</span>)
+
+<span class="comment"># Creer et entrainer KNN (K=3)</span>
+knn = <span class="function">KNeighborsClassifier</span>(n_neighbors=<span class="number">3</span>)
+knn.<span class="function">fit</span>(X_train, y_train)
+
+<span class="comment"># Prediction</span>
+y_pred = knn.<span class="function">predict</span>(X_test)
+<span class="function">print</span>(<span class="string">f"Accuracy: {accuracy_score(y_test, y_pred):.2%}"</span>)
+
+<span class="comment"># Classifier un nouveau point</span>
+new_point = [[<span class="number">36</span>, <span class="number">75</span>]]
+prediction = knn.<span class="function">predict</span>(new_point)
+<span class="function">print</span>(<span class="string">f"Prediction: {'Alerte' if prediction[0] else 'Normal'}"</span>)</pre>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>5.2 Regression Logistique</h3>
+                
+                <p>Malgre son nom, c'est un algorithme de <strong>classification binaire</strong>. Utilise la fonction sigmoide.</p>
+
+                <div class="formula-box">
+                    <strong>Fonction Sigmoide</strong>
+                    <div class="formula">σ(z) = 1 / (1 + e⁻ᶻ)</div>
+                    <div class="description">Transforme une valeur en probabilite entre 0 et 1</div>
+                </div>
+
+                <div class="code-block">
+                    <pre><span class="comment"># Regression logistique</span>
+<span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LogisticRegression
+
+<span class="comment"># Creer et entrainer</span>
+log_reg = <span class="function">LogisticRegression</span>()
+log_reg.<span class="function">fit</span>(X_train, y_train)
+
+<span class="comment"># Prediction</span>
+y_pred = log_reg.<span class="function">predict</span>(X_test)
+
+<span class="comment"># Probabilites</span>
+proba = log_reg.<span class="function">predict_proba</span>([[<span class="number">36</span>, <span class="number">75</span>]])
+<span class="function">print</span>(<span class="string">f"Probabilite Normal: {proba[0][0]:.2%}"</span>)
+<span class="function">print</span>(<span class="string">f"Probabilite Alerte: {proba[0][1]:.2%}"</span>)</pre>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>5.3 Metriques de Classification</h3>
+                
+                <h4>Matrice de Confusion</h4>
+                <div class="diagram-box">
+                    <pre>
+                        PREDICTION
+                    Positif   Negatif
+                 ┌─────────┬─────────┐
+        Positif  │   TP    │   FN    │   TP = True Positive (Vrais Positifs)
+    REEL         │         │         │   FP = False Positive (Faux Positifs)
+                 ├─────────┼─────────┤   TN = True Negative (Vrais Negatifs)
+        Negatif  │   FP    │   TN    │   FN = False Negative (Faux Negatifs)
+                 │         │         │
+                 └─────────┴─────────┘
+                    </pre>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <tr><th>Metrique</th><th>Formule</th><th>Signification</th></tr>
+                        <tr><td><strong>Accuracy</strong></td><td>(TP+TN) / Total</td><td>% de predictions correctes</td></tr>
+                        <tr><td><strong>Precision</strong></td><td>TP / (TP+FP)</td><td>Parmi les positifs predits, % de vrais</td></tr>
+                        <tr><td><strong>Recall</strong></td><td>TP / (TP+FN)</td><td>Parmi les vrais positifs, % detectes</td></tr>
+                        <tr><td><strong>F1-Score</strong></td><td>2×(P×R)/(P+R)</td><td>Moyenne harmonique Precision/Recall</td></tr>
+                    </table>
+                </div>
+
+                <div class="code-block">
+                    <pre><span class="comment"># Metriques de classification</span>
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> confusion_matrix, classification_report
+
+<span class="comment"># Matrice de confusion</span>
+cm = <span class="function">confusion_matrix</span>(y_test, y_pred)
+<span class="function">print</span>(<span class="string">"Matrice de confusion:"</span>)
+<span class="function">print</span>(cm)
+
+<span class="comment"># Rapport complet</span>
+<span class="function">print</span>(<span class="function">classification_report</span>(y_test, y_pred))</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPITRE 6 ==================== -->
+        <section class="chapter" id="ch6">
+            <div class="chapter-header ch6">
+                <div class="chapter-icon">🌳</div>
+                <div class="chapter-info">
+                    <h2>Chapitre 6 : Arbres de Decision</h2>
+                    <p>Algorithmes interpretables pour classification et regression</p>
+                </div>
+            </div>
+
+            <div class="objectives">
+                <h4>🎯 Objectifs du chapitre</h4>
+                <ul>
+                    <li>Comprendre le fonctionnement des arbres de decision</li>
+                    <li>Implementer un arbre de decision</li>
+                    <li>Visualiser et interpreter l'arbre</li>
+                    <li>Decouvrir Random Forest (foret aleatoire)</li>
+                </ul>
+            </div>
+
+            <div class="content-card">
+                <h3>6.1 Principe de l'Arbre de Decision</h3>
+                
+                <p>L'arbre de decision pose une serie de <strong>questions binaires</strong> pour arriver a une decision.</p>
+
+                <div class="diagram-box">
+                    <pre>
+    ARBRE DE DECISION - Detection d'anomalie capteur
+    
+                      ┌─────────────────────┐
+                      │  Temperature > 35°C │
+                      └──────────┬──────────┘
+                          Oui /       \ Non
+                             ▼         ▼
+                 ┌─────────────────┐  ┌─────────────────┐
+                 │ Humidite > 80%  │  │    NORMAL ✓     │
+                 └────────┬────────┘  └─────────────────┘
+                    Oui /     \ Non
+                       ▼       ▼
+            ┌──────────────┐ ┌──────────────┐
+            │  ALERTE ⚠️   │ │ Vibration>5  │
+            └──────────────┘ └──────┬───────┘
+                               Oui /   \ Non
+                                  ▼     ▼
+                       ┌──────────┐ ┌──────────┐
+                       │ ALERTE ⚠️│ │ NORMAL ✓ │
+                       └──────────┘ └──────────┘
+                    </pre>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>6.2 Implementation avec Scikit-Learn</h3>
+                
+                <div class="code-block">
+                    <pre><span class="comment"># Arbre de decision pour classification</span>
+<span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeClassifier, plot_tree
+<span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt
+
+<span class="comment"># Donnees: [temperature, humidite, vibration] → Etat</span>
+X = np.<span class="function">array</span>([
+    [<span class="number">25</span>, <span class="number">50</span>, <span class="number">2</span>], [<span class="number">30</span>, <span class="number">60</span>, <span class="number">3</span>], [<span class="number">38</span>, <span class="number">85</span>, <span class="number">4</span>],
+    [<span class="number">40</span>, <span class="number">90</span>, <span class="number">6</span>], [<span class="number">22</span>, <span class="number">45</span>, <span class="number">1</span>], [<span class="number">42</span>, <span class="number">95</span>, <span class="number">8</span>]
+])
+y = np.<span class="function">array</span>([<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>])  <span class="comment"># 0=Normal, 1=Alerte</span>
+
+<span class="comment"># Creer et entrainer l'arbre</span>
+tree = <span class="function">DecisionTreeClassifier</span>(max_depth=<span class="number">3</span>, random_state=<span class="number">42</span>)
+tree.<span class="function">fit</span>(X, y)
+
+<span class="comment"># Visualiser l'arbre</span>
+plt.<span class="function">figure</span>(figsize=(<span class="number">12</span>, <span class="number">8</span>))
+<span class="function">plot_tree</span>(tree, feature_names=[<span class="string">'Temp'</span>, <span class="string">'Hum'</span>, <span class="string">'Vib'</span>], 
+          class_names=[<span class="string">'Normal'</span>, <span class="string">'Alerte'</span>], filled=<span class="keyword">True</span>)
+plt.<span class="function">show</span>()
+
+<span class="comment"># Prediction</span>
+new_data = [[<span class="number">36</span>, <span class="number">82</span>, <span class="number">5</span>]]
+<span class="function">print</span>(<span class="string">f"Prediction: {tree.predict(new_data)}"</span>)</pre>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>6.3 Random Forest (Foret Aleatoire)</h3>
+                
+                <p>Ensemble de plusieurs arbres de decision qui <strong>votent</strong> pour la decision finale. Plus robuste qu'un seul arbre.</p>
+
+                <div class="code-block">
+                    <pre><span class="comment"># Random Forest</span>
+<span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestClassifier
+
+<span class="comment"># Creer le modele avec 100 arbres</span>
+rf = <span class="function">RandomForestClassifier</span>(n_estimators=<span class="number">100</span>, random_state=<span class="number">42</span>)
+rf.<span class="function">fit</span>(X_train, y_train)
+
+<span class="comment"># Evaluation</span>
+accuracy = rf.<span class="function">score</span>(X_test, y_test)
+<span class="function">print</span>(<span class="string">f"Accuracy: {accuracy:.2%}"</span>)
+
+<span class="comment"># Importance des features</span>
+<span class="function">print</span>(<span class="string">"Importance des features:"</span>)
+<span class="keyword">for</span> name, importance <span class="keyword">in</span> <span class="function">zip</span>([<span class="string">'Temp'</span>, <span class="string">'Hum'</span>, <span class="string">'Vib'</span>], rf.feature_importances_):
+    <span class="function">print</span>(<span class="string">f"  {name}: {importance:.2%}"</span>)</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPITRE 7 ==================== -->
+        <section class="chapter" id="ch7">
+            <div class="chapter-header ch7">
+                <div class="chapter-icon">🧬</div>
+                <div class="chapter-info">
+                    <h2>Chapitre 7 : Reseaux de Neurones Artificiels</h2>
+                    <p>Fondements du Deep Learning</p>
+                </div>
+            </div>
+
+            <div class="objectives">
+                <h4>🎯 Objectifs du chapitre</h4>
+                <ul>
+                    <li>Comprendre le neurone artificiel (perceptron)</li>
+                    <li>Connaitre les fonctions d'activation</li>
+                    <li>Comprendre l'architecture multicouche</li>
+                    <li>Expliquer la retropropagation</li>
+                </ul>
+            </div>
+
+            <div class="content-card">
+                <h3>7.1 Le Neurone Artificiel (Perceptron)</h3>
+                
+                <div class="diagram-box">
+                    <pre>
+    NEURONE ARTIFICIEL
+    
+      Entrees         Poids        Somme      Activation     Sortie
+    
+        x₁ ────○──── w₁ ────┐
+                            │
+        x₂ ────○──── w₂ ────┼──▶ Σ ──▶ f(z) ──▶ y
+                            │
+        x₃ ────○──── w₃ ────┘
+                            │
+        1  ────○──── b  ────┘  (biais)
+    
+    z = w₁x₁ + w₂x₂ + w₃x₃ + b   (somme ponderee)
+    y = f(z)                      (fonction d'activation)
+                    </pre>
+                </div>
+
+                <div class="formula-box">
+                    <strong>Calcul du neurone</strong>
+                    <div class="formula">y = f(Σ wᵢxᵢ + b)</div>
+                    <div class="description">Somme ponderee des entrees + biais, passee par une activation</div>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>7.2 Fonctions d'Activation</h3>
+                
+                <div class="table-container">
+                    <table>
+                        <tr><th>Fonction</th><th>Formule</th><th>Sortie</th><th>Usage</th></tr>
+                        <tr>
+                            <td><strong>Sigmoid</strong></td>
+                            <td>1 / (1 + e⁻ˣ)</td>
+                            <td>[0, 1]</td>
+                            <td>Classification binaire (sortie)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tanh</strong></td>
+                            <td>(eˣ - e⁻ˣ) / (eˣ + e⁻ˣ)</td>
+                            <td>[-1, 1]</td>
+                            <td>Couches cachees</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ReLU</strong></td>
+                            <td>max(0, x)</td>
+                            <td>[0, +∞)</td>
+                            <td>Couches cachees (le plus utilise)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Softmax</strong></td>
+                            <td>eˣⁱ / Σeˣʲ</td>
+                            <td>[0, 1], somme=1</td>
+                            <td>Classification multi-classes</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="diagram-box">
+                    <pre>
+    FONCTIONS D'ACTIVATION
+    
+    SIGMOID               ReLU                   SOFTMAX
+    
+     1 │    ╭───         │     ╱               Classe A: 0.7
+       │   ╱             │    ╱                Classe B: 0.2
+   0.5│──╱───            │   ╱                 Classe C: 0.1
+       │ ╱               │  ╱                  ─────────────
+     0 │╱                │─╱                   Somme = 1.0
+       └──────           └──────
+         -5  0  5          -2  0  2
+                    </pre>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>7.3 Architecture Multicouche (MLP)</h3>
+                
+                <div class="diagram-box">
+                    <pre>
+    RESEAU DE NEURONES MULTICOUCHE (Multi-Layer Perceptron)
+    
+     Couche         Couche(s)           Couche
+     d'entree        cachee(s)          de sortie
+    
+       ○──────────────○
+        ╲            ╱ ╲
+       ○──╲────────○─────╲─────────○
+        ╲  ╲      ╱ ╲     ╲
+       ○───╲────○─────╲────╲───────○
+            ╲  ╱       ╲    ╲
+       ○─────○──────────╲────╲─────○
+    
+     3 entrees     4 neurones       3 sorties
+     (features)    (representation  (classes)
+                    apprise)
+    
+    Dense (Fully Connected): Chaque neurone connecte a tous les neurones de la couche precedente
+                    </pre>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>7.4 Entrainement et Retropropagation</h3>
+                
+                <div class="diagram-box">
+                    <pre>
+    CYCLE D'ENTRAÎNEMENT
+    
+    1. FORWARD PROPAGATION (Propagation avant)
+       ───────────────────────────────────────▶
+       Input → Hidden → Output → Prediction (ŷ)
+    
+    2. CALCUL DE L'ERREUR (Loss)
+       Loss = f(y_vrai, ŷ)   ex: MSE, Cross-Entropy
+    
+    3. BACKPROPAGATION (Retropropagation)
+       ◀───────────────────────────────────────
+       Calcul des gradients: ∂Loss/∂w pour chaque poids
+    
+    4. MISE A JOUR DES POIDS (Gradient Descent)
+       w_nouveau = w_ancien - η × ∂Loss/∂w
+       (η = learning rate, taux d'apprentissage)
+    
+    5. REPETER pour chaque batch/epoch
+                    </pre>
+                </div>
+
+                <div class="info-box tip">
+                    <div class="info-box-icon">💡</div>
+                    <div class="info-box-content">
+                        <strong>Epoch et Batch</strong>
+                        <br>- <strong>Epoch:</strong> Un passage complet sur toutes les donnees d'entrainement
+                        <br>- <strong>Batch:</strong> Sous-ensemble de donnees traitees ensemble avant mise a jour des poids
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== CHAPITRE 8 ==================== -->
+        <section class="chapter" id="ch8">
+            <div class="chapter-header ch8">
+                <div class="chapter-icon">🔮</div>
+                <div class="chapter-info">
+                    <h2>Chapitre 8 : Deep Learning</h2>
+                    <p>Reseaux de neurones profonds et architectures avancees</p>
+                </div>
+            </div>
+
+            <div class="objectives">
+                <h4>🎯 Objectifs du chapitre</h4>
+                <ul>
+                    <li>Comprendre ce qu'est le Deep Learning</li>
+                    <li>Decouvrir les reseaux convolutifs (CNN)</li>
+                    <li>Connaitre les reseaux recurrents (RNN)</li>
+                    <li>Identifier les applications en electronique</li>
+                </ul>
+            </div>
+
+            <div class="content-card">
+                <h3>8.1 Deep Learning vs Machine Learning</h3>
+                
+                <div class="info-box definition">
+                    <div class="info-box-icon">📖</div>
+                    <div class="info-box-content">
+                        <strong>Deep Learning (Apprentissage Profond)</strong>
+                        Sous-domaine du ML utilisant des reseaux de neurones avec <strong>plusieurs couches cachees</strong> (profonds). Capable d'apprendre automatiquement des representations hierarchiques complexes a partir de donnees brutes.
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <tr><th>Aspect</th><th>Machine Learning Classique</th><th>Deep Learning</th></tr>
+                        <tr><td>Features</td><td>Extraction manuelle (humain)</td><td>Extraction automatique (reseau)</td></tr>
+                        <tr><td>Donnees</td><td>Fonctionne avec peu de donnees</td><td>Necessite beaucoup de donnees</td></tr>
+                        <tr><td>Materiel</td><td>CPU suffisant</td><td>GPU recommande</td></tr>
+                        <tr><td>Interpretabilite</td><td>Souvent interpretable</td><td>Boite noire</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <h3>8.2 Reseaux Convolutifs (CNN)</h3>
+                
+                <p>Specialises dans le traitement d'<strong>images</strong>. Apprennent des filtres (features) hierarchiques.</p>
+
+                <div class="diagram-box">
+                    <pre>
+    CNN - CONVOLUTIONAL NEURAL NETWORK
+    
+    Image         Convolution      Pooling       Fully Connected    Sortie
+    Entree        + Activation     (Reduction)   (Classification)
+    
+    ┌─────┐      ┌─────┐          ┌───┐         ┌───┐
+    │█████│      │▓▓▓▓▓│          │▓▓▓│         │   │
+    │█████│  →   │▓▓▓▓▓│   →      │▓▓▓│    →    │   │  →  "Chat"
+    │█████│      │▓▓▓▓▓│          │▓▓▓│         │   │
+    └─────┘      └─────┘          └───┘         └───┘
+    28×28        24×24×32         12×12×32       128      10 classes
+    
+    Convolution: Detecte des patterns locaux (bords, textures)
+    Pooling: Reduit la taille, garde l'information importante
+                    </pre>
+                </div>
+
+                <h4>Applications des CNN</h4>
+                <ul>
+                    <li>Classification d'images (chat vs chien)</li>
+                    <li>Detection d'objets (YOLO, SSD)</li>
+                    <li>Reconnaissance faciale</li>
+                    <li>Inspection visuelle de PCB</li>
+                    <li>Lecture de compteurs analogiques</li>
+                </ul>
+            </div>
+
+            <div class="content-card">
+                <h3>8.3 Reseaux Recurrents (RNN)</h3>
+                
+                <p>Specialises dans les <strong>sequences</strong> (texte, audio, series temporelles). Possedent une "memoire".</p>
+
+                <div class="diagram-box">
+                    <pre>
+    RNN - RECURRENT NEURAL NETWORK
+    
+    Sequence temporelle: t₁ → t₂ → t₃ → t₄
+    
+         ┌───┐     ┌───┐     ┌───┐     ┌───┐
+         │ h │────▶│ h │────▶│ h │────▶│ h │───▶ Sortie
+         └─▲─┘     └─▲─┘     └─▲─┘     └─▲─┘
+           │         │         │         │
+          x₁        x₂        x₃        x₄
+    
+    h = etat cache (memoire des entrees precedentes)
+    
+    Variantes: LSTM (Long Short-Term Memory)
+               GRU (Gated Recurrent Unit)
+                    </pre>
+                </div>
+
+                <h4>Applications des RNN/LSTM</h4>
+                <ul>
+                    <li>Prediction de series temporelles (capteurs)</li>
+                    <li>Reconnaissance vocale</li>
+                    <li>Traduction automatique</li>
+                    <li>Detection d'anomalies temporelles</li>
+                </ul>
+            </div>
+        </section>
