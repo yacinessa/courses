@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EII Portal — Accès Restreint</title>
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --card: #161b22;
+    --border: #21262d;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --warn: #f0883e;
+    --danger: #f85149;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+  /* ── Stars canvas ── */
+  #stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+  /* ── Login Screen ── */
+  #login-screen {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg);
+  }
+  .login-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    width: 100%; max-width: 420px;
+    position: relative; z-index: 1;
+  }
+  .login-logo {
+    text-align: center; margin-bottom: 2rem;
+  }
+  .login-logo .icon { font-size: 2.5rem; }
+  .login-logo h1 { font-size: 1.4rem; font-weight: 700; color: var(--accent); margin-top: .5rem; }
+  .login-logo p { font-size: .85rem; color: var(--muted); margin-top: .25rem; }
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { display: block; font-size: .8rem; color: var(--muted); margin-bottom: .4rem; text-transform: uppercase; letter-spacing: .05em; }
+  .form-group input {
+    width: 100%; padding: .7rem 1rem;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); color: var(--text); font-size: .95rem;
+    outline: none; transition: border .2s;
+  }
+  .form-group input:focus { border-color: var(--accent); }
+  .btn-login {
+    width: 100%; padding: .8rem;
+    background: var(--accent); color: #0a0c10;
+    border: none; border-radius: var(--radius);
+    font-size: 1rem; font-weight: 700; cursor: pointer;
+    margin-top: .5rem; transition: opacity .2s;
+  }
+  .btn-login:hover { opacity: .85; }
+  .login-error {
+    background: #2d1215; border: 1px solid var(--danger);
+    border-radius: var(--radius); padding: .6rem 1rem;
+    color: var(--danger); font-size: .85rem;
+    margin-top: .75rem; display: none;
+  }
+
+  /* ── App Shell ── */
+  #app { display: none; position: relative; z-index: 1; }
+  header {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem; height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .header-brand { display: flex; align-items: center; gap: .6rem; font-weight: 700; color: var(--accent); }
+  .header-right { display: flex; align-items: center; gap: 1rem; }
+  .badge-user {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: .25rem .8rem;
+    font-size: .8rem; color: var(--muted);
+  }
+  .badge-expiry {
+    font-size: .75rem; padding: .25rem .7rem;
+    border-radius: 20px; border: 1px solid;
+  }
+  .badge-expiry.ok { color: var(--accent2); border-color: var(--accent2); background: #0d2116; }
+  .badge-expiry.warn { color: var(--warn); border-color: var(--warn); background: #1f1609; }
+  .badge-expiry.expired { color: var(--danger); border-color: var(--danger); background: #2d1215; }
+  .btn-logout { background: none; border: none; color: var(--muted); cursor: pointer; font-size: .85rem; }
+  .btn-logout:hover { color: var(--danger); }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .welcome { margin-bottom: 2rem; }
+  .welcome h2 { font-size: 1.4rem; }
+  .welcome p { color: var(--muted); margin-top: .3rem; font-size: .9rem; }
+
+  /* ── Tabs ── */
+  .tabs { display: flex; gap: .5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .tab-btn {
+    padding: .45rem 1rem; border-radius: 20px;
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--muted); font-size: .85rem; cursor: pointer; transition: all .2s;
+  }
+  .tab-btn.active, .tab-btn:hover { background: var(--accent); border-color: var(--accent); color: #0a0c10; font-weight: 600; }
+
+  /* ── Content Grid ── */
+  .content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+  .content-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.1rem;
+    display: flex; flex-direction: column; gap: .6rem;
+    transition: border-color .2s, transform .15s;
+    cursor: pointer; text-decoration: none; color: inherit;
+  }
+  .content-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .card-type {
+    font-size: .7rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; padding: .2rem .6rem; border-radius: 4px;
+    width: fit-content;
+  }
+  .type-html { background: #0d1f3c; color: #58a6ff; }
+  .type-pdf  { background: #2d1215; color: #f85149; }
+  .type-video{ background: #1a1229; color: #bf91f3; }
+  .type-audio{ background: #0d2116; color: #3fb950; }
+  .card-title { font-size: 1rem; font-weight: 600; }
+  .card-desc  { font-size: .82rem; color: var(--muted); flex: 1; }
+  .card-footer { display: flex; align-items: center; gap: .5rem; font-size: .78rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: .6rem; margin-top: .2rem; }
+  .card-icon { font-size: 1.1rem; }
+
+  /* ── Expired overlay ── */
+  #expired-overlay {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(10,12,16,.97);
+    align-items: center; justify-content: center;
+    flex-direction: column; gap: 1rem; text-align: center;
+  }
+  #expired-overlay h2 { color: var(--danger); font-size: 1.5rem; }
+  #expired-overlay p { color: var(--muted); max-width: 360px; }
+
+  /* ── Admin Panel ── */
+  #admin-panel {
+    display: none; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.5rem; margin-bottom: 2rem;
+  }
+  #admin-panel h3 { margin-bottom: 1rem; color: var(--warn); }
+  .admin-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+  .admin-table th { text-align: left; color: var(--muted); padding: .4rem .6rem; border-bottom: 1px solid var(--border); }
+  .admin-table td { padding: .5rem .6rem; border-bottom: 1px solid var(--border); }
+  .status-ok { color: var(--accent2); }
+  .status-exp { color: var(--danger); }
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<!-- ════════════ LOGIN ════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="icon">🔐</div>
+      <h1>EII Portal</h1>
+      <p>Accès réservé aux membres autorisés</p>
+    </div>
+    <div class="form-group">
+      <label>Nom d'utilisateur</label>
+      <input type="text" id="username-input" placeholder="ex: etudiant01" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Code d'activation</label>
+      <input type="password" id="code-input" placeholder="••••••••••">
+    </div>
+    <button class="btn-login" onclick="doLogin()">Accéder au portail</button>
+    <div class="login-error" id="login-error">❌ Identifiants invalides ou code expiré.</div>
+  </div>
+</div>
+
+<!-- ════════════ APP ════════════ -->
+<div id="app">
+  <header>
+    <div class="header-brand">⚡ EII Portal</div>
+    <div class="header-right">
+      <span class="badge-user" id="badge-user">—</span>
+      <span class="badge-expiry ok" id="badge-expiry">—</span>
+      <button class="btn-logout" onclick="doLogout()">Déconnexion</button>
+    </div>
+  </header>
+  <main>
+    <div id="admin-panel">
+      <h3>⚙️ Panneau Admin — Utilisateurs</h3>
+      <table class="admin-table">
+        <thead><tr><th>Utilisateur</th><th>Code</th><th>Expiration</th><th>Statut</th></tr></thead>
+        <tbody id="admin-table-body"></tbody>
+      </table>
+    </div>
+    <div class="welcome">
+      <h2>Bienvenue, <span id="welcome-name">—</span> 👋</h2>
+      <p>Tous les contenus disponibles pendant votre période d'accès.</p>
+    </div>
+    <div class="tabs" id="tabs"></div>
+    <div class="content-grid" id="content-grid"></div>
+  </main>
+</div>
+
+<!-- ════════════ EXPIRED ════════════ -->
+<div id="expired-overlay">
+  <div style="font-size:3rem">⏰</div>
+  <h2>Accès expiré</h2>
+  <p>Votre période d'accès est terminée. Contactez l'administrateur pour renouveler votre code.</p>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   ▸ CONFIGURATION — MODIFIEZ CETTE SECTION
+   ══════════════════════════════════════════════════════════ */
+
+const USERS = {
+  // "nom_utilisateur": { code: "CODE_ACTIVATION", expiry: "AAAA-MM-JJ", role: "user" }
+  "etudiant01": { code: "EII2024-ALPHA", expiry: "2025-12-31", role: "user" },
+  "etudiant02": { code: "EII2024-BETA",  expiry: "2025-09-15", role: "user" },
+  "etudiant03": { code: "STAGE-XYZ99",  expiry: "2025-06-30", role: "user" },
+  "admin":      { code: "ADMIN-SECRET", expiry: "2030-01-01", role: "admin" },
+};
+
+/* Catégories visibles dans les onglets */
+const CATEGORIES = ["Tout", "Cours HTML", "PDF", "Vidéos", "Audio"];
+
+/* Contenu — remplacez les liens Google Drive par les vôtres
+   Pour Google Drive :
+     - Fichier HTML/PDF : clic droit → Partager → "Tout le monde avec le lien" → copier l'URL
+     - Vidéo Drive : récupérez l'ID du fichier et utilisez : https://drive.google.com/file/d/ID/preview
+     - Audio Drive : même principe                                                                    */
+const CONTENT = [
+  {
+    id: 1, title: "Introduction au STM32F4",
+    desc: "Cours interactif HTML — Architecture, GPIO, horloges.",
+    type: "html", category: "Cours HTML",
+    url: "https://drive.google.com/file/d/VOTRE_ID_ICI/preview",
+    icon: "📄"
+  },
+  {
+    id: 2, title: "TP Arduino — PWM & ADC",
+    desc: "Feuille de TP complète avec exercices guidés.",
+    type: "html", category: "Cours HTML",
+    url: "https://drive.google.com/file/d/VOTRE_ID_ICI/preview",
+    icon: "📄"
+  },
+  {
+    id: 3, title: "Cours VHDL — Logique combinatoire",
+    desc: "Document PDF — opérateurs, structures, exemples.",
+    type: "pdf", category: "PDF",
+    url: "https://drive.google.com/file/d/VOTRE_ID_ICI/preview",
+    icon: "📕"
+  },
+  {
+    id: 4, title: "Protocoles de communication",
+    desc: "Résumé UART / I2C / SPI / CAN en PDF.",
+    type: "pdf", category: "PDF",
+    url: "https://drive.google.com/file/d/VOTRE_ID_ICI/preview",
+    icon: "📕"
+  },
+  {
+    id: 5, title: "Vidéo — Introduction IoT & MQTT",
+    desc: "Explication du protocole MQTT avec démonstration ESP32.",
+    type: "video", category: "Vidéos",
+    url: "https://drive.google.com/file/d/VOTRE_ID_ICI/preview",
+    icon: "🎬"
+  },
+  {
+    id: 6, title: "Vidéo — Programmation STM32 HAL",
+    desc: "Démarrage avec STM32CubeIDE et la bibliothèque HAL.",
+    type: "video", category: "Vidéos",
+    url: "https://drive.google.com/file/d/VOTRE_ID_ICI/preview",
+    icon: "🎬"
+  },
+  {
+    id: 7, title: "Podcast — Systèmes embarqués",
+    desc: "Épisode audio sur les architectures temps réel (RTOS).",
+    type: "audio", category: "Audio",
+    url: "https://drive.google.com/file/d/VOTRE_ID_ICI/preview",
+    icon: "🎧"
+  },
+  {
+    id: 8, title: "Audio — Révision Filtres Analogiques",
+    desc: "Résumé audio — filtres passe-bas, passe-haut, résonance.",
+    type: "audio", category: "Audio",
+    url: "https://drive.google.com/file/d/VOTRE_ID_ICI/preview",
+    icon: "🎧"
+  },
+];
+
+/* ══════════════════════════════════════════════════════════
+   ▸ AUTH LOGIC
+   ══════════════════════════════════════════════════════════ */
+let currentUser = null;
+let activeCategory = "Tout";
+
+function doLogin() {
+  const username = document.getElementById('username-input').value.trim().toLowerCase();
+  const code     = document.getElementById('code-input').value.trim();
+  const err      = document.getElementById('login-error');
+
+  const user = USERS[username];
+  if (!user || user.code !== code) {
+    err.style.display = 'block';
+    return;
+  }
+
+  const today  = new Date(); today.setHours(0,0,0,0);
+  const expiry = new Date(user.expiry);
+  if (today > expiry) {
+    err.textContent = '⏰ Votre code a expiré le ' + user.expiry + '. Contactez l\'admin.';
+    err.style.display = 'block';
+    return;
+  }
+
+  err.style.display = 'none';
+  currentUser = { username, ...user, expiryDate: expiry };
+  showApp();
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  const u = currentUser;
+  document.getElementById('welcome-name').textContent = u.username;
+  document.getElementById('badge-user').textContent   = '👤 ' + u.username;
+
+  const today   = new Date(); today.setHours(0,0,0,0);
+  const daysLeft = Math.round((u.expiryDate - today) / 86400000);
+  const badge    = document.getElementById('badge-expiry');
+  badge.textContent = daysLeft <= 0 ? 'Expiré' :
+                      daysLeft === 1 ? 'Expire demain' :
+                      `⏳ ${daysLeft} jours restants`;
+  badge.className = 'badge-expiry ' + (daysLeft <= 3 ? 'warn' : 'ok');
+
+  if (u.role === 'admin') showAdminPanel();
+
+  buildTabs();
+  renderContent("Tout");
+}
+
+function doLogout() {
+  currentUser = null;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('username-input').value = '';
+  document.getElementById('code-input').value = '';
+  document.getElementById('admin-panel').style.display = 'none';
+}
+
+/* Allow Enter key */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') doLogin();
+});
+
+/* ══════════════════════════════════════════════════════════
+   ▸ CONTENT RENDERING
+   ══════════════════════════════════════════════════════════ */
+function buildTabs() {
+  const tabs = document.getElementById('tabs');
+  tabs.innerHTML = '';
+  CATEGORIES.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (cat === 'Tout' ? ' active' : '');
+    btn.textContent = cat;
+    btn.onclick = () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderContent(cat);
+    };
+    tabs.appendChild(btn);
+  });
+}
+
+function renderContent(category) {
+  activeCategory = category;
+  const grid = document.getElementById('content-grid');
+  grid.innerHTML = '';
+  const items = category === 'Tout' ? CONTENT : CONTENT.filter(c => c.category === category);
+
+  items.forEach(item => {
+    const a = document.createElement('a');
+    a.href = item.url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.className = 'content-card';
+    a.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span class="card-type type-${item.type}">${item.type.toUpperCase()}</span>
+        <span class="card-icon">${item.icon}</span>
+      </div>
+      <div class="card-title">${item.title}</div>
+      <div class="card-desc">${item.desc}</div>
+      <div class="card-footer">
+        <span>📁 ${item.category}</span>
+        <span style="margin-left:auto;color:var(--accent);font-size:.75rem">Ouvrir →</span>
+      </div>`;
+    grid.appendChild(a);
+  });
+
+  if (items.length === 0) {
+    grid.innerHTML = '<p style="color:var(--muted);grid-column:1/-1">Aucun contenu dans cette catégorie.</p>';
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   ▸ ADMIN PANEL
+   ══════════════════════════════════════════════════════════ */
+function showAdminPanel() {
+  const panel = document.getElementById('admin-panel');
+  panel.style.display = 'block';
+  const tbody = document.getElementById('admin-table-body');
+  tbody.innerHTML = '';
+  const today = new Date(); today.setHours(0,0,0,0);
+  Object.entries(USERS).forEach(([name, u]) => {
+    const exp  = new Date(u.expiry);
+    const left = Math.round((exp - today) / 86400000);
+    const ok   = left > 0;
+    const tr   = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${name}</td>
+      <td style="font-family:monospace;color:var(--muted)">${u.code}</td>
+      <td>${u.expiry}</td>
+      <td class="${ok ? 'status-ok' : 'status-exp'}">${ok ? left + ' jours' : 'Expiré'}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
+   ▸ STARS BACKGROUND
+   ══════════════════════════════════════════════════════════ */
+(function() {
+  const c = document.getElementById('stars');
+  const ctx = c.getContext('2d');
+  let stars = [];
+  function init() {
+    c.width  = window.innerWidth;
+    c.height = window.innerHeight;
+    stars = Array.from({length: 120}, () => ({
+      x: Math.random() * c.width,
+      y: Math.random() * c.height,
+      r: Math.random() * 1.2 + .3,
+      a: Math.random(),
+      d: (Math.random() - .5) * .004
+    }));
+  }
+  function draw() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    stars.forEach(s => {
+      s.a += s.d;
+      if (s.a < 0 || s.a > 1) s.d *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(88,166,255,${s.a * .7})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  init();
+  draw();
+  window.addEventListener('resize', init);
+})();
+</script>
+</body>
+</html>
