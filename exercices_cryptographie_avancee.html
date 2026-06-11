@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercices C Avancés : Cryptographie et Chiffrement</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }
+        h1 {
+            color: #58a6ff;
+            text-align: center;
+            border-bottom: 3px solid #21262d;
+            padding-bottom: 10px;
+            font-size: 2.5em;
+        }
+        h2 {
+            color: #79c0ff;
+            margin-top: 30px;
+            border-left: 4px solid #ff7b72;
+            padding-left: 15px;
+        }
+        .exercise {
+            background: #161b22;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            border: 1px solid #30363d;
+        }
+        .difficulty {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .difficulty-3 { background-color: #f39c12; color: white; }
+        .difficulty-4 { background-color: #e67e22; color: white; }
+        .difficulty-5 { background-color: #e74c3c; color: white; }
+        code {
+            background-color: #21262d;
+            padding: 15px;
+            border-radius: 4px;
+            display: block;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            border: 1px solid #30363d;
+        }
+        .crypto-note {
+            background-color: #1f6feb;
+            color: white;
+            padding: 15px;
+            border-left: 4px solid #58a6ff;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .security-warning {
+            background-color: #d29922;
+            color: #1f2328;
+            padding: 15px;
+            border-left: 4px solid #f0f674;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .advanced-info {
+            background-color: #0f3460;
+            color: #00d4ff;
+            padding: 15px;
+            border-left: 4px solid #00d4ff;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .author {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #161b22;
+            border-radius: 5px;
+            border: 1px solid #30363d;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔐 Exercices C Avancés : Cryptographie et Chiffrement</h1>
+    
+    <div class="crypto-note">
+        <h3>🔒 Aperçu de la Cryptographie</h3>
+        <p>Ces exercices explorent les concepts fondamentaux de la cryptographie moderne et classique, du chiffrement symétrique aux algorithmes asymétriques, en passant par les fonctions de hachage et les protocoles de sécurité.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 1 : Chiffre de César Avancé</h2>
+        <span class="difficulty difficulty-3">⭐⭐⭐</span>
+        <code>void caesarCipher(char text[], int key, char result[]);<br>void caesarDecrypt(char cipher[], int key, char result[]);</code>
+        <p>Implémenter un chiffre de César avec gestion des caractères accentués, ponctuation et espaces. Inclure la prise en charge Unicode et permettre des clés négatives pour le déchiffrement automatique.</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> Arithmétique modulaire, manipulation de caractères Unicode, cryptanalyse de fréquence
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 2 : Chiffre de Vigenère Dynamique</h2>
+        <span class="difficulty difficulty-4">⭐⭐⭐⭐</span>
+        <code>void vigenereCipher(char plaintext[], char key[], char ciphertext[]);<br>char* vigenereCrack(char ciphertext[], char dictionary[]);</code>
+        <p>Créer un chiffre de Vigenère avec clé dynamique et cassage automatique basé sur l'analyse de fréquence. Détecter automatiquement la longueur de clé et proposer des clés candidates.</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> Analyse de fréquence, corrélation statistique, attaque par clé répétitive
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 3 : AES Simplified Implementation</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>void aesEncryptECB(unsigned char plaintext[], unsigned char key[], unsigned char ciphertext[]);<br>void aesDecryptECB(unsigned char ciphertext[], unsigned char key[], unsigned char plaintext[]);</code>
+        <p>Implémenter une version simplifiée d'AES (Advanced Encryption Standard) en mode ECB avec toutes les transformations : SubBytes, ShiftRows, MixColumns, AddRoundKey.</p>
+        <div class="security-warning">
+            <strong>Avertissement :</strong> Pour usage éducatif uniquement. Utiliser des implémentations certifiées pour la production.
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 4 : RSA avec Génération de Clés</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>void generateRSAKeys(unsigned long* publicKey, unsigned long* privateKey, unsigned long* modulus);<br>unsigned long rsaEncrypt(unsigned long message, unsigned long publicKey, unsigned long modulus);<br>unsigned long rsaDecrypt(unsigned long cipher, unsigned long privateKey, unsigned long modulus);</code>
+        <p>Implémenter le cryptosystème RSA complet avec génération de clés, test de primalité de Miller-Rabin, algorithme d'Euclide étendu, et chiffrement/déchiffrement. Gérer les grands entiers.</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> Théorie des nombres, arithmétique modulaire, fonctions à sens unique, cryptographie asymétrique
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 5 : Hachage SHA-256</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>void sha256Hash(unsigned char data[], int length, unsigned char hash[]);<br>int verifyIntegrity(unsigned char data[], int length, unsigned char expectedHash[]);</code>
+        <p>Implémenter l'algorithme de hachage SHA-256 complet avec padding, traitement des blocs, fonctions de compression et constantes de hachage. Inclure la vérification d'intégrité des données.</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> Fonctions de hachage cryptographique, Merkle-Damgård construction, compression unidirectionnelle
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 6 : Générateur de Nombres Pseudo-Aléatoires Sécurisés</h2>
+        <span class="difficulty difficulty-4">⭐⭐⭐⭐</span>
+        <code>void csprngInit(unsigned int seed[]);<br>unsigned int csprngNext();<br>double csprngUniform();<br>void csprngBytes(unsigned char* buffer, int length);</code>
+        <p>Implémenter un générateur de nombres pseudo-aléatoires cryptographiquement sûr basé sur l'algorithme ChaCha20 ou similar. Inclure différents types de sortie (entiers, flottants, octets).</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> Entropie, états internes, non-linéarité, période maximale
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 7 : Détection et Cassage de XOR Bit-à-Bit</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>void xorCipher(unsigned char data[], unsigned char key[], int dataLen, int keyLen, unsigned char result[]);<br>unsigned char* xorBruteForce(unsigned char cipher[], int cipherLen, char dictionary[]);</code>
+        <p>Implémenter le chiffrement XOR avec détection automatique de longueur de clé et cassage par force brute en utilisant l'analyse de fréquences English. Optimiser pour les grandes données.</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> XOR logique, cryptanalyse statistique, Hamming distance, attaque par clé répétitive
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 8 : Chiffrement par Flux (Stream Cipher)</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>void streamCipherInit(int seed);<br>void encryptStream(unsigned char plaintext[], unsigned char ciphertext[], int length);<br>void decryptStream(unsigned char ciphertext[], unsigned char plaintext[], int length);</code>
+        <p>Créer un chiffrement par flux basé sur LFSR (Linear Feedback Shift Register) avec plusieurs polynômes de rétroaction et mécanisme de synchronisation. Implémenter la synchronisation automatique.</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> LFSR, feedback polynomial, synchronisation de flux, attaques par synchronisation
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 9 : Protocole de Diffie-Hellman</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>unsigned long diffieHellmanGeneratePrivate(unsigned long prime, unsigned long generator);<br>unsigned long diffieHellmanComputePublic(unsigned long privateKey, unsigned long generator, unsigned long prime);<br>unsigned long diffieHellmanSharedSecret(unsigned long privateKey, unsigned long otherPublic, unsigned long prime);</code>
+        <p>Implémenter l'échange de clés Diffie-Hellman avec génération de paramètres sûrs, calcul d'exponentiation modulaire efficace et vérification de la légitimité des paramètres.</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> Problème du logarithme discret, échange de clés sécurisé, man-in-the-middle defense
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 10 : Authentification par Message (MAC)</h2>
+        <span class="difficulty difficulty-4">⭐⭐⭐⭐</span>
+        <code>void hmacSha256(unsigned char key[], int keyLen, unsigned char message[], int msgLen, unsigned char mac[]);<br>int verifyHmac(unsigned char key[], int keyLen, unsigned char message[], int msgLen, unsigned char expectedMac[]);</code>
+        <p>Implémenter HMAC-SHA256 pour l'authentification des messages avec construction Merkle-Damgård, padding de clé, et fonctionnement en mode inner/outer.</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> Message Authentication Code, key derivation, hash-based constructions, tamper detection
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 11 : Base64 Encoding/Decoding Sécurisé</h2>
+        <span class="difficulty difficulty-3">⭐⭐⭐</span>
+        <code>int base64Encode(unsigned char* data, int length, char* encoded);<br>int base64Decode(char* encoded, unsigned char* data);<br>int base64UrlEncode(unsigned char* data, int length, char* encoded);</code>
+        <p>Implémenter Base64 avec gestion des caractères d'échappement, validation des données d'entrée, et variante URL-safe. Gérer les cas d'erreur et tampons insuffisants.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 12 : Chiffrement de Hill (Matrice)</h2>
+        <span class="difficulty difficulty-4">⭐⭐⭐⭐</span>
+        <code>void hillCipherEncrypt(char plaintext[], int keyMatrix[][], int n, char ciphertext[]);<br>void hillCipherDecrypt(char ciphertext[], int keyMatrix[][], int n, char plaintext[]);<br>int invertMatrix(int matrix[][], int n, int inverse[][]);</code>
+        <p>Implémenter le chiffre de Hill avec matrices de taille variable, calcul de l'inverse modulaire, et gestion des caracteres non alphabétiques. Inclure la cryptanalyse par matrice inconnue.</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> Algèbre linéaire, matrices modulaires, calculs d'inverse, cryptanalyse linéaire
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 13 : Signatures Numériques RSA</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>void rsaSign(unsigned char message[], int msgLen, unsigned char signature[], unsigned long privateKey, unsigned long modulus);<br>int rsaVerify(unsigned char message[], int msgLen, unsigned char signature[], unsigned long publicKey, unsigned long modulus);</code>
+        <p>Implémenter les signatures numériques RSA avec hachage SHA-256, padding PSS (Probabilistic Signature Scheme), et vérification de signature. Gérer l'attaque par falsification.</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> Signatures numériques, hash-then-sign, protection against existential forgery, non-répudiation
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 14 : Chiffrement par Substitution Polynomiale</h2>
+        <span class="difficulty difficulty-4">⭐⭐⭐⭐</span>
+        <code>void polySubCipher(unsigned char data[], int length, unsigned char key[], int keyLen, unsigned char result[]);<br>int findPolyKeyLength(unsigned char cipher[], int cipherLen);</code>
+        <p>Créer un chiffrement basé sur la substitution polynomiale avec détection automatique de longueur de clé. Implémenter l'attaque par analyse de corrélation.</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> Fonctions polynomiales, corrélation, attaque par clé incomplète, analyse fréquentielle multidimensionnelle
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 15 : Cryptanalyse par Analyse de Fréquence</h2>
+        <span class="difficulty difficulty-4">⭐⭐⭐⭐</span>
+        <code>void frequencyAnalysis(char cipher[], int length, double frequencies[256]);<br>char* crackFrequencyCipher(char cipher[], int length, char dictionary[]);</code>
+        <p>Créer un système complet de cryptanalyse par analyse de fréquences avec génération de rapports statistiques, estimation de longueur de clé, et reconstruction automatique.</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> Statistiques de fréquence, chi-squared test, maximum likelihood, dictionnaire de fréquence
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 16 : Zero-Knowledge Proof Simple</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>void zkpCommit(int secret, int* commitment, int* random);<br>int zkpChallenge(int commitment);<br>int zkpResponse(int challenge, int secret, int random);<br>int zkpVerify(int commitment, int challenge, int response, int* publicHash);</code>
+        <p>Implémenter une preuve à divulgation nulle de connaissance basée sur le protocole de Schnorr pour démontrer la connaissance d'un secret sans le révéler.</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> Zero-knowledge proofs, commitments, challenges, perfect zero-knowledge, interactive protocols
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 17 : Masquage d'Information (Steganographie)</h2>
+        <span class="difficulty difficulty-4">⭐⭐⭐⭐</span>
+        <code>int hideMessageInImage(unsigned char image[], int width, int height, char message[], unsigned char stegoImage[]);<br>char* extractMessageFromImage(unsigned char stegoImage[], int width, int height);</code>
+        <p>Implémenter une technique de stéganographie pour cacher des messages dans des images en modifiant les bits de poids faible (LSB). Inclure détection et extraction automatique.</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> Steganographie, LSB manipulation, capacité de masquage, détection statistique, forensics
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 18 : Chiffrement Quantique Simulé</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>void quantumKeyDistribution(int qubits[], int length, int basis[], int results[]);<br>int detectEavesdropping(int aliceResults[], int bobResults[], int basis[], int length);<br>void generateQuantumKey(int siftedKey[], int secureKey[], int length);</code>
+        <p>Simuler le protocole de distribution quantique de clés BB84 avec génération de qubits, mesure dans différentes bases, et détection d'interception. Implémenter la reconciliation d'erreur.</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> Cryptographie quantique, polarisation de photons, bases de mesure, théorème de non-clonage, eavesdropping detection
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 19 : Authentification Biométrique Simulée</h2>
+        <span class="difficulty difficulty-4">⭐⭐⭐⭐</span>
+        <code>double computeMinutiae(double features[][], int numFeatures);<br>int matchBiometric(double template1[], double template2[], double threshold);<br>double fuzzyExtractor(double biometric[], int length, char* helper);</code>
+        <p>Implémenter un système d'authentification biométrique simulé avec extraction de minutiae, correspondance floue, et fuzzy extractors pour la protection des templates.</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> Biométrie, minutiae extraction, fuzzy matching, template protection, privacy-preserving biometrics
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 20 : Blockchain Simplifiée</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>typedef struct Block { int index; char data[256]; int timestamp; char previousHash[65]; char hash[65]; } Block;<br>void mineBlock(Block* block, int difficulty);<br>int validateChain(Block chain[], int length);<br>void addTransaction(Block* block, char transaction[]);</code>
+        <p>Créer une blockchain simplifiée avec proof-of-work, calcul de hash SHA-256, validation de chaîne, et mécanisme de consensus. Inclure détection de blockchain fork.</p>
+        <div class="advanced-info">
+            <strong>Concepts :</strong> Blockchain, proof-of-work, hash chains, distributed consensus, tampering detection, consensus algorithms
+        </div>
+    </div>
+
+    <div class="security-warning">
+        <h3>⚠️ Avertissements de Sécurité Importants</h3>
+        <ul>
+            <li><strong>Usage Éducatif :</strong> Ces exercices sont conçu à des fins éducatives uniquement</li>
+            <li><strong>Production :</strong> Ne pas utiliser ces implémentations en production sans audit de sécurité</li>
+            <li><strong>Implémentations Certifiées :</strong> Utiliser toujours des bibliothèques cryptographiques certifiées pour les applications réelles</li>
+            <li><strong>Test de Sécurité :</strong> Les algorithmes peuvent contenir des vulnérabilités intentionnelles pour l'apprentissage</li>
+        </ul>
+    </div>
+
+    <div class="advanced-info">
+        <h3>🎓 Concepts Cryptographiques Avancés Couverts</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+            <div>
+                <h4>🔐 Chiffrement Symétrique</h4>
+                <ul>
+                    <li>AES (Advanced Encryption Standard)</li>
+                    <li>Chiffres de flux (Stream Ciphers)</li>
+                    <li>Chiffres par blocs</li>
+                    <li>Modes d'opération (ECB, CBC, CTR)</li>
+                </ul>
+            </div>
+            <div>
+                <h4>🔑 Chiffrement Asymétrique</h4>
+                <ul>
+                    <li>RSA (Rivest-Shamir-Adleman)</li>
+                    <li>Échange de clés Diffie-Hellman</li>
+                    <li>Signatures numériques</li>
+                    <li>Infrastructure à clés publiques (PKI)</li>
+                </ul>
+            </div>
+            <div>
+                <h4>📊 Fonctions de Hachage</h4>
+                <ul>
+                    <li>SHA-256 (Secure Hash Algorithm)</li>
+                    <li>HMAC (Hash-based Message Authentication)</li>
+                    <li>MD5 (Message Digest)</li>
+                    <li>Fonctions de dérivation de clés</li>
+                </ul>
+            </div>
+            <div>
+                <h4>🔍 Cryptanalyse</h4>
+                <ul>
+                    <li>Analyse de fréquence</li>
+                    <li>Attaques par clé répétitive</li>
+                    <li>Analyse différentielle et linéaire</li>
+                    <li>Cryptanalyse moderne</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="author">
+        <p><strong>Auteur :</strong> MiniMax Agent</p>
+        <p><em>Exercices de cryptographie avancée pour développer l'expertise en sécurité informatique</em></p>
+        <p><em>Conçu pour étudiants en cybersécurité et développeurs d'applications sécurisées</em></p>
+    </div>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"9a346b7868937d33","serverTiming":{"name":{"cfExtPri":true,"cfEdge":true,"cfOrigin":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"version":"2025.9.1","token":"e72945439c264b3b85d2e3b689102d27"}' crossorigin="anonymous"></script>
+</body>
+</html>

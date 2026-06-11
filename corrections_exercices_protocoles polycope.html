@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corrections - Exercices Protocoles de Communication Série</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+            font-style: italic;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .exercise {
+            margin: 30px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            border-radius: 8px;
+        }
+
+        .exercise-title {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .question {
+            background: #fff;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 3px solid #28a745;
+        }
+
+        .question-title {
+            color: #28a745;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .solution {
+            background: #e7f3ff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 3px solid #007bff;
+        }
+
+        .formula {
+            background: #fff3cd;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 3px solid #ffc107;
+            font-family: 'Courier New', monospace;
+        }
+
+        .result {
+            background: #d4edda;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 3px solid #28a745;
+            font-weight: bold;
+            color: #155724;
+        }
+
+        .important {
+            background: #f8d7da;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 3px solid #dc3545;
+            color: #721c24;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        .step {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .step::before {
+            content: "➤ ";
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        ul, ol {
+            margin: 10px 0 10px 30px;
+        }
+
+        li {
+            margin: 5px 0;
+        }
+
+        .comparison-table {
+            margin: 20px 0;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .protocol-uart { border-left: 4px solid #ff6b6b; }
+        .protocol-i2c { border-left: 4px solid #4ecdc4; }
+        .protocol-spi { border-left: 4px solid #ffe66d; }
+        .protocol-can { border-left: 4px solid #a8e6cf; }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📡 Corrections des Exercices</h1>
+            <div class="subtitle">Protocoles de Communication Série</div>
+            <div class="subtitle">UART • I²C • SPI • CAN Bus</div>
+        </header>
+
+        <div class="info-box">
+            <h3>📚 Centre Lycée Moulay Youssef - Tanger</h3>
+            <p><strong>Formation:</strong> BTS Électronique et Informatique Industrielle</p>
+            <p><strong>Chapitre 3:</strong> Protocoles de Communication Série</p>
+            <p><strong>Contenu:</strong> Corrections détaillées avec formules et explications</p>
+        </div>
+
+        <!-- EXERCICE 1 -->
+        <div class="exercise protocol-uart">
+            <div class="exercise-title">Exercice 1 - Calcul de débit UART</div>
+            
+            <div class="question">
+                <div class="question-title">Énoncé</div>
+                <p>Calculez le temps pour transmettre le mot <strong>"BONJOUR"</strong> (7 caractères) en format 8N1 à 19200 bauds.</p>
+            </div>
+
+            <div class="solution">
+                <h4>📝 Solution</h4>
+                
+                <p><strong>Données:</strong></p>
+                <ul>
+                    <li>Mot: "BONJOUR" = 7 caractères</li>
+                    <li>Format: 8N1 (8 bits de données, No parity, 1 stop bit)</li>
+                    <li>Vitesse: 19200 bauds</li>
+                </ul>
+
+                <p><strong>Étape 1: Calcul du nombre de bits par caractère</strong></p>
+                <div class="formula">
+                    Format 8N1 = 1 START + 8 DATA + 1 STOP = 10 bits par caractère
+                </div>
+
+                <p><strong>Étape 2: Calcul du nombre total de bits</strong></p>
+                <div class="formula">
+                    Nombre total de bits = 7 caractères × 10 bits/caractère = 70 bits
+                </div>
+
+                <p><strong>Étape 3: Calcul du temps de transmission</strong></p>
+                <div class="formula">
+                    Temps = Nombre de bits ÷ Débit<br>
+                    Temps = 70 bits ÷ 19200 bits/s<br>
+                    Temps = 0.003646 s = 3.646 ms
+                </div>
+
+                <div class="result">
+                    ✅ Résultat final: <strong>3.65 ms</strong> (ou 3646 µs)
+                </div>
+            </div>
+        </div>
+
+        <!-- EXERCICE 2 -->
+        <div class="exercise protocol-uart">
+            <div class="exercise-title">Exercice 2 - Efficacité UART</div>
+            
+            <div class="question">
+                <div class="question-title">Énoncé</div>
+                <p>À 57600 bauds en format 8E1 (8 bits, Even parity, 1 stop):</p>
+                <ul>
+                    <li>a) Combien de bits totaux par caractère?</li>
+                    <li>b) Quel est le débit utile en octets/seconde?</li>
+                    <li>c) Quel est le pourcentage d'efficacité?</li>
+                </ul>
+            </div>
+
+            <div class="solution">
+                <h4>📝 Solution</h4>
+                
+                <p><strong>Question a) Bits totaux par caractère</strong></p>
+                <div class="formula">
+                    Format 8E1 = 1 START + 8 DATA + 1 PARITY + 1 STOP<br>
+                    Total = 11 bits par caractère
+                </div>
+                <div class="result">
+                    ✅ Réponse a): <strong>11 bits par caractère</strong>
+                </div>
+
+                <p><strong>Question b) Débit utile en octets/seconde</strong></p>
+                <div class="formula">
+                    Débit brut = 57600 bits/s<br>
+                    Bits utiles par caractère = 8 bits (données uniquement)<br>
+                    Bits totaux par caractère = 11 bits<br>
+                    <br>
+                    Débit utile (bits/s) = 57600 × (8/11) = 41890.91 bits/s<br>
+                    Débit utile (octets/s) = 41890.91 ÷ 8 = 5236.36 octets/s
+                </div>
+                <div class="result">
+                    ✅ Réponse b): <strong>5236 octets/seconde</strong>
+                </div>
+
+                <p><strong>Question c) Pourcentage d'efficacité</strong></p>
+                <div class="formula">
+                    Efficacité = (Bits utiles / Bits totaux) × 100%<br>
+                    Efficacité = (8 / 11) × 100%<br>
+                    Efficacité = 72.73%
+                </div>
+                <div class="result">
+                    ✅ Réponse c): <strong>72.73%</strong>
+                </div>
+
+                <div class="important">
+                    ⚠️ <strong>Note:</strong> L'ajout du bit de parité réduit l'efficacité de 80% (format 8N1) à 72.73% (format 8E1), mais améliore la détection d'erreurs.
+                </div>
+            </div>
+        </div>
+
+        <!-- EXERCICE 3 -->
+        <div class="exercise protocol-i2c">
+            <div class="exercise-title">Exercice 3 - Temps de transmission I²C</div>
+            
+            <div class="question">
+                <div class="question-title">Énoncé</div>
+                <p>Combien de temps faut-il pour lire 16 octets sur un bus I²C à 400 kHz?</p>
+                <p><em>Rappel: chaque octet nécessite 9 bits (8 data + 1 ACK) + START + STOP.</em></p>
+            </div>
+
+            <div class="solution">
+                <h4>📝 Solution</h4>
+                
+                <p><strong>Données:</strong></p>
+                <ul>
+                    <li>Nombre d'octets à lire: 16 octets</li>
+                    <li>Fréquence I²C: 400 kHz = 400000 Hz</li>
+                    <li>Chaque octet: 8 bits data + 1 ACK = 9 bits</li>
+                </ul>
+
+                <p><strong>Étape 1: Structure d'une lecture I²C</strong></p>
+                <div class="code-block">
+START | Adresse+R/W | ACK | Data1 | ACK | Data2 | ACK | ... | Data16 | NACK | STOP
+                </div>
+
+                <p><strong>Étape 2: Calcul du nombre de bits</strong></p>
+                <div class="formula">
+                    - START condition: ~1 bit<br>
+                    - Adresse esclave (7 bits) + R/W (1 bit) + ACK: 9 bits<br>
+                    - 16 octets de données: 16 × 9 bits = 144 bits<br>
+                    - STOP condition: ~1 bit<br>
+                    <br>
+                    Total = 1 + 9 + 144 + 1 = 155 bits
+                </div>
+
+                <p><strong>Étape 3: Calcul du temps</strong></p>
+                <div class="formula">
+                    Période par bit = 1 / 400000 Hz = 2.5 µs/bit<br>
+                    Temps total = 155 bits × 2.5 µs/bit = 387.5 µs
+                </div>
+
+                <div class="result">
+                    ✅ Résultat final: <strong>387.5 µs</strong> (environ 0.39 ms)
+                </div>
+
+                <div class="important">
+                    📌 <strong>Note:</strong> En pratique, il faut ajouter le temps pour les conditions START/STOP et les délais entre octets, ce qui peut porter le temps total à environ 400-420 µs.
+                </div>
+            </div>
+        </div>
+
+        <!-- EXERCICE 4 -->
+        <div class="exercise">
+            <div class="exercise-title">Exercice 4 - Comparaison de débits</div>
+            
+            <div class="question">
+                <div class="question-title">Énoncé</div>
+                <p>Comparez le temps pour transmettre 1 Ko (1024 octets) sur:</p>
+                <ul>
+                    <li>a) UART à 115200 bauds (format 8N1)</li>
+                    <li>b) I²C à 400 kHz</li>
+                    <li>c) SPI à 8 MHz</li>
+                </ul>
+            </div>
+
+            <div class="solution">
+                <h4>📝 Solution</h4>
+                
+                <p><strong>a) UART à 115200 bauds (format 8N1)</strong></p>
+                <div class="formula">
+                    Format 8N1 = 10 bits par octet<br>
+                    Nombre total de bits = 1024 octets × 10 bits = 10240 bits<br>
+                    Temps = 10240 bits ÷ 115200 bits/s = 0.0889 s
+                </div>
+                <div class="result protocol-uart">
+                    ✅ UART: <strong>88.9 ms</strong>
+                </div>
+
+                <p><strong>b) I²C à 400 kHz</strong></p>
+                <div class="formula">
+                    Chaque octet = 9 bits (8 data + 1 ACK)<br>
+                    Pour 1024 octets en lecture continue:<br>
+                    - START + Adresse: 10 bits<br>
+                    - 1024 octets: 1024 × 9 = 9216 bits<br>
+                    - STOP: 1 bit<br>
+                    Total = 10 + 9216 + 1 = 9227 bits<br>
+                    <br>
+                    Temps = 9227 bits ÷ 400000 bits/s = 0.0231 s
+                </div>
+                <div class="result protocol-i2c">
+                    ✅ I²C: <strong>23.1 ms</strong>
+                </div>
+
+                <p><strong>c) SPI à 8 MHz</strong></p>
+                <div class="formula">
+                    SPI transfère directement les octets sans overhead<br>
+                    Nombre total de bits = 1024 octets × 8 bits = 8192 bits<br>
+                    Temps = 8192 bits ÷ 8000000 bits/s = 0.001024 s
+                </div>
+                <div class="result protocol-spi">
+                    ✅ SPI: <strong>1.024 ms</strong>
+                </div>
+
+                <h4>📊 Tableau comparatif</h4>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Protocole</th>
+                        <th>Vitesse</th>
+                        <th>Bits totaux</th>
+                        <th>Temps</th>
+                        <th>Classement</th>
+                    </tr>
+                    <tr>
+                        <td>UART</td>
+                        <td>115200 bauds</td>
+                        <td>10240 bits</td>
+                        <td>88.9 ms</td>
+                        <td>3ème (le plus lent)</td>
+                    </tr>
+                    <tr>
+                        <td>I²C</td>
+                        <td>400 kHz</td>
+                        <td>9227 bits</td>
+                        <td>23.1 ms</td>
+                        <td>2ème</td>
+                    </tr>
+                    <tr>
+                        <td>SPI</td>
+                        <td>8 MHz</td>
+                        <td>8192 bits</td>
+                        <td>1.024 ms</td>
+                        <td>1er (le plus rapide)</td>
+                    </tr>
+                </table>
+
+                <div class="important">
+                    🎯 <strong>Conclusion:</strong> SPI est <strong>87× plus rapide</strong> que UART et <strong>23× plus rapide</strong> que I²C pour ce transfert!
+                </div>
+            </div>
+        </div>
+
+        <!-- EXERCICE 5 -->
+        <div class="exercise">
+            <div class="exercise-title">Exercice 5 - Questions à Choix Multiples</div>
+            
+            <div class="question">
+                <div class="question-title">Q1. Quel protocole nécessite des résistances pull-up obligatoires?</div>
+                <p>a) UART &nbsp;&nbsp;&nbsp; b) I²C &nbsp;&nbsp;&nbsp; c) SPI &nbsp;&nbsp;&nbsp; d) Tous</p>
+            </div>
+            <div class="result">
+                ✅ Réponse: <strong>b) I²C</strong><br>
+                <em>Explication: I²C utilise des lignes open-drain (SDA et SCL) qui nécessitent des résistances pull-up (typiquement 4.7kΩ) pour ramener les lignes à l'état haut.</em>
+            </div>
+
+            <div class="question">
+                <div class="question-title">Q2. Quel protocole est Full-Duplex?</div>
+                <p>a) UART et SPI &nbsp;&nbsp;&nbsp; b) I²C et CAN &nbsp;&nbsp;&nbsp; c) Tous &nbsp;&nbsp;&nbsp; d) Aucun</p>
+            </div>
+            <div class="result">
+                ✅ Réponse: <strong>a) UART et SPI</strong><br>
+                <em>Explication: UART (TX/RX séparés) et SPI (MOSI/MISO séparés) peuvent transmettre et recevoir simultanément. I²C et CAN sont Half-Duplex (bidirectionnel alterné).</em>
+            </div>
+
+            <div class="question">
+                <div class="question-title">Q3. À quelle vitesse maximum fonctionne I²C en mode Fast?</div>
+                <p>a) 100 kHz &nbsp;&nbsp;&nbsp; b) 400 kHz &nbsp;&nbsp;&nbsp; c) 1 MHz &nbsp;&nbsp;&nbsp; d) 3.4 MHz</p>
+            </div>
+            <div class="result">
+                ✅ Réponse: <strong>b) 400 kHz</strong><br>
+                <em>Explication: Les modes I²C sont: Standard (100 kHz), Fast (400 kHz), Fast+ (1 MHz), High-Speed (3.4 MHz).</em>
+            </div>
+
+            <div class="question">
+                <div class="question-title">Q4. Quel protocole utilise la transmission différentielle?</div>
+                <p>a) UART &nbsp;&nbsp;&nbsp; b) I²C &nbsp;&nbsp;&nbsp; c) SPI &nbsp;&nbsp;&nbsp; d) CAN</p>
+            </div>
+            <div class="result">
+                ✅ Réponse: <strong>d) CAN</strong><br>
+                <em>Explication: CAN utilise deux fils (CAN_H et CAN_L) avec transmission différentielle pour une meilleure immunité au bruit.</em>
+            </div>
+
+            <div class="question">
+                <div class="question-title">Q5. Combien de fils minimum pour connecter 5 esclaves en SPI?</div>
+                <p>a) 4 &nbsp;&nbsp;&nbsp; b) 6 &nbsp;&nbsp;&nbsp; c) 8 &nbsp;&nbsp;&nbsp; d) 10</p>
+            </div>
+            <div class="solution">
+                <div class="formula">
+                    SPI nécessite:<br>
+                    - 3 fils partagés: MOSI, MISO, SCK<br>
+                    - 1 fil SS (Slave Select) par esclave: 5 fils<br>
+                    - Total: 3 + 5 = 8 fils (sans compter GND)
+                </div>
+                <div class="result">
+                    ✅ Réponse: <strong>c) 8 fils</strong><br>
+                    <em>Avec GND: 9 fils au total (MOSI, MISO, SCK, SS1, SS2, SS3, SS4, SS5, GND)</em>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXERCICE 6 -->
+        <div class="exercise">
+            <div class="exercise-title">Exercice 6 - Choix de protocole</div>
+            
+            <div class="question">
+                <div class="question-title">Énoncé</div>
+                <p>Vous devez concevoir un système embarqué avec:</p>
+                <ul>
+                    <li>1 écran LCD</li>
+                    <li>1 carte SD</li>
+                    <li>1 horloge RTC</li>
+                    <li>3 capteurs de température</li>
+                </ul>
+                <p>Quels protocoles choisiriez-vous pour chaque composant et pourquoi?</p>
+            </div>
+
+            <div class="solution">
+                <h4>📝 Solution détaillée</h4>
+                
+                <table>
+                    <tr>
+                        <th>Composant</th>
+                        <th>Protocole recommandé</th>
+                        <th>Justification</th>
+                    </tr>
+                    <tr class="protocol-i2c">
+                        <td><strong>Écran LCD</strong></td>
+                        <td>I²C</td>
+                        <td>
+                            • Module LCD I²C avec PCF8574 (adresse 0x27 ou 0x3F)<br>
+                            • Seulement 2 fils nécessaires (SDA, SCL)<br>
+                            • Économise des broches du microcontrôleur<br>
+                            • Vitesse suffisante pour l'affichage texte
+                        </td>
+                    </tr>
+                    <tr class="protocol-spi">
+                        <td><strong>Carte SD</strong></td>
+                        <td>SPI</td>
+                        <td>
+                            • Haute vitesse nécessaire pour transfert de fichiers<br>
+                            • Les cartes SD supportent SPI (mode compatible)<br>
+                            • Peut atteindre plusieurs MHz<br>
+                            • Full-duplex pour lecture/écriture efficace
+                        </td>
+                    </tr>
+                    <tr class="protocol-i2c">
+                        <td><strong>Horloge RTC</strong></td>
+                        <td>I²C</td>
+                        <td>
+                            • DS1307 ou DS3231 utilisent I²C (adresse 0x68)<br>
+                            • Vitesse faible suffisante (lecture occasionnelle)<br>
+                            • Partage le bus I²C avec l'écran LCD<br>
+                            • Seulement 2 fils
+                        </td>
+                    </tr>
+                    <tr class="protocol-i2c">
+                        <td><strong>3 capteurs température</strong></td>
+                        <td>I²C</td>
+                        <td>
+                            • Plusieurs capteurs sur le même bus I²C<br>
+                            • Chaque capteur a une adresse différente<br>
+                            • Exemples: DS18B20, LM75, MCP9808<br>
+                            • Économie de broches (tous sur SDA/SCL)<br>
+                            • Vitesse suffisante pour mesures périodiques
+                        </td>
+                    </tr>
+                </table>
+
+                <h4>🔌 Schéma de connexion proposé</h4>
+                <div class="code-block">
+Microcontrôleur (Arduino/STM32)
+├── I²C (SDA, SCL) ─┬─ LCD I²C (0x27)
+│                   ├─ RTC DS1307 (0x68)
+│                   ├─ Capteur Temp 1 (0x48)
+│                   ├─ Capteur Temp 2 (0x49)
+│                   └─ Capteur Temp 3 (0x4A)
+│
+└── SPI (MOSI, MISO, SCK, SS) ─── Carte SD
+
+Résistances pull-up 4.7kΩ sur SDA et SCL
+                </div>
+
+                <h4>📊 Bilan des broches utilisées</h4>
+                <div class="formula">
+                    • I²C: 2 broches (SDA, SCL) pour 5 périphériques<br>
+                    • SPI: 4 broches (MOSI, MISO, SCK, SS) pour la carte SD<br>
+                    • Total: 6 broches GPIO du microcontrôleur<br>
+                    • + GND et VCC communs
+                </div>
+
+                <div class="result">
+                    ✅ <strong>Solution optimale:</strong> Utilisation de I²C pour les périphériques lents/moyens et SPI pour la carte SD (haute vitesse). Cette configuration minimise l'utilisation des broches tout en optimisant les performances.
+                </div>
+            </div>
+        </div>
+
+        <!-- EXERCICE 7 -->
+        <div class="exercise protocol-can">
+            <div class="exercise-title">Exercice 7 - Distance maximale</div>
+            
+            <div class="question">
+                <div class="question-title">Énoncé</div>
+                <p>Vous devez connecter deux cartes Arduino distantes de <strong>50 mètres</strong>. Quel(s) protocole(s) pouvez-vous utiliser et lesquels sont impossibles?</p>
+            </div>
+
+            <div class="solution">
+                <h4>📝 Analyse par protocole</h4>
+                
+                <table>
+                    <tr>
+                        <th>Protocole</th>
+                        <th>Distance max</th>
+                        <th>Utilisable à 50m?</th>
+                        <th>Explication</th>
+                    </tr>
+                    <tr>
+                        <td><strong>UART (TTL)</strong></td>
+                        <td>≈ 1-2 m</td>
+                        <td>❌ NON</td>
+                        <td>Signaux TTL (0V/5V) se dégradent rapidement avec la distance et les interférences</td>
+                    </tr>
+                    <tr>
+                        <td><strong>RS-232</strong></td>
+                        <td>≈ 15 m</td>
+                        <td>❌ NON</td>
+                        <td>Limite standard à 15m. Possible jusqu'à 30m dans de bonnes conditions mais pas fiable à 50m</td>
+                    </tr>
+                    <tr>
+                        <td><strong>I²C</strong></td>
+                        <td>≈ 1 m</td>
+                        <td>❌ NON</td>
+                        <td>Capacitance du bus limite la distance. Au-delà d'1m, les signaux sont trop dégradés</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SPI</strong></td>
+                        <td>< 1 m</td>
+                        <td>❌ NON</td>
+                        <td>Conçu pour communication sur circuit imprimé, très sensible aux interférences sur longue distance</td>
+                    </tr>
+                    <tr style="background: #d4edda;">
+                        <td><strong>CAN Bus</strong></td>
+                        <td>≈ 1000 m</td>
+                        <td>✅ OUI</td>
+                        <td>Transmission différentielle robuste. À 50m, vitesse possible: 500 kbps - 1 Mbps</td>
+                    </tr>
+                    <tr style="background: #d4edda;">
+                        <td><strong>RS-485</strong></td>
+                        <td>≈ 1200 m</td>
+                        <td>✅ OUI</td>
+                        <td>Extension de UART avec transmission différentielle. Idéal pour 50m à 115200 bauds ou plus</td>
+                    </tr>
+                </table>
+
+                <h4>🎯 Solutions recommandées</h4>
+                
+                <div class="solution">
+                    <h5>Solution 1: CAN Bus (Recommandé pour robustesse)</h5>
+                    <div class="step">Matériel: 2× module CAN (MCP2515 + TJA1050) ou microcontrôleur avec CAN intégré</div>
+                    <div class="step">Vitesse possible à 50m: 500 kbps à 1 Mbps</div>
+                    <div class="step">Câblage: Paire torsadée blindée (CAN_H, CAN_L, GND)</div>
+                    <div class="step">Terminaisons: 120Ω aux deux extrémités</div>
+                    <div class="step">Avantages: Très robuste, multi-maîtres, détection d'erreurs CRC</div>
+                    
+                    <div class="code-block">
+Arduino 1                                Arduino 2
+[MCP2515] ----CAN_H----(50m)----CAN_H---- [MCP2515]
+   |      ----CAN_L----(50m)----CAN_L----    |
+  120Ω                                      120Ω
+                    </div>
+                </div>
+
+                <div class="solution">
+                    <h5>Solution 2: RS-485 (Recommandé pour simplicité)</h5>
+                    <div class="step">Matériel: 2× module RS-485 (MAX485 ou équivalent)</div>
+                    <div class="step">Vitesse possible à 50m: jusqu'à 1 Mbps</div>
+                    <div class="step">Câblage: Paire torsadée (A, B, GND)</div>
+                    <div class="step">Terminaisons: 120Ω aux extrémités</div>
+                    <div class="step">Avantages: Simple à mettre en œuvre, compatible avec UART/Serial</div>
+                    
+                    <div class="code-block">
+Arduino 1                                Arduino 2
+TX → [MAX485] ----A/+----(50m)----A/+---- [MAX485] → RX
+RX ←    |     ----B/-----(50m)----B/----- ← |    ← TX
+       120Ω                                 120Ω
+                    </div>
+                </div>
+
+                <h4>⚡ Tableau de performance à 50 mètres</h4>
+                <table>
+                    <tr>
+                        <th>Solution</th>
+                        <th>Vitesse max</th>
+                        <th>Coût</th>
+                        <th>Complexité</th>
+                        <th>Robustesse</th>
+                    </tr>
+                    <tr>
+                        <td>CAN Bus</td>
+                        <td>1 Mbps</td>
+                        <td>Moyen</td>
+                        <td>Moyenne</td>
+                        <td>Excellente</td>
+                    </tr>
+                    <tr>
+                        <td>RS-485</td>
+                        <td>1 Mbps</td>
+                        <td>Faible</td>
+                        <td>Faible</td>
+                        <td>Très bonne</td>
+                    </tr>
+                </table>
+
+                <div class="result">
+                    ✅ <strong>Réponse finale:</strong><br>
+                    • <strong>Protocoles utilisables:</strong> CAN Bus et RS-485<br>
+                    • <strong>Protocoles impossibles:</strong> UART (TTL), RS-232, I²C, SPI<br>
+                    • <strong>Recommandation:</strong> RS-485 pour simplicité et coût, CAN Bus pour applications critiques
+                </div>
+
+                <div class="important">
+                    ⚠️ <strong>Important:</strong> Pour toute communication longue distance:<br>
+                    • Utilisez une paire torsadée blindée<br>
+                    • Ajoutez des terminaisons 120Ω aux extrémités<br>
+                    • Connectez les masses (GND) des deux systèmes<br>
+                    • Protégez contre les surtensions (TVS diodes)<br>
+                    • Testez avec différentes vitesses pour trouver l'optimum
+                </div>
+            </div>
+        </div>
+
+        <!-- TABLEAU RÉCAPITULATIF -->
+        <div class="exercise">
+            <div class="exercise-title">📊 Tableau récapitulatif des protocoles</div>
+            
+            <table class="comparison-table">
+                <tr>
+                    <th>Critère</th>
+                    <th>UART</th>
+                    <th>I²C</th>
+                    <th>SPI</th>
+                    <th>CAN</th>
+                </tr>
+                <tr>
+                    <td><strong>Fils</strong></td>
+                    <td>2 + GND</td>
+                    <td>2 + GND</td>
+                    <td>4 + GND*</td>
+                    <td>2 + GND</td>
+                </tr>
+                <tr>
+                    <td><strong>Type</strong></td>
+                    <td>Asynchrone</td>
+                    <td>Synchrone</td>
+                    <td>Synchrone</td>
+                    <td>Synchrone</td>
+                </tr>
+                <tr>
+                    <td><strong>Duplex</strong></td>
+                    <td>Full</td>
+                    <td>Half</td>
+                    <td>Full</td>
+                    <td>Half</td>
+                </tr>
+                <tr>
+                    <td><strong>Vitesse max</strong></td>
+                    <td>≤ 115 kbps</td>
+                    <td>≤ 3.4 Mbps</td>
+                    <td>≤ 50 Mbps</td>
+                    <td>≤ 1 Mbps</td>
+                </tr>
+                <tr>
+                    <td><strong>Maîtres</strong></td>
+                    <td>1</td>
+                    <td>Multi</td>
+                    <td>1</td>
+                    <td>Multi</td>
+                </tr>
+                <tr>
+                    <td><strong>Distance max</strong></td>
+                    <td>15 m</td>
+                    <td>1 m</td>
+                    <td>< 1 m</td>
+                    <td>1000 m</td>
+                </tr>
+                <tr>
+                    <td><strong>Complexité</strong></td>
+                    <td>Simple</td>
+                    <td>Moyenne</td>
+                    <td>Simple</td>
+                    <td>Élevée</td>
+                </tr>
+                <tr>
+                    <td><strong>Usage typique</strong></td>
+                    <td>Debug, GPS, Bluetooth</td>
+                    <td>Capteurs, RTC, EEPROM</td>
+                    <td>Écrans, SD card, Flash</td>
+                    <td>Automobile, Industrie</td>
+                </tr>
+                <tr>
+                    <td><strong>Avantages</strong></td>
+                    <td>Simple, universel</td>
+                    <td>Peu de fils, multi-périph</td>
+                    <td>Très rapide, full-duplex</td>
+                    <td>Robuste, temps réel</td>
+                </tr>
+                <tr>
+                    <td><strong>Inconvénients</strong></td>
+                    <td>Lent, point-à-point</td>
+                    <td>Vitesse limitée</td>
+                    <td>Beaucoup de fils</td>
+                    <td>Complexe, coûteux</td>
+                </tr>
+            </table>
+            <p style="font-size: 0.9em; color: #666; margin-top: 10px;">* SPI: +1 fil SS par esclave supplémentaire</p>
+        </div>
+
+        <!-- CONSEILS PRATIQUES -->
+        <div class="info-box">
+            <h3>💡 Conseils pour choisir le bon protocole</h3>
+            <ul style="margin-left: 20px;">
+                <li><strong>UART:</strong> Débogage, communication série simple, modules Bluetooth/WiFi</li>
+                <li><strong>I²C:</strong> Nombreux capteurs sur peu de broches, RTC, EEPROM, LCD</li>
+                <li><strong>SPI:</strong> Transferts rapides (écrans TFT, cartes SD, mémoires Flash)</li>
+                <li><strong>CAN:</strong> Environnements bruités, applications critiques, automobile</li>
+            </ul>
+        </div>
+
+        <footer style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 2px solid #ddd; color: #666;">
+            <p><strong>Centre Lycée Moulay Youssef - Tanger</strong></p>
+            <p>BTS Électronique et Informatique Industrielle</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">Document de correction - Protocoles de Communication Série</p>
+        </footer>
+    </div>
+</body>
+</html>

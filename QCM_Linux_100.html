@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--primary:#f9a825;--secondary:#ff6f00;--accent:#ffca28;--bg-dark:#0d1117;--bg-card:#161b22;--text-primary:#e6edf3;--text-secondary:#8b949e;--border:#30363d;--success:#3fb950;--error:#f85149;--warning:#d29922;--ch1:#f9a825;--ch2:#42a5f5;--ch3:#66bb6a;--ch4:#ab47bc;--ch5:#ef5350;--ch6:#26c6da;--ch7:#ffa726;--ch8:#ec407a}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Outfit',sans-serif;background:var(--bg-dark);color:var(--text-primary);line-height:1.6}
+        .bg-pattern{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(ellipse at 20% 20%,rgba(249,168,37,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(255,111,0,0.08) 0%,transparent 50%)}
+        .header{background:linear-gradient(135deg,var(--bg-card) 0%,rgba(22,27,34,0.98) 100%);border-bottom:5px solid var(--primary);padding:45px 20px;text-align:center}
+        .header .logo{font-size:4.5rem;margin-bottom:12px;text-shadow:0 0 40px rgba(249,168,37,0.5)}
+        .header h1{font-size:2.8rem;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--secondary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
+        .header .subtitle{font-size:1.15rem;color:var(--text-secondary)}
+        .badges{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:18px}
+        .badge{padding:10px 20px;border-radius:25px;font-size:0.9rem;font-weight:600}
+        .badge.q{background:var(--secondary);color:white}.badge.ch{background:var(--primary);color:var(--bg-dark)}.badge.yr{background:var(--success);color:var(--bg-dark)}
+        .progress-section{position:sticky;top:0;z-index:100;background:rgba(13,17,23,0.95);backdrop-filter:blur(15px);padding:16px 20px;border-bottom:1px solid var(--border)}
+        .progress-inner{max-width:1000px;margin:0 auto}
+        .progress-stats{display:flex;justify-content:space-between;margin-bottom:10px;font-size:0.95rem;color:var(--text-secondary)}
+        .progress-stats span{color:var(--primary);font-weight:700;font-family:'JetBrains Mono',monospace}
+        .progress-bar{height:12px;background:var(--border);border-radius:12px;overflow:hidden}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--ch1),var(--ch4),var(--primary));border-radius:12px;transition:width 0.4s;width:0%}
+        .main{max-width:1000px;margin:0 auto;padding:35px 20px}
+        .section-header{display:flex;align-items:center;gap:18px;margin:45px 0 22px;padding:22px;background:var(--bg-card);border-radius:16px;border-left:6px solid}
+        .section-header.ch1{border-color:var(--ch1)}.section-header.ch2{border-color:var(--ch2)}.section-header.ch3{border-color:var(--ch3)}.section-header.ch4{border-color:var(--ch4)}.section-header.ch5{border-color:var(--ch5)}.section-header.ch6{border-color:var(--ch6)}.section-header.ch7{border-color:var(--ch7)}.section-header.ch8{border-color:var(--ch8)}
+        .section-icon{width:65px;height:65px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2.2rem}
+        .section-header.ch1 .section-icon{background:rgba(249,168,37,0.15)}.section-header.ch2 .section-icon{background:rgba(66,165,245,0.15)}.section-header.ch3 .section-icon{background:rgba(102,187,106,0.15)}.section-header.ch4 .section-icon{background:rgba(171,71,188,0.15)}.section-header.ch5 .section-icon{background:rgba(239,83,80,0.15)}.section-header.ch6 .section-icon{background:rgba(38,198,218,0.15)}.section-header.ch7 .section-icon{background:rgba(255,167,38,0.15)}.section-header.ch8 .section-icon{background:rgba(236,64,122,0.15)}
+        .section-info h2{font-size:1.45rem;font-weight:700}.section-info p{color:var(--text-secondary);font-size:0.95rem}
+        .section-header.ch1 h2{color:var(--ch1)}.section-header.ch2 h2{color:var(--ch2)}.section-header.ch3 h2{color:var(--ch3)}.section-header.ch4 h2{color:var(--ch4)}.section-header.ch5 h2{color:var(--ch5)}.section-header.ch6 h2{color:var(--ch6)}.section-header.ch7 h2{color:var(--ch7)}.section-header.ch8 h2{color:var(--ch8)}
+        .qcard{background:var(--bg-card);border-radius:14px;padding:24px;margin-bottom:16px;border:1px solid var(--border);position:relative}
+        .qcard::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%;border-radius:5px 0 0 5px}
+        .qcard.ch1::before{background:var(--ch1)}.qcard.ch2::before{background:var(--ch2)}.qcard.ch3::before{background:var(--ch3)}.qcard.ch4::before{background:var(--ch4)}.qcard.ch5::before{background:var(--ch5)}.qcard.ch6::before{background:var(--ch6)}.qcard.ch7::before{background:var(--ch7)}.qcard.ch8::before{background:var(--ch8)}
+        .qcard.answered::after{content:'✓';position:absolute;top:14px;right:14px;width:28px;height:28px;background:var(--success);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem;color:white;animation:pop 0.3s}
+        @keyframes pop{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+        .qheader{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
+        .qnum{min-width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1rem}
+        .qcard.ch1 .qnum{background:rgba(249,168,37,0.15);color:var(--ch1)}.qcard.ch2 .qnum{background:rgba(66,165,245,0.15);color:var(--ch2)}.qcard.ch3 .qnum{background:rgba(102,187,106,0.15);color:var(--ch3)}.qcard.ch4 .qnum{background:rgba(171,71,188,0.15);color:var(--ch4)}.qcard.ch5 .qnum{background:rgba(239,83,80,0.15);color:var(--ch5)}.qcard.ch6 .qnum{background:rgba(38,198,218,0.15);color:var(--ch6)}.qcard.ch7 .qnum{background:rgba(255,167,38,0.15);color:var(--ch7)}.qcard.ch8 .qnum{background:rgba(236,64,122,0.15);color:var(--ch8)}
+        .qtext{font-size:1.05rem;font-weight:500;flex:1;padding-top:10px;padding-right:40px}
+        .qtext code{background:rgba(249,168,37,0.15);color:var(--primary);padding:3px 7px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:0.9rem}
+        .opts{display:grid;gap:12px}
+        .opt{display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--bg-dark);border:2px solid var(--border);border-radius:12px;cursor:pointer;transition:all 0.25s}
+        .opt:hover{border-color:var(--primary);transform:translateX(4px)}
+        .opt.selected{border-color:var(--primary);background:rgba(249,168,37,0.1)}
+        .opt.selected .marker{background:var(--primary);color:var(--bg-dark)}
+        .marker{min-width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:0.85rem;background:var(--border);color:var(--text-secondary);transition:all 0.25s}
+        .otxt{flex:1;font-size:0.95rem}
+        .otxt code{background:rgba(171,71,188,0.15);color:var(--ch4);padding:3px 6px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:0.88rem}
+        .submit-section{text-align:center;padding:55px 20px;margin-top:35px}
+        .submit-btn{padding:20px 65px;font-size:1.25rem;font-weight:700;font-family:'Outfit',sans-serif;background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;border:none;border-radius:18px;cursor:pointer;transition:all 0.3s;text-transform:uppercase;letter-spacing:2px}
+        .submit-btn:hover{transform:translateY(-4px);box-shadow:0 18px 45px rgba(249,168,37,0.35)}
+        .submit-btn:disabled{background:var(--border);cursor:not-allowed;transform:none;box-shadow:none}
+        .submit-warning{margin-top:18px;color:var(--warning);display:none;font-size:1.05rem}
+        .results{display:none;margin-top:55px;padding:45px;background:var(--bg-card);border-radius:22px;border:3px solid var(--primary)}
+        .results h2{text-align:center;font-size:2.4rem;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:35px}
+        .score-display{display:flex;justify-content:center;align-items:center;gap:35px;flex-wrap:wrap;margin:35px 0}
+        .score-circle{width:170px;height:170px;border-radius:50%;background:conic-gradient(var(--primary) 0deg,var(--border) 0deg);display:flex;align-items:center;justify-content:center}
+        .score-inner{width:140px;height:140px;border-radius:50%;background:var(--bg-card);display:flex;flex-direction:column;align-items:center;justify-content:center}
+        .score-pct{font-size:3rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--primary)}
+        .score-lbl{font-size:0.85rem;color:var(--text-secondary);text-transform:uppercase}
+        .score-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+        .score-card{padding:22px;background:var(--bg-dark);border-radius:14px;text-align:center}
+        .score-card .num{font-size:2.4rem;font-weight:800;font-family:'JetBrains Mono',monospace}
+        .score-card.correct .num{color:var(--success)}.score-card.incorrect .num{color:var(--error)}.score-card.total .num{color:var(--accent)}
+        .score-card .lbl{font-size:0.9rem;color:var(--text-secondary);margin-top:6px}
+        .appreciation{text-align:center;padding:35px;margin-top:35px;background:linear-gradient(135deg,rgba(249,168,37,0.1),rgba(255,111,0,0.1));border-radius:18px}
+        .appreciation h4{font-size:1.7rem;margin-bottom:10px}.appreciation p{color:var(--text-secondary);font-size:1.05rem}
+        .appreciation.excellent h4{color:var(--success)}.appreciation.good h4{color:var(--primary)}.appreciation.average h4{color:var(--warning)}.appreciation.poor h4{color:var(--error)}
+        .answers-section{margin-top:45px}
+        .answers-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:12px}
+        .answers-header h3{font-size:1.6rem;color:var(--secondary)}
+        .filter-btns{display:flex;gap:10px}
+        .filter-btn{padding:8px 16px;border:2px solid var(--border);border-radius:20px;background:transparent;color:var(--text-secondary);cursor:pointer;font-family:'Outfit',sans-serif;font-size:0.85rem;transition:all 0.3s}
+        .filter-btn:hover,.filter-btn.active{border-color:var(--primary);color:var(--primary)}
+        .filter-btn.active{background:rgba(249,168,37,0.1)}
+        .ans-card{background:var(--bg-dark);border-radius:12px;padding:18px;margin-bottom:12px;border-left:5px solid;display:flex;align-items:flex-start;gap:14px}
+        .ans-card.correct{border-color:var(--success)}.ans-card.incorrect{border-color:var(--error)}
+        .ans-card.hidden{display:none}
+        .ans-status{min-width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+        .ans-status.correct{background:rgba(63,185,80,0.2);color:var(--success)}.ans-status.incorrect{background:rgba(248,81,73,0.2);color:var(--error)}
+        .ans-content{flex:1}
+        .ans-q{font-weight:600;margin-bottom:8px;font-size:0.95rem}
+        .ans-info{display:flex;gap:14px;flex-wrap:wrap;font-size:0.85rem}
+        .ans-info span{padding:4px 10px;border-radius:6px}
+        .your-ans{background:rgba(139,148,158,0.1);color:var(--text-secondary)}.correct-ans{background:rgba(63,185,80,0.15);color:var(--success)}
+        .footer{text-align:center;padding:35px;margin-top:45px;border-top:1px solid var(--border);color:var(--text-secondary)}
+        .footer .author{color:var(--primary);font-weight:600}
+        @media(max-width:768px){.header h1{font-size:2.1rem}.section-header{flex-direction:column;text-align:center}.qheader{flex-direction:column}.score-display{flex-direction:column}.score-cards{grid-template-columns:1fr}.submit-btn{padding:16px 45px;font-size:1.05rem}}
+    </style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+<header class="header">
+    <div class="logo">🐧</div>
+    <h1>QCM Linux Complet</h1>
+    <p class="subtitle">Evaluation des Commandes Shell et Administration Systeme</p>
+    <div class="badges">
+        <span class="badge q">📝 100 Questions</span>
+        <span class="badge ch">📚 8 Chapitres</span>
+    </div>
+</header>
+<div class="progress-section">
+    <div class="progress-inner">
+        <div class="progress-stats">
+            <span>Progression : <span id="progressValue">0/100</span></span>
+            <span>Complete : <span id="progressPercent">0%</span></span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
+    </div>
+</div>
+<main class="main" id="questionsContainer"></main>
+<div class="main">
+    <div class="submit-section">
+        <button class="submit-btn" id="submitBtn" onclick="submitQuiz()">🐧 Valider mes 100 Reponses</button>
+        <p class="submit-warning" id="submitWarning">⚠️ Repondez a toutes les questions avant de valider</p>
+    </div>
+    <div class="results" id="results">
+        <h2>📊 Resultats du QCM</h2>
+        <div class="score-display">
+            <div class="score-circle" id="scoreCircle">
+                <div class="score-inner">
+                    <span class="score-pct" id="scorePct">0%</span>
+                    <span class="score-lbl">Score</span>
+                </div>
+            </div>
+            <div class="score-cards">
+                <div class="score-card correct"><div class="num" id="correctCount">0</div><div class="lbl">Correctes</div></div>
+                <div class="score-card incorrect"><div class="num" id="incorrectCount">0</div><div class="lbl">Incorrectes</div></div>
+                <div class="score-card total"><div class="num">100</div><div class="lbl">Total</div></div>
+            </div>
+        </div>
+        <div class="appreciation" id="appreciation"><h4 id="appTitle"></h4><p id="appText"></p></div>
+        <div class="answers-section">
+            <div class="answers-header">
+                <h3>📋 Correction Detaillee</h3>
+                <div class="filter-btns">
+                    <button class="filter-btn active" onclick="filterAnswers('all',this)">Toutes</button>
+                    <button class="filter-btn" onclick="filterAnswers('correct',this)">Correctes</button>
+                    <button class="filter-btn" onclick="filterAnswers('incorrect',this)">Incorrectes</button>
+                </div>
+            </div>
+            <div id="answersContainer"></div>
+        </div>
+    </div>
+</div>
+<footer class="footer">
+</footer>
+<script>
+const questions = [
+// CH1: Introduction (12 questions)
+{q:1,ch:1,txt:"Qui a cree le noyau Linux ?",opts:["Richard Stallman","Linus Torvalds","Dennis Ritchie","Bill Gates"],ans:"b"},
+{q:2,ch:1,txt:"En quelle annee Linux a-t-il ete cree ?",opts:["1985","1989","1991","1995"],ans:"c"},
+{q:3,ch:1,txt:"Quel est le shell par defaut sur la plupart des distributions Linux ?",opts:["zsh","sh","bash","fish"],ans:"c"},
+{q:4,ch:1,txt:"Que signifie GNU ?",opts:["General Network Utility","GNU's Not Unix","Global New Unix","Great New Utility"],ans:"b"},
+{q:5,ch:1,txt:"Quel repertoire contient les fichiers de configuration ?",opts:["/bin","/etc","/var","/home"],ans:"b"},
+{q:6,ch:1,txt:"Quel repertoire contient les repertoires des utilisateurs ?",opts:["/root","/usr","/home","/var"],ans:"c"},
+{q:7,ch:1,txt:"Quel repertoire contient les fichiers temporaires ?",opts:["/tmp","/var","/opt","/mnt"],ans:"a"},
+{q:8,ch:1,txt:"Quel repertoire est le home de l'utilisateur root ?",opts:["/home/root","/root","/admin","/superuser"],ans:"b"},
+{q:9,ch:1,txt:"Quel caractere termine le prompt d'un utilisateur normal ?",opts:["#","$","@","%"],ans:"b"},
+{q:10,ch:1,txt:"Quel caractere termine le prompt de root ?",opts:["$","#","@","!"],ans:"b"},
+{q:11,ch:1,txt:"Quelle distribution est basee sur Debian ?",opts:["Fedora","CentOS","Ubuntu","Arch Linux"],ans:"c"},
+{q:12,ch:1,txt:"Quel gestionnaire de paquets utilise Ubuntu ?",opts:["yum","dnf","pacman","apt"],ans:"d"},
+// CH2: Navigation (13 questions)
+{q:13,ch:2,txt:"Quelle commande affiche le repertoire courant ?",opts:["cd","ls","pwd","dir"],ans:"c"},
+{q:14,ch:2,txt:"Que signifie <code>pwd</code> ?",opts:["Print Working Directory","Path Working Dir","Present Work Directory","Print Where Directory"],ans:"a"},
+{q:15,ch:2,txt:"Quelle commande permet de changer de repertoire ?",opts:["pwd","ls","cd","mv"],ans:"c"},
+{q:16,ch:2,txt:"Que fait <code>cd ..</code> ?",opts:["Va au home","Va a la racine","Remonte d'un niveau","Reste sur place"],ans:"c"},
+{q:17,ch:2,txt:"Que fait <code>cd ~</code> ?",opts:["Va a la racine","Va au repertoire home","Va au repertoire precedent","Va au parent"],ans:"b"},
+{q:18,ch:2,txt:"Que fait <code>cd -</code> ?",opts:["Va a la racine","Va au home","Va au repertoire precedent","Affiche le chemin"],ans:"c"},
+{q:19,ch:2,txt:"Quelle commande liste les fichiers ?",opts:["cd","pwd","dir","ls"],ans:"d"},
+{q:20,ch:2,txt:"Quelle option de <code>ls</code> affiche les fichiers caches ?",opts:["-l","-h","-a","-r"],ans:"c"},
+{q:21,ch:2,txt:"Quelle option de <code>ls</code> affiche le format detaille ?",opts:["-a","-l","-h","-R"],ans:"b"},
+{q:22,ch:2,txt:"Que fait <code>ls -lh</code> ?",opts:["Liste recursive","Liste caches","Liste detaillee avec tailles lisibles","Liste triee"],ans:"c"},
+{q:23,ch:2,txt:"Quel symbole represente le repertoire courant ?",opts:["~",".","..","*"],ans:"b"},
+{q:24,ch:2,txt:"Quel symbole represente le repertoire parent ?",opts:["~",".","..","*"],ans:"c"},
+{q:25,ch:2,txt:"Un chemin absolu commence par quel caractere ?",opts:["~",".","/","$"],ans:"c"},
+// CH3: Fichiers (14 questions)
+{q:26,ch:3,txt:"Quelle commande cree un fichier vide ?",opts:["create","new","touch","make"],ans:"c"},
+{q:27,ch:3,txt:"Quelle commande cree un repertoire ?",opts:["md","mkdir","mkfolder","newdir"],ans:"b"},
+{q:28,ch:3,txt:"Quelle option de <code>mkdir</code> cree une arborescence ?",opts:["-r","-p","-a","-f"],ans:"b"},
+{q:29,ch:3,txt:"Quelle commande copie des fichiers ?",opts:["cp","mv","copy","duplicate"],ans:"a"},
+{q:30,ch:3,txt:"Quelle option de <code>cp</code> copie recursivement ?",opts:["-a","-f","-r","-v"],ans:"c"},
+{q:31,ch:3,txt:"Quelle commande deplace ou renomme ?",opts:["cp","mv","rn","move"],ans:"b"},
+{q:32,ch:3,txt:"Quelle commande supprime des fichiers ?",opts:["del","remove","rm","erase"],ans:"c"},
+{q:33,ch:3,txt:"Quelle option de <code>rm</code> supprime recursivement ?",opts:["-f","-r","-a","-d"],ans:"b"},
+{q:34,ch:3,txt:"Quelle commande supprime un repertoire vide ?",opts:["rm","rmdir","deldir","rd"],ans:"b"},
+{q:35,ch:3,txt:"Que fait <code>rm -rf</code> ?",opts:["Supprime fichier","Supprime recursivement sans confirmation","Renomme fichier","Cree dossier"],ans:"b"},
+{q:36,ch:3,txt:"Quelle commande affiche le contenu d'un fichier ?",opts:["show","print","cat","display"],ans:"c"},
+{q:37,ch:3,txt:"Quelle commande affiche les 10 premieres lignes ?",opts:["top","head","first","start"],ans:"b"},
+{q:38,ch:3,txt:"Quelle commande affiche les dernieres lignes ?",opts:["end","last","tail","bottom"],ans:"c"},
+{q:39,ch:3,txt:"Quelle option de <code>tail</code> suit un fichier en temps reel ?",opts:["-r","-l","-f","-w"],ans:"c"},
+// CH4: Permissions (13 questions)
+{q:40,ch:4,txt:"Que signifie <code>r</code> dans les permissions ?",opts:["Run","Read","Root","Remove"],ans:"b"},
+{q:41,ch:4,txt:"Que signifie <code>w</code> dans les permissions ?",opts:["Wait","Work","Write","Watch"],ans:"c"},
+{q:42,ch:4,txt:"Que signifie <code>x</code> dans les permissions ?",opts:["Exit","Extra","Execute","Exclude"],ans:"c"},
+{q:43,ch:4,txt:"Quelle valeur octale correspond a <code>rwx</code> ?",opts:["4","5","6","7"],ans:"d"},
+{q:44,ch:4,txt:"Quelle valeur octale correspond a <code>rw-</code> ?",opts:["4","5","6","7"],ans:"c"},
+{q:45,ch:4,txt:"Quelle valeur octale correspond a <code>r--</code> ?",opts:["1","2","4","5"],ans:"c"},
+{q:46,ch:4,txt:"Que signifie <code>chmod 755</code> ?",opts:["rwxr-xr-x","rwxrwxrwx","rw-r--r--","rwx------"],ans:"a"},
+{q:47,ch:4,txt:"Que signifie <code>chmod 644</code> ?",opts:["rwxr-xr-x","rwxrwxrwx","rw-r--r--","rwx------"],ans:"c"},
+{q:48,ch:4,txt:"Quelle commande change les permissions ?",opts:["chown","chgrp","chmod","chperm"],ans:"c"},
+{q:49,ch:4,txt:"Quelle commande change le proprietaire ?",opts:["chmod","chown","chgrp","owner"],ans:"b"},
+{q:50,ch:4,txt:"Quelle commande change le groupe ?",opts:["chmod","chown","chgrp","group"],ans:"c"},
+{q:51,ch:4,txt:"Que fait <code>chmod u+x fichier</code> ?",opts:["Retire execution","Ajoute execution au proprietaire","Ajoute lecture","Change proprietaire"],ans:"b"},
+{q:52,ch:4,txt:"Que signifie <code>sudo</code> ?",opts:["Super User Delete","Super User Do","System User Directory","Switch User Domain"],ans:"b"},
+// CH5: Processus (12 questions)
+{q:53,ch:5,txt:"Quelle commande liste les processus du terminal ?",opts:["top","ps","proc","list"],ans:"b"},
+{q:54,ch:5,txt:"Quelle option de <code>ps</code> affiche tous les processus ?",opts:["ps -a","ps aux","ps -p","ps -l"],ans:"b"},
+{q:55,ch:5,txt:"Quelle commande affiche les processus en temps reel ?",opts:["ps","proc","top","monitor"],ans:"c"},
+{q:56,ch:5,txt:"Quelle commande termine un processus par PID ?",opts:["stop","end","kill","terminate"],ans:"c"},
+{q:57,ch:5,txt:"Quel signal force l'arret d'un processus ?",opts:["SIGTERM","SIGKILL","SIGSTOP","SIGHUP"],ans:"b"},
+{q:58,ch:5,txt:"Que fait <code>kill -9 PID</code> ?",opts:["Pause le processus","Termine proprement","Force l'arret","Redemarre"],ans:"c"},
+{q:59,ch:5,txt:"Quelle commande tue par nom ?",opts:["killname","killall","killpid","killproc"],ans:"b"},
+{q:60,ch:5,txt:"Quel caractere lance une commande en arriere-plan ?",opts:["#","$","&","@"],ans:"c"},
+{q:61,ch:5,txt:"Quelle commande liste les jobs en arriere-plan ?",opts:["bg","fg","jobs","list"],ans:"c"},
+{q:62,ch:5,txt:"Quel raccourci interrompt un processus ?",opts:["Ctrl+Z","Ctrl+C","Ctrl+D","Ctrl+X"],ans:"b"},
+{q:63,ch:5,txt:"Quel raccourci suspend un processus ?",opts:["Ctrl+Z","Ctrl+C","Ctrl+D","Ctrl+S"],ans:"a"},
+{q:64,ch:5,txt:"Quelle commande gere les services systemd ?",opts:["service","daemon","systemctl","sysctl"],ans:"c"},
+// CH6: Reseau (12 questions)
+{q:65,ch:6,txt:"Quelle commande affiche la configuration reseau (moderne) ?",opts:["ifconfig","ipconfig","ip addr","netstat"],ans:"c"},
+{q:66,ch:6,txt:"Quelle commande teste la connectivite reseau ?",opts:["test","check","ping","connect"],ans:"c"},
+{q:67,ch:6,txt:"Quelle option limite le nombre de pings ?",opts:["-n","-c","-t","-l"],ans:"b"},
+{q:68,ch:6,txt:"Quelle commande affiche le chemin reseau ?",opts:["path","route","traceroute","netpath"],ans:"c"},
+{q:69,ch:6,txt:"Quelle commande affiche les ports en ecoute ?",opts:["ports","listen","netstat -tuln","showports"],ans:"c"},
+{q:70,ch:6,txt:"Quelle commande moderne remplace netstat ?",opts:["ip","ss","net","socket"],ans:"b"},
+{q:71,ch:6,txt:"Quel protocole permet la connexion distante securisee ?",opts:["Telnet","FTP","SSH","HTTP"],ans:"c"},
+{q:72,ch:6,txt:"Quel port utilise SSH par defaut ?",opts:["21","22","23","80"],ans:"b"},
+{q:73,ch:6,txt:"Quelle commande copie des fichiers via SSH ?",opts:["cp","copy","scp","sftp"],ans:"c"},
+{q:74,ch:6,txt:"Quelle commande telecharge un fichier depuis le web ?",opts:["download","get","wget","fetch"],ans:"c"},
+{q:75,ch:6,txt:"Quelle commande effectue des requetes HTTP ?",opts:["http","request","curl","web"],ans:"c"},
+{q:76,ch:6,txt:"Quelle commande affiche uniquement l'adresse IP ?",opts:["ip addr","ifconfig","hostname -I","getip"],ans:"c"},
+// CH7: Paquets (12 questions)
+{q:77,ch:7,txt:"Quelle commande met a jour la liste des paquets (Debian) ?",opts:["apt upgrade","apt update","apt refresh","apt sync"],ans:"b"},
+{q:78,ch:7,txt:"Quelle commande met a jour les paquets installes ?",opts:["apt update","apt upgrade","apt install","apt refresh"],ans:"b"},
+{q:79,ch:7,txt:"Quelle commande installe un paquet ?",opts:["apt get","apt add","apt install","apt setup"],ans:"c"},
+{q:80,ch:7,txt:"Quelle commande desinstalle un paquet (garde config) ?",opts:["apt delete","apt remove","apt uninstall","apt purge"],ans:"b"},
+{q:81,ch:7,txt:"Quelle commande desinstalle et supprime la config ?",opts:["apt remove","apt delete","apt purge","apt clean"],ans:"c"},
+{q:82,ch:7,txt:"Quelle commande supprime les paquets orphelins ?",opts:["apt clean","apt autoremove","apt autoclean","apt orphan"],ans:"b"},
+{q:83,ch:7,txt:"Quelle commande recherche un paquet ?",opts:["apt find","apt search","apt lookup","apt query"],ans:"b"},
+{q:84,ch:7,txt:"Quel gestionnaire utilise Fedora ?",opts:["apt","yum","dnf","pacman"],ans:"c"},
+{q:85,ch:7,txt:"Quel gestionnaire utilise Arch Linux ?",opts:["apt","yum","dnf","pacman"],ans:"d"},
+{q:86,ch:7,txt:"Quelle commande affiche les infos d'un paquet ?",opts:["apt info","apt show","apt details","apt describe"],ans:"b"},
+{q:87,ch:7,txt:"Que fait <code>apt list --installed</code> ?",opts:["Liste disponibles","Liste installes","Liste mises a jour","Liste obsoletes"],ans:"b"},
+{q:88,ch:7,txt:"Quelle distribution utilise <code>apt</code> ?",opts:["Fedora","CentOS","Arch","Debian"],ans:"d"},
+// CH8: Scripts (12 questions)
+{q:89,ch:8,txt:"Quelle est la premiere ligne d'un script Bash ?",opts:["#/bin/bash","#!/bin/bash","//bin/bash","@!/bin/bash"],ans:"b"},
+{q:90,ch:8,txt:"Comment declarer une variable en Bash ?",opts:["var = valeur","$var = valeur","var=valeur","set var valeur"],ans:"c"},
+{q:91,ch:8,txt:"Comment acceder a une variable ?",opts:["var","%var","$var","@var"],ans:"c"},
+{q:92,ch:8,txt:"Que represente <code>$1</code> dans un script ?",opts:["Nom du script","Premier argument","Code retour","Nombre d'arguments"],ans:"b"},
+{q:93,ch:8,txt:"Que represente <code>$0</code> dans un script ?",opts:["Nom du script","Premier argument","Code retour","PID"],ans:"a"},
+{q:94,ch:8,txt:"Que represente <code>$#</code> dans un script ?",opts:["PID","Code retour","Nombre d'arguments","Tous les arguments"],ans:"c"},
+{q:95,ch:8,txt:"Que represente <code>$?</code> dans un script ?",opts:["PID","Code retour derniere commande","Nombre d'arguments","Nom du script"],ans:"b"},
+{q:96,ch:8,txt:"Quel operateur redirige la sortie vers un fichier (ecrase) ?",opts:["<",">>",">","<<"],ans:"c"},
+{q:97,ch:8,txt:"Quel operateur ajoute a la fin d'un fichier ?",opts:["<",">>",">","><"],ans:"b"},
+{q:98,ch:8,txt:"Quel operateur chaine les commandes (pipe) ?",opts:["&",";","|","$"],ans:"c"},
+{q:99,ch:8,txt:"Comment rendre un script executable ?",opts:["chmod +r script","chmod +w script","chmod +x script","chmod 644 script"],ans:"c"},
+{q:100,ch:8,txt:"Quel test verifie si un fichier existe ?",opts:["[ -e fichier ]","[ -f fichier ]","[ -d fichier ]","Les deux A et B"],ans:"d"}
+];
+
+const chapterNames = {1:"Introduction",2:"Navigation",3:"Fichiers",4:"Permissions",5:"Processus",6:"Reseau",7:"Paquets",8:"Scripts"};
+const chapterIcons = {1:"🐧",2:"📂",3:"📄",4:"🔐",5:"⚙️",6:"🌐",7:"📦",8:"📜"};
+const userAnswers = {};
+
+function init() {
+    const container = document.getElementById('questionsContainer');
+    let currentChapter = 0;
+    let html = '';
+    
+    questions.forEach(q => {
+        if (q.ch !== currentChapter) {
+            currentChapter = q.ch;
+            const count = questions.filter(x => x.ch === currentChapter).length;
+            html += `<div class="section-header ch${currentChapter}">
+                <div class="section-icon">${chapterIcons[currentChapter]}</div>
+                <div class="section-info">
+                    <h2>Chapitre ${currentChapter} : ${chapterNames[currentChapter]}</h2>
+                    <p>${count} questions</p>
+                </div>
+            </div>`;
+        }
+        
+        const letters = ['a','b','c','d'];
+        let optsHtml = q.opts.map((o,i) => {
+            const isCode = /^[a-z]+\s|^\/|^\$|^#|^-|chmod|chown|mkdir|rmdir|sudo|systemctl|apt|dnf|pacman|grep|find|ssh|scp|wget|curl|ping|kill|^ps|^ls|^cd|^cp|^mv|^rm|^cat|^echo|^touch|Ctrl\+/.test(o);
+            const text = isCode ? `<code>${o}</code>` : o;
+            return `<div class="opt" data-value="${letters[i]}"><span class="marker">${letters[i].toUpperCase()}</span><span class="otxt">${text}</span></div>`;
+        }).join('');
+        
+        html += `<div class="qcard ch${q.ch}" data-q="${q.q}" data-ans="${q.ans}">
+            <div class="qheader">
+                <div class="qnum">Q${q.q}</div>
+                <div class="qtext">${q.txt}</div>
+            </div>
+            <div class="opts">${optsHtml}</div>
+        </div>`;
+    });
+    
+    container.innerHTML = html;
+    
+    document.querySelectorAll('.opt').forEach(opt => {
+        opt.addEventListener('click', function() {
+            const card = this.closest('.qcard');
+            const qNum = card.dataset.q;
+            card.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            userAnswers[qNum] = this.dataset.value;
+            card.classList.add('answered');
+            updateProgress();
+        });
+    });
+}
+
+function updateProgress() {
+    const answered = Object.keys(userAnswers).length;
+    const pct = (answered / 100) * 100;
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressValue').textContent = answered + '/100';
+    document.getElementById('progressPercent').textContent = Math.round(pct) + '%';
+    if (answered === 100) document.getElementById('submitWarning').style.display = 'none';
+}
+
+function submitQuiz() {
+    const answered = Object.keys(userAnswers).length;
+    if (answered < 100) {
+        document.getElementById('submitWarning').style.display = 'block';
+        const unanswered = document.querySelector('.qcard:not(.answered)');
+        if (unanswered) unanswered.scrollIntoView({behavior:'smooth',block:'center'});
+        return;
+    }
+    
+    let correct = 0;
+    questions.forEach(q => {
+        if (userAnswers[q.q] === q.ans) correct++;
+    });
+    
+    const pct = Math.round((correct/100)*100);
+    document.getElementById('correctCount').textContent = correct;
+    document.getElementById('incorrectCount').textContent = 100 - correct;
+    document.getElementById('scorePct').textContent = pct + '%';
+    document.getElementById('scoreCircle').style.background = `conic-gradient(var(--primary) ${pct*3.6}deg, var(--border) ${pct*3.6}deg)`;
+    
+    const app = document.getElementById('appreciation');
+    const appTitle = document.getElementById('appTitle');
+    const appText = document.getElementById('appText');
+    app.className = 'appreciation';
+    
+    if (pct >= 90) { app.classList.add('excellent'); appTitle.textContent = '🏆 Excellent !'; appText.textContent = 'Maitrise parfaite des commandes Linux !'; }
+    else if (pct >= 75) { app.classList.add('good'); appTitle.textContent = '👍 Tres Bien !'; appText.textContent = 'Solides connaissances en administration Linux.'; }
+    else if (pct >= 50) { app.classList.add('average'); appTitle.textContent = '📚 Peut mieux faire'; appText.textContent = 'Revisez les commandes moins maitrisees.'; }
+    else { app.classList.add('poor'); appTitle.textContent = '⚠️ A revoir'; appText.textContent = 'Score insuffisant. Pratiquez davantage le terminal.'; }
+    
+    const ansContainer = document.getElementById('answersContainer');
+    ansContainer.innerHTML = '';
+    
+    questions.forEach(q => {
+        const isCorrect = userAnswers[q.q] === q.ans;
+        const userAns = userAnswers[q.q] ? userAnswers[q.q].toUpperCase() : '-';
+        const correctAns = q.ans.toUpperCase();
+        const shortTxt = q.txt.length > 65 ? q.txt.substring(0,65).replace(/<[^>]*>/g,'') + '...' : q.txt.replace(/<[^>]*>/g,'');
+        
+        ansContainer.innerHTML += `<div class="ans-card ${isCorrect?'correct':'incorrect'}" data-status="${isCorrect?'correct':'incorrect'}">
+            <div class="ans-status ${isCorrect?'correct':'incorrect'}">${isCorrect?'✓':'✗'}</div>
+            <div class="ans-content">
+                <div class="ans-q"><strong>Q${q.q}:</strong> ${shortTxt}</div>
+                <div class="ans-info">
+                    <span class="your-ans">Reponse: <strong>${userAns}</strong></span>
+                    ${!isCorrect ? `<span class="correct-ans">Correcte: <strong>${correctAns}</strong></span>` : ''}
+                </div>
+            </div>
+        </div>`;
+    });
+    
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({behavior:'smooth'});
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('submitBtn').textContent = '✅ QCM Termine';
+}
+
+function filterAnswers(filter, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.ans-card').forEach(card => {
+        if (filter === 'all') card.classList.remove('hidden');
+        else card.classList.toggle('hidden', card.dataset.status !== filter);
+    });
+}
+
+init();
+</script>
+</body>
+</html>

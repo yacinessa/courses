@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--primary:#9b59b6;--secondary:#8e44ad;--accent:#bb8fce;--bg-dark:#0d1117;--bg-card:#161b22;--text-primary:#e6edf3;--text-secondary:#8b949e;--border:#30363d;--success:#3fb950;--error:#f85149;--warning:#d29922;--ch1:#9b59b6;--ch2:#3498db;--ch3:#1abc9c;--ch4:#e74c3c;--ch5:#f39c12;--ch6:#2ecc71;--ch7:#e91e63;--ch8:#00bcd4;--ch9:#ff5722;--ch10:#673ab7;--ch11:#009688;--ch12:#ff9800}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Outfit',sans-serif;background:var(--bg-dark);color:var(--text-primary);line-height:1.6}
+        .bg-pattern{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(ellipse at 20% 20%,rgba(155,89,182,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(142,68,173,0.08) 0%,transparent 50%)}
+        .header{background:linear-gradient(135deg,var(--bg-card) 0%,rgba(22,27,34,0.98) 100%);border-bottom:5px solid var(--primary);padding:45px 20px;text-align:center}
+        .header .logo{font-size:4.5rem;margin-bottom:12px;text-shadow:0 0 40px rgba(155,89,182,0.5)}
+        .header h1{font-size:2.6rem;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--secondary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
+        .header .subtitle{font-size:1.1rem;color:var(--text-secondary)}
+        .badges{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:18px}
+        .badge{padding:10px 20px;border-radius:25px;font-size:0.9rem;font-weight:600}
+        .badge.q{background:var(--secondary);color:white}.badge.ch{background:var(--primary);color:white}.badge.yr{background:var(--success);color:var(--bg-dark)}
+        .progress-section{position:sticky;top:0;z-index:100;background:rgba(13,17,23,0.95);backdrop-filter:blur(15px);padding:16px 20px;border-bottom:1px solid var(--border)}
+        .progress-inner{max-width:1000px;margin:0 auto}
+        .progress-stats{display:flex;justify-content:space-between;margin-bottom:10px;font-size:0.95rem;color:var(--text-secondary)}
+        .progress-stats span{color:var(--primary);font-weight:700;font-family:'JetBrains Mono',monospace}
+        .progress-bar{height:12px;background:var(--border);border-radius:12px;overflow:hidden}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--ch1),var(--ch7),var(--ch12));border-radius:12px;transition:width 0.4s;width:0%}
+        .main{max-width:1000px;margin:0 auto;padding:35px 20px}
+        .section-header{display:flex;align-items:center;gap:18px;margin:45px 0 22px;padding:22px;background:var(--bg-card);border-radius:16px;border-left:6px solid}
+        .section-header.ch1{border-color:var(--ch1)}.section-header.ch2{border-color:var(--ch2)}.section-header.ch3{border-color:var(--ch3)}.section-header.ch4{border-color:var(--ch4)}.section-header.ch5{border-color:var(--ch5)}.section-header.ch6{border-color:var(--ch6)}.section-header.ch7{border-color:var(--ch7)}.section-header.ch8{border-color:var(--ch8)}.section-header.ch9{border-color:var(--ch9)}.section-header.ch10{border-color:var(--ch10)}.section-header.ch11{border-color:var(--ch11)}.section-header.ch12{border-color:var(--ch12)}
+        .section-icon{width:60px;height:60px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:2rem}
+        .section-header.ch1 .section-icon{background:rgba(155,89,182,0.15)}.section-header.ch2 .section-icon{background:rgba(52,152,219,0.15)}.section-header.ch3 .section-icon{background:rgba(26,188,156,0.15)}.section-header.ch4 .section-icon{background:rgba(231,76,60,0.15)}.section-header.ch5 .section-icon{background:rgba(243,156,18,0.15)}.section-header.ch6 .section-icon{background:rgba(46,204,113,0.15)}.section-header.ch7 .section-icon{background:rgba(233,30,99,0.15)}.section-header.ch8 .section-icon{background:rgba(0,188,212,0.15)}.section-header.ch9 .section-icon{background:rgba(255,87,34,0.15)}.section-header.ch10 .section-icon{background:rgba(103,58,183,0.15)}.section-header.ch11 .section-icon{background:rgba(0,150,136,0.15)}.section-header.ch12 .section-icon{background:rgba(255,152,0,0.15)}
+        .section-info h2{font-size:1.4rem;font-weight:700}.section-info p{color:var(--text-secondary);font-size:0.9rem}
+        .section-header.ch1 h2{color:var(--ch1)}.section-header.ch2 h2{color:var(--ch2)}.section-header.ch3 h2{color:var(--ch3)}.section-header.ch4 h2{color:var(--ch4)}.section-header.ch5 h2{color:var(--ch5)}.section-header.ch6 h2{color:var(--ch6)}.section-header.ch7 h2{color:var(--ch7)}.section-header.ch8 h2{color:var(--ch8)}.section-header.ch9 h2{color:var(--ch9)}.section-header.ch10 h2{color:var(--ch10)}.section-header.ch11 h2{color:var(--ch11)}.section-header.ch12 h2{color:var(--ch12)}
+        .qcard{background:var(--bg-card);border-radius:14px;padding:24px;margin-bottom:16px;border:1px solid var(--border);position:relative}
+        .qcard::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%;border-radius:5px 0 0 5px}
+        .qcard.ch1::before{background:var(--ch1)}.qcard.ch2::before{background:var(--ch2)}.qcard.ch3::before{background:var(--ch3)}.qcard.ch4::before{background:var(--ch4)}.qcard.ch5::before{background:var(--ch5)}.qcard.ch6::before{background:var(--ch6)}.qcard.ch7::before{background:var(--ch7)}.qcard.ch8::before{background:var(--ch8)}.qcard.ch9::before{background:var(--ch9)}.qcard.ch10::before{background:var(--ch10)}.qcard.ch11::before{background:var(--ch11)}.qcard.ch12::before{background:var(--ch12)}
+        .qcard.answered::after{content:'✓';position:absolute;top:14px;right:14px;width:28px;height:28px;background:var(--success);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem;color:white;animation:pop 0.3s}
+        @keyframes pop{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+        .qheader{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
+        .qnum{min-width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1rem}
+        .qcard.ch1 .qnum{background:rgba(155,89,182,0.15);color:var(--ch1)}.qcard.ch2 .qnum{background:rgba(52,152,219,0.15);color:var(--ch2)}.qcard.ch3 .qnum{background:rgba(26,188,156,0.15);color:var(--ch3)}.qcard.ch4 .qnum{background:rgba(231,76,60,0.15);color:var(--ch4)}.qcard.ch5 .qnum{background:rgba(243,156,18,0.15);color:var(--ch5)}.qcard.ch6 .qnum{background:rgba(46,204,113,0.15);color:var(--ch6)}.qcard.ch7 .qnum{background:rgba(233,30,99,0.15);color:var(--ch7)}.qcard.ch8 .qnum{background:rgba(0,188,212,0.15);color:var(--ch8)}.qcard.ch9 .qnum{background:rgba(255,87,34,0.15);color:var(--ch9)}.qcard.ch10 .qnum{background:rgba(103,58,183,0.15);color:var(--ch10)}.qcard.ch11 .qnum{background:rgba(0,150,136,0.15);color:var(--ch11)}.qcard.ch12 .qnum{background:rgba(255,152,0,0.15);color:var(--ch12)}
+        .qtext{font-size:1.05rem;font-weight:500;flex:1;padding-top:10px;padding-right:40px}
+        .qtext code{background:rgba(155,89,182,0.15);color:var(--primary);padding:3px 7px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:0.9rem}
+        .opts{display:grid;gap:12px}
+        .opt{display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--bg-dark);border:2px solid var(--border);border-radius:12px;cursor:pointer;transition:all 0.25s}
+        .opt:hover{border-color:var(--primary);transform:translateX(4px)}
+        .opt.selected{border-color:var(--primary);background:rgba(155,89,182,0.1)}
+        .opt.selected .marker{background:var(--primary);color:white}
+        .marker{min-width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:0.85rem;background:var(--border);color:var(--text-secondary);transition:all 0.25s}
+        .otxt{flex:1;font-size:0.95rem}
+        .otxt code{background:rgba(103,58,183,0.15);color:var(--ch10);padding:3px 6px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:0.88rem}
+        .submit-section{text-align:center;padding:55px 20px;margin-top:35px}
+        .submit-btn{padding:20px 65px;font-size:1.25rem;font-weight:700;font-family:'Outfit',sans-serif;background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;border:none;border-radius:18px;cursor:pointer;transition:all 0.3s;text-transform:uppercase;letter-spacing:2px}
+        .submit-btn:hover{transform:translateY(-4px);box-shadow:0 18px 45px rgba(155,89,182,0.35)}
+        .submit-btn:disabled{background:var(--border);cursor:not-allowed;transform:none;box-shadow:none}
+        .submit-warning{margin-top:18px;color:var(--warning);display:none;font-size:1.05rem}
+        .results{display:none;margin-top:55px;padding:45px;background:var(--bg-card);border-radius:22px;border:3px solid var(--primary)}
+        .results h2{text-align:center;font-size:2.4rem;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:35px}
+        .score-display{display:flex;justify-content:center;align-items:center;gap:35px;flex-wrap:wrap;margin:35px 0}
+        .score-circle{width:170px;height:170px;border-radius:50%;background:conic-gradient(var(--primary) 0deg,var(--border) 0deg);display:flex;align-items:center;justify-content:center}
+        .score-inner{width:140px;height:140px;border-radius:50%;background:var(--bg-card);display:flex;flex-direction:column;align-items:center;justify-content:center}
+        .score-pct{font-size:3rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--primary)}
+        .score-lbl{font-size:0.85rem;color:var(--text-secondary);text-transform:uppercase}
+        .score-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+        .score-card{padding:22px;background:var(--bg-dark);border-radius:14px;text-align:center}
+        .score-card .num{font-size:2.4rem;font-weight:800;font-family:'JetBrains Mono',monospace}
+        .score-card.correct .num{color:var(--success)}.score-card.incorrect .num{color:var(--error)}.score-card.total .num{color:var(--accent)}
+        .score-card .lbl{font-size:0.9rem;color:var(--text-secondary);margin-top:6px}
+        .appreciation{text-align:center;padding:35px;margin-top:35px;background:linear-gradient(135deg,rgba(155,89,182,0.1),rgba(142,68,173,0.1));border-radius:18px}
+        .appreciation h4{font-size:1.7rem;margin-bottom:10px}.appreciation p{color:var(--text-secondary);font-size:1.05rem}
+        .appreciation.excellent h4{color:var(--success)}.appreciation.good h4{color:var(--primary)}.appreciation.average h4{color:var(--warning)}.appreciation.poor h4{color:var(--error)}
+        .answers-section{margin-top:45px}
+        .answers-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:12px}
+        .answers-header h3{font-size:1.6rem;color:var(--secondary)}
+        .filter-btns{display:flex;gap:10px}
+        .filter-btn{padding:8px 16px;border:2px solid var(--border);border-radius:20px;background:transparent;color:var(--text-secondary);cursor:pointer;font-family:'Outfit',sans-serif;font-size:0.85rem;transition:all 0.3s}
+        .filter-btn:hover,.filter-btn.active{border-color:var(--primary);color:var(--primary)}
+        .filter-btn.active{background:rgba(155,89,182,0.1)}
+        .ans-card{background:var(--bg-dark);border-radius:12px;padding:18px;margin-bottom:12px;border-left:5px solid;display:flex;align-items:flex-start;gap:14px}
+        .ans-card.correct{border-color:var(--success)}.ans-card.incorrect{border-color:var(--error)}
+        .ans-card.hidden{display:none}
+        .ans-status{min-width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+        .ans-status.correct{background:rgba(63,185,80,0.2);color:var(--success)}.ans-status.incorrect{background:rgba(248,81,73,0.2);color:var(--error)}
+        .ans-content{flex:1}
+        .ans-q{font-weight:600;margin-bottom:8px;font-size:0.95rem}
+        .ans-info{display:flex;gap:14px;flex-wrap:wrap;font-size:0.85rem}
+        .ans-info span{padding:4px 10px;border-radius:6px}
+        .your-ans{background:rgba(139,148,158,0.1);color:var(--text-secondary)}.correct-ans{background:rgba(63,185,80,0.15);color:var(--success)}
+        .footer{text-align:center;padding:35px;margin-top:45px;border-top:1px solid var(--border);color:var(--text-secondary)}
+        .footer .author{color:var(--primary);font-weight:600}
+        @media(max-width:768px){.header h1{font-size:2rem}.section-header{flex-direction:column;text-align:center}.qheader{flex-direction:column}.score-display{flex-direction:column}.score-cards{grid-template-columns:1fr}.submit-btn{padding:16px 45px;font-size:1.05rem}}
+    </style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+<header class="header">
+    <div class="logo">🤖</div>
+    <h1>QCM Intelligence Artificielle</h1>
+    <p class="subtitle">Machine Learning - Deep Learning - TinyML</p>
+    <div class="badges">
+        <span class="badge q">📝 100 Questions</span>
+        <span class="badge ch">📚 12 Chapitres</span>
+    </div>
+</header>
+<div class="progress-section">
+    <div class="progress-inner">
+        <div class="progress-stats">
+            <span>Progression : <span id="progressValue">0/100</span></span>
+            <span>Complete : <span id="progressPercent">0%</span></span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
+    </div>
+</div>
+<main class="main" id="questionsContainer"></main>
+<div class="main">
+    <div class="submit-section">
+        <button class="submit-btn" id="submitBtn" onclick="submitQuiz()">🤖 Valider mes 100 Reponses</button>
+        <p class="submit-warning" id="submitWarning">⚠️ Repondez a toutes les questions avant de valider</p>
+    </div>
+    <div class="results" id="results">
+        <h2>📊 Resultats du QCM IA</h2>
+        <div class="score-display">
+            <div class="score-circle" id="scoreCircle"><div class="score-inner"><span class="score-pct" id="scorePct">0%</span><span class="score-lbl">Score</span></div></div>
+            <div class="score-cards">
+                <div class="score-card correct"><div class="num" id="correctCount">0</div><div class="lbl">Correctes</div></div>
+                <div class="score-card incorrect"><div class="num" id="incorrectCount">0</div><div class="lbl">Incorrectes</div></div>
+                <div class="score-card total"><div class="num">100</div><div class="lbl">Total</div></div>
+            </div>
+        </div>
+        <div class="appreciation" id="appreciation"><h4 id="appTitle"></h4><p id="appText"></p></div>
+        <div class="answers-section">
+            <div class="answers-header">
+                <h3>📋 Correction Detaillee</h3>
+                <div class="filter-btns">
+                    <button class="filter-btn active" onclick="filterAnswers('all',this)">Toutes</button>
+                    <button class="filter-btn" onclick="filterAnswers('correct',this)">Correctes</button>
+                    <button class="filter-btn" onclick="filterAnswers('incorrect',this)">Incorrectes</button>
+                </div>
+            </div>
+            <div id="answersContainer"></div>
+        </div>
+    </div>
+</div>
+<footer class="footer">
+</footer>
+<script>
+const questions = [
+// CH1: Introduction IA (8 questions)
+{q:1,ch:1,txt:"Que signifie IA ?",opts:["Interface Automatique","Intelligence Artificielle","Information Avancee","Informatique Appliquee"],ans:"b"},
+{q:2,ch:1,txt:"En quelle annee le terme 'Intelligence Artificielle' a-t-il ete invente ?",opts:["1943","1950","1956","1970"],ans:"c"},
+{q:3,ch:1,txt:"Qui a propose le 'Test de Turing' ?",opts:["John McCarthy","Alan Turing","Marvin Minsky","Frank Rosenblatt"],ans:"b"},
+{q:4,ch:1,txt:"Quelle IA a battu le champion d'echecs Kasparov en 1997 ?",opts:["AlphaGo","Watson","Deep Blue","GPT"],ans:"c"},
+{q:5,ch:1,txt:"Qu'est-ce que l'IA faible (Narrow AI) ?",opts:["IA peu performante","IA specialisee dans une tache","IA generaliste","IA hypothetique"],ans:"b"},
+{q:6,ch:1,txt:"Le Deep Learning est une branche de...",opts:["L'IA uniquement","Le Machine Learning","La robotique","Le Big Data"],ans:"b"},
+{q:7,ch:1,txt:"Quelle application n'utilise PAS l'IA ?",opts:["Reconnaissance faciale","Calculatrice simple","Recommandations Netflix","Traduction automatique"],ans:"b"},
+{q:8,ch:1,txt:"NLP signifie...",opts:["Neural Learning Process","Natural Language Processing","Network Layer Protocol","New Learning Paradigm"],ans:"b"},
+// CH2: Types ML (8 questions)
+{q:9,ch:2,txt:"L'apprentissage supervise utilise des donnees...",opts:["Non etiquetees","Etiquetees","Generees","Compressees"],ans:"b"},
+{q:10,ch:2,txt:"La classification est un probleme de type...",opts:["Non supervise","Supervise","Par renforcement","Generatif"],ans:"b"},
+{q:11,ch:2,txt:"K-Means est un algorithme de...",opts:["Classification","Regression","Clustering","Renforcement"],ans:"c"},
+{q:12,ch:2,txt:"Dans l'apprentissage par renforcement, l'agent recoit...",opts:["Des labels","Des recompenses","Des clusters","Des centroides"],ans:"b"},
+{q:13,ch:2,txt:"La regression predit...",opts:["Une categorie","Une valeur continue","Un cluster","Une action"],ans:"b"},
+{q:14,ch:2,txt:"AlphaGo utilise quel type d'apprentissage ?",opts:["Supervise uniquement","Non supervise","Par renforcement","Transfer learning"],ans:"c"},
+{q:15,ch:2,txt:"La detection de spam est un probleme de...",opts:["Regression","Classification binaire","Clustering","Renforcement"],ans:"b"},
+{q:16,ch:2,txt:"L'apprentissage non supervise decouvre...",opts:["Les labels","La structure cachee","Les recompenses","Les gradients"],ans:"b"},
+// CH3: Donnees (9 questions)
+{q:17,ch:3,txt:"Que signifie 'Garbage In, Garbage Out' ?",opts:["Les donnees sont importantes","Les modeles sont complexes","Le GPU est necessaire","Le cloud est requis"],ans:"a"},
+{q:18,ch:3,txt:"La normalisation Min-Max transforme les donnees en...",opts:["[-1, 1]","[0, 1]","[0, 100]","Moyenne 0, ecart-type 1"],ans:"b"},
+{q:19,ch:3,txt:"La standardisation (Z-score) donne une moyenne de...",opts:["0","1","0.5","100"],ans:"a"},
+{q:20,ch:3,txt:"One-Hot Encoding est utilise pour...",opts:["Normaliser les donnees","Encoder les variables categorielles nominales","Reduire la dimensionnalite","Detecter les outliers"],ans:"b"},
+{q:21,ch:3,txt:"Quelle proportion est typique pour le test set ?",opts:["5%","10-20%","50%","80%"],ans:"b"},
+{q:22,ch:3,txt:"<code>df.isnull().sum()</code> en Pandas affiche...",opts:["Les doublons","Les valeurs manquantes par colonne","La moyenne","Le type de donnees"],ans:"b"},
+{q:23,ch:3,txt:"L'IQR est utilise pour detecter...",opts:["Les valeurs manquantes","Les outliers","Les doublons","Les categories"],ans:"b"},
+{q:24,ch:3,txt:"<code>train_test_split</code> provient de quelle bibliotheque ?",opts:["Pandas","NumPy","Scikit-learn","TensorFlow"],ans:"c"},
+{q:25,ch:3,txt:"<code>random_state=42</code> sert a...",opts:["Accelerer le calcul","Garantir la reproductibilite","Ameliorer la precision","Reduire l'overfitting"],ans:"b"},
+// CH4: Regression (8 questions)
+{q:26,ch:4,txt:"La regression lineaire simple a combien de variable(s) d'entree ?",opts:["0","1","2","Plusieurs"],ans:"b"},
+{q:27,ch:4,txt:"Dans Y = aX + b, 'a' represente...",opts:["L'ordonnee a l'origine","La pente","L'erreur","La prediction"],ans:"b"},
+{q:28,ch:4,txt:"MSE signifie...",opts:["Maximum Square Error","Mean Squared Error","Minimum Standard Error","Model Score Evaluation"],ans:"b"},
+{q:29,ch:4,txt:"Un R² de 0.95 indique...",opts:["Un mauvais modele","Un bon modele","Un overfitting","Un underfitting"],ans:"b"},
+{q:30,ch:4,txt:"RMSE est la racine carree de...",opts:["MAE","MSE","R²","Variance"],ans:"b"},
+{q:31,ch:4,txt:"La regression multiple utilise...",opts:["Une seule feature","Plusieurs features","Pas de features","Des categories"],ans:"b"},
+{q:32,ch:4,txt:"Quelle classe Scikit-learn pour la regression lineaire ?",opts:["LinearClassifier","LinearRegression","LogisticRegression","RegressionModel"],ans:"b"},
+{q:33,ch:4,txt:"Un R² proche de 0 indique...",opts:["Un modele parfait","Un modele qui n'explique pas la variance","Un overfitting","Une erreur de code"],ans:"b"},
+// CH5: Classification (8 questions)
+{q:34,ch:5,txt:"KNN signifie...",opts:["K-Nearest Neighbors","Kernel Neural Network","Knowledge Node Network","K-Normalized Neurons"],ans:"a"},
+{q:35,ch:5,txt:"Dans KNN avec K=3, on considere...",opts:["3 features","3 voisins les plus proches","3 classes","3 iterations"],ans:"b"},
+{q:36,ch:5,txt:"L'accuracy est calculee comme...",opts:["TP / (TP+FP)","(TP+TN) / Total","TP / (TP+FN)","TN / (TN+FP)"],ans:"b"},
+{q:37,ch:5,txt:"La precision (Precision) mesure...",opts:["Les vrais positifs parmi les predits positifs","Tous les positifs trouves","L'erreur globale","La vitesse du modele"],ans:"a"},
+{q:38,ch:5,txt:"Le rappel (Recall) mesure...",opts:["Les predictions correctes","Les vrais positifs parmi les reels positifs","L'accuracy","La precision"],ans:"b"},
+{q:39,ch:5,txt:"F1-Score est la moyenne...",opts:["Arithmetique de P et R","Harmonique de Precision et Rappel","Geometrique","Ponderee"],ans:"b"},
+{q:40,ch:5,txt:"Un arbre de decision prend des decisions par...",opts:["Calcul de distance","Questions successives (regles)","Multiplication matricielle","Gradient descent"],ans:"b"},
+{q:41,ch:5,txt:"TP dans une matrice de confusion signifie...",opts:["True Positive","Test Prediction","Total Positive","Training Parameter"],ans:"a"},
+// CH6: Clustering (8 questions)
+{q:42,ch:6,txt:"Le clustering est un apprentissage...",opts:["Supervise","Non supervise","Par renforcement","Semi-supervise"],ans:"b"},
+{q:43,ch:6,txt:"K-Means necessite de specifier...",opts:["Les labels","Le nombre de clusters K","La fonction d'activation","Le learning rate"],ans:"b"},
+{q:44,ch:6,txt:"Un centroide est...",opts:["Un point de donnees","Le centre d'un cluster","Une metrique","Un hyperparametre"],ans:"b"},
+{q:45,ch:6,txt:"La methode du coude (Elbow) aide a choisir...",opts:["Le learning rate","Le nombre de clusters K","La taille du batch","Le nombre d'epochs"],ans:"b"},
+{q:46,ch:6,txt:"L'inertie dans K-Means mesure...",opts:["La vitesse","La somme des distances au centroide","L'accuracy","Le nombre de clusters"],ans:"b"},
+{q:47,ch:6,txt:"DBSCAN est un algorithme de...",opts:["Classification","Regression","Clustering base densite","Reduction dimensionnalite"],ans:"c"},
+{q:48,ch:6,txt:"K-Means converge quand...",opts:["K = 0","Les centroides ne changent plus","L'accuracy atteint 100%","Le gradient est nul"],ans:"b"},
+{q:49,ch:6,txt:"La segmentation de clientele utilise souvent...",opts:["La classification","Le clustering","La regression","Le renforcement"],ans:"b"},
+// CH7: Reseaux de Neurones (8 questions)
+{q:50,ch:7,txt:"Le perceptron est...",opts:["Un reseau complet","Un neurone artificiel","Une fonction d'activation","Un optimiseur"],ans:"b"},
+{q:51,ch:7,txt:"La fonction ReLU retourne...",opts:["max(0, x)","1 / (1 + e^-x)","tanh(x)","x²"],ans:"a"},
+{q:52,ch:7,txt:"La fonction Sigmoid a une sortie entre...",opts:["[-1, 1]","[0, 1]","[0, +∞)","(-∞, +∞)"],ans:"b"},
+{q:53,ch:7,txt:"Softmax est utilisee pour...",opts:["La regression","La classification multi-classe","Le clustering","La normalisation"],ans:"b"},
+{q:54,ch:7,txt:"Les poids (weights) sont...",opts:["Les entrees","Les parametres appris","Les sorties","Les activations"],ans:"b"},
+{q:55,ch:7,txt:"Le biais (bias) permet...",opts:["D'accelerer l'entrainement","De decaler la fonction d'activation","De reduire l'overfitting","De normaliser"],ans:"b"},
+{q:56,ch:7,txt:"La backpropagation propage...",opts:["Les donnees vers l'avant","Les erreurs vers l'arriere","Les poids vers l'avant","Les activations"],ans:"b"},
+{q:57,ch:7,txt:"Le gradient descent minimise...",opts:["L'accuracy","La fonction de perte (loss)","Le nombre de parametres","La vitesse"],ans:"b"},
+// CH8: Deep Learning (8 questions)
+{q:58,ch:8,txt:"Le Deep Learning utilise des reseaux...",opts:["A une couche","Peu profonds","Profonds (plusieurs couches)","Sans couches"],ans:"c"},
+{q:59,ch:8,txt:"CNN signifie...",opts:["Central Neural Network","Convolutional Neural Network","Clustered Node Network","Connected Neuron Net"],ans:"b"},
+{q:60,ch:8,txt:"Les CNN sont specialises dans...",opts:["Le texte","Les images","Les series temporelles","Le son uniquement"],ans:"b"},
+{q:61,ch:8,txt:"RNN signifie...",opts:["Random Neural Network","Recurrent Neural Network","Regression Node Net","Reinforced NN"],ans:"b"},
+{q:62,ch:8,txt:"LSTM est une variante de...",opts:["CNN","RNN","GAN","Transformer"],ans:"b"},
+{q:63,ch:8,txt:"Le Transfer Learning permet de...",opts:["Transferer des fichiers","Reutiliser un modele pre-entraine","Accelerer le GPU","Compresser le modele"],ans:"b"},
+{q:64,ch:8,txt:"AlexNet a revolutionne la classification d'images en...",opts:["2008","2012","2016","2020"],ans:"b"},
+{q:65,ch:8,txt:"Le pooling dans un CNN sert a...",opts:["Augmenter la resolution","Reduire la dimension","Ajouter des poids","Activer les neurones"],ans:"b"},
+// CH9: Python ML (9 questions)
+{q:66,ch:9,txt:"NumPy est utilise pour...",opts:["Les DataFrames","Les calculs numeriques/tableaux","La visualisation","Le Deep Learning"],ans:"b"},
+{q:67,ch:9,txt:"Pandas gere les donnees sous forme de...",opts:["Arrays","DataFrames","Tensors","Graphs"],ans:"b"},
+{q:68,ch:9,txt:"Matplotlib sert a...",opts:["Manipuler des donnees","Visualiser des graphiques","Entrainer des modeles","Charger des datasets"],ans:"b"},
+{q:69,ch:9,txt:"<code>np.zeros((3, 3))</code> cree...",opts:["Une matrice de uns","Une matrice de zeros 3×3","Un vecteur de 3 elements","Une matrice identite"],ans:"b"},
+{q:70,ch:9,txt:"<code>df.head()</code> affiche...",opts:["La derniere ligne","Les 5 premieres lignes","Les statistiques","Les types"],ans:"b"},
+{q:71,ch:9,txt:"<code>df.describe()</code> affiche...",opts:["Les types","Les statistiques descriptives","Les premieres lignes","Les colonnes"],ans:"b"},
+{q:72,ch:9,txt:"<code>plt.scatter()</code> cree un graphique...",opts:["En ligne","En barres","De nuage de points","Circulaire"],ans:"c"},
+{q:73,ch:9,txt:"<code>np.dot(a, b)</code> calcule...",opts:["La somme","Le produit matriciel","La difference","La moyenne"],ans:"b"},
+{q:74,ch:9,txt:"Pour installer TensorFlow, on utilise...",opts:["conda install tensorflow","pip install tensorflow","apt install tensorflow","npm install tensorflow"],ans:"b"},
+// CH10: Scikit-learn (8 questions)
+{q:75,ch:10,txt:"L'API Scikit-learn utilise quelle methode pour entrainer ?",opts:["train()","fit()","learn()","build()"],ans:"b"},
+{q:76,ch:10,txt:"<code>model.predict(X)</code> retourne...",opts:["Le score","Les predictions","Les parametres","L'erreur"],ans:"b"},
+{q:77,ch:10,txt:"<code>model.score()</code> retourne...",opts:["Les poids","La metrique de performance","Le temps","La taille"],ans:"b"},
+{q:78,ch:10,txt:"La validation croisee (cross-validation) evalue sur...",opts:["Un seul split","Plusieurs splits (folds)","Toutes les donnees","Aucune donnee"],ans:"b"},
+{q:79,ch:10,txt:"<code>cross_val_score(model, X, y, cv=5)</code> utilise...",opts:["5 epochs","5 folds","5 features","5 modeles"],ans:"b"},
+{q:80,ch:10,txt:"Pour sauvegarder un modele Scikit-learn, on utilise...",opts:["model.save()","joblib.dump()","pickle.store()","np.save()"],ans:"b"},
+{q:81,ch:10,txt:"RandomForestClassifier est un ensemble de...",opts:["Regressions","Arbres de decision","KNN","SVM"],ans:"b"},
+{q:82,ch:10,txt:"<code>StandardScaler</code> applique...",opts:["Min-Max","Standardisation Z-score","One-Hot","PCA"],ans:"b"},
+// CH11: TensorFlow/Keras (9 questions)
+{q:83,ch:11,txt:"Keras est une API de...",opts:["Bas niveau","Haut niveau","Moyenne","Systeme"],ans:"b"},
+{q:84,ch:11,txt:"<code>Sequential()</code> cree un modele...",opts:["Parallele","Sequentiel (couches empilees)","Recurrent","Convolutif"],ans:"b"},
+{q:85,ch:11,txt:"<code>Dense(128, activation='relu')</code> cree une couche...",opts:["Convolutive","Fully connected avec 128 neurones","De pooling","D'entree"],ans:"b"},
+{q:86,ch:11,txt:"<code>model.compile()</code> configure...",opts:["Les donnees","L'optimiseur et la loss","La sauvegarde","L'affichage"],ans:"b"},
+{q:87,ch:11,txt:"<code>model.fit()</code> lance...",opts:["La prediction","L'entrainement","L'evaluation","La compilation"],ans:"b"},
+{q:88,ch:11,txt:"Un epoch est...",opts:["Un batch","Un passage complet sur les donnees","Une couche","Un neurone"],ans:"b"},
+{q:89,ch:11,txt:"<code>model.evaluate()</code> retourne...",opts:["Les predictions","La loss et les metriques sur le test set","Les poids","L'historique"],ans:"b"},
+{q:90,ch:11,txt:"<code>model.save('model.h5')</code> sauvegarde au format...",opts:["JSON","HDF5","Pickle","TFLite"],ans:"b"},
+{q:91,ch:11,txt:"<code>Flatten()</code> transforme une matrice en...",opts:["Image","Vecteur 1D","Tenseur 3D","Sparse matrix"],ans:"b"},
+// CH12: TinyML (9 questions)
+{q:92,ch:12,txt:"TinyML permet d'executer le ML sur...",opts:["Des serveurs","Des microcontroleurs","Des GPU","Le cloud"],ans:"b"},
+{q:93,ch:12,txt:"TensorFlow Lite est optimise pour...",opts:["Les serveurs","Les appareils mobiles et embarques","Les superordinateurs","Le cloud"],ans:"b"},
+{q:94,ch:12,txt:"La quantification reduit la taille du modele en convertissant...",opts:["int8 en float32","float32 en int8","Texte en binaire","Images en vecteurs"],ans:"b"},
+{q:95,ch:12,txt:"L'ESP32 a combien de RAM ?",opts:["2 KB","520 KB","4 MB","16 GB"],ans:"b"},
+{q:96,ch:12,txt:"TinyML est aussi appele...",opts:["Cloud AI","Edge AI","Server AI","Distributed AI"],ans:"b"},
+{q:97,ch:12,txt:"Un avantage de TinyML est...",opts:["Necessite Internet","Latence faible (temps reel)","Necessite beaucoup de donnees","Consomme beaucoup d'energie"],ans:"b"},
+{q:98,ch:12,txt:"Le format de modele pour microcontroleurs est...",opts:[".h5",".pkl",".tflite",".onnx"],ans:"c"},
+{q:99,ch:12,txt:"'Wake Word Detection' est un exemple de...",opts:["Vision","TinyML audio","Cloud computing","Big Data"],ans:"b"},
+{q:100,ch:12,txt:"Pour deployer un modele TFLite sur ESP32, on le convertit en...",opts:["JSON","Header C (tableau)","XML","CSV"],ans:"b"}
+];
+
+const chapterNames={1:"Introduction IA",2:"Types ML",3:"Donnees",4:"Regression",5:"Classification",6:"Clustering",7:"Reseaux Neurones",8:"Deep Learning",9:"Python ML",10:"Scikit-learn",11:"TensorFlow/Keras",12:"TinyML"};
+const chapterIcons={1:"🤖",2:"🧠",3:"📊",4:"📈",5:"🏷️",6:"🎯",7:"🧬",8:"🔮",9:"🐍",10:"🔧",11:"🧠",12:"📱"};
+const userAnswers={};
+
+function init(){
+    const container=document.getElementById('questionsContainer');
+    let currentChapter=0;
+    let html='';
+    
+    questions.forEach(q=>{
+        if(q.ch!==currentChapter){
+            currentChapter=q.ch;
+            const count=questions.filter(x=>x.ch===currentChapter).length;
+            html+=`<div class="section-header ch${currentChapter}">
+                <div class="section-icon">${chapterIcons[currentChapter]}</div>
+                <div class="section-info">
+                    <h2>Chapitre ${currentChapter}: ${chapterNames[currentChapter]}</h2>
+                    <p>${count} questions</p>
+                </div>
+            </div>`;
+        }
+        
+        const letters=['a','b','c','d'];
+        let optsHtml=q.opts.map((o,i)=>{
+            const isCode=/^model\.|^np\.|^df\.|^plt\.|fit|predict|score|Sequential|Dense|Flatten|compile|train_test|Standard|MinMax|Linear|KNeighbors|KMeans|Random|cross_val|joblib|\.h5$|\.tflite$|\.pkl$|relu|sigmoid|softmax/.test(o);
+            const text=isCode?`<code>${o}</code>`:o;
+            return`<div class="opt" data-value="${letters[i]}"><span class="marker">${letters[i].toUpperCase()}</span><span class="otxt">${text}</span></div>`;
+        }).join('');
+        
+        html+=`<div class="qcard ch${q.ch}" data-q="${q.q}" data-ans="${q.ans}">
+            <div class="qheader">
+                <div class="qnum">Q${q.q}</div>
+                <div class="qtext">${q.txt}</div>
+            </div>
+            <div class="opts">${optsHtml}</div>
+        </div>`;
+    });
+    
+    container.innerHTML=html;
+    
+    document.querySelectorAll('.opt').forEach(opt=>{
+        opt.addEventListener('click',function(){
+            const card=this.closest('.qcard');
+            const qNum=card.dataset.q;
+            card.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+            this.classList.add('selected');
+            userAnswers[qNum]=this.dataset.value;
+            card.classList.add('answered');
+            updateProgress();
+        });
+    });
+}
+
+function updateProgress(){
+    const answered=Object.keys(userAnswers).length;
+    const pct=(answered/100)*100;
+    document.getElementById('progressBar').style.width=pct+'%';
+    document.getElementById('progressValue').textContent=answered+'/100';
+    document.getElementById('progressPercent').textContent=Math.round(pct)+'%';
+    if(answered===100)document.getElementById('submitWarning').style.display='none';
+}
+
+function submitQuiz(){
+    const answered=Object.keys(userAnswers).length;
+    if(answered<100){
+        document.getElementById('submitWarning').style.display='block';
+        const unanswered=document.querySelector('.qcard:not(.answered)');
+        if(unanswered)unanswered.scrollIntoView({behavior:'smooth',block:'center'});
+        return;
+    }
+    
+    let correct=0;
+    questions.forEach(q=>{if(userAnswers[q.q]===q.ans)correct++;});
+    
+    const pct=Math.round((correct/100)*100);
+    document.getElementById('correctCount').textContent=correct;
+    document.getElementById('incorrectCount').textContent=100-correct;
+    document.getElementById('scorePct').textContent=pct+'%';
+    document.getElementById('scoreCircle').style.background=`conic-gradient(var(--primary) ${pct*3.6}deg, var(--border) ${pct*3.6}deg)`;
+    
+    const app=document.getElementById('appreciation');
+    const appTitle=document.getElementById('appTitle');
+    const appText=document.getElementById('appText');
+    app.className='appreciation';
+    
+    if(pct>=90){app.classList.add('excellent');appTitle.textContent='🏆 Excellent !';appText.textContent='Maitrise parfaite de l\'Intelligence Artificielle !';}
+    else if(pct>=75){app.classList.add('good');appTitle.textContent='👍 Tres Bien !';appText.textContent='Solides connaissances en Machine Learning.';}
+    else if(pct>=50){app.classList.add('average');appTitle.textContent='📚 Peut mieux faire';appText.textContent='Revisez les chapitres moins maitrises.';}
+    else{app.classList.add('poor');appTitle.textContent='⚠️ A revoir';appText.textContent='Score insuffisant. Retravaillez le cours IA/ML.';}
+    
+    const ansContainer=document.getElementById('answersContainer');
+    ansContainer.innerHTML='';
+    
+    questions.forEach(q=>{
+        const isCorrect=userAnswers[q.q]===q.ans;
+        const userAns=userAnswers[q.q]?userAnswers[q.q].toUpperCase():'-';
+        const correctAns=q.ans.toUpperCase();
+        const shortTxt=q.txt.length>60?q.txt.substring(0,60).replace(/<[^>]*>/g,'')+'...':q.txt.replace(/<[^>]*>/g,'');
+        
+        ansContainer.innerHTML+=`<div class="ans-card ${isCorrect?'correct':'incorrect'}" data-status="${isCorrect?'correct':'incorrect'}">
+            <div class="ans-status ${isCorrect?'correct':'incorrect'}">${isCorrect?'✓':'✗'}</div>
+            <div class="ans-content">
+                <div class="ans-q"><strong>Q${q.q}:</strong> ${shortTxt}</div>
+                <div class="ans-info">
+                    <span class="your-ans">Reponse: <strong>${userAns}</strong></span>
+                    ${!isCorrect?`<span class="correct-ans">Correcte: <strong>${correctAns}</strong></span>`:''}
+                </div>
+            </div>
+        </div>`;
+    });
+    
+    document.getElementById('results').style.display='block';
+    document.getElementById('results').scrollIntoView({behavior:'smooth'});
+    document.getElementById('submitBtn').disabled=true;
+    document.getElementById('submitBtn').textContent='✅ QCM Termine';
+}
+
+function filterAnswers(filter,btn){
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.ans-card').forEach(card=>{
+        if(filter==='all')card.classList.remove('hidden');
+        else card.classList.toggle('hidden',card.dataset.status!==filter);
+    });
+}
+
+init();
+</script>
+</body>
+</html>

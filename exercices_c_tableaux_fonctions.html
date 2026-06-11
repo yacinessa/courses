@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercices C Avancés : Tableaux et Fonctions</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            border-left: 4px solid #e74c3c;
+            padding-left: 15px;
+        }
+        .exercise {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .difficulty {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .difficulty-3 { background-color: #f39c12; color: white; }
+        .difficulty-4 { background-color: #e67e22; color: white; }
+        .difficulty-5 { background-color: #e74c3c; color: white; }
+        code {
+            background-color: #ecf0f1;
+            padding: 10px;
+            border-radius: 4px;
+            display: block;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        .instructions {
+            background-color: #e8f6f3;
+            padding: 15px;
+            border-left: 4px solid #1abc9c;
+            margin: 15px 0;
+        }
+        .rules {
+            background-color: #fdf2e9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .author {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔢 Exercices C Avancés : Tableaux et Fonctions</h1>
+    
+    <div class="instructions">
+        <h3>📋 Instructions</h3>
+        <p>Ces exercices nécessitent une réflexion algorithmique intelligente. Chaque problème a un énoncé court mais demande des solutions optimisées en termes de temps et d'espace mémoire.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 1 : Le Détecteur d'Élément Manquant</h2>
+        <span class="difficulty difficulty-3">⭐⭐⭐</span>
+        <code>int findMissingElement(int arr1[], int arr2[], int n);</code>
+        <p>Étant donné deux tableaux où <code>arr2</code> contient tous les éléments de <code>arr1</code> sauf un élément manquant et possiblement mélangés, trouver l'élément manquant avec une complexité temporelle <strong>O(n)</strong> et spatiale <strong>O(1)</strong>.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 2 : Le Rotateur Cyclique</h2>
+        <span class="difficulty difficulty-4">⭐⭐⭐⭐</span>
+        <code>void rotateArray(int arr[], int n, int k);</code>
+        <p>Faire tourner un tableau de <code>n</code> éléments vers la droite de <code>k</code> positions <strong>en place</strong> avec un temps <strong>O(n)</strong>. Aucun espace supplémentaire autorisé sauf quelques variables. <code>k</code> peut être plus grand que <code>n</code>.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 3 : Le Maître des Sous-tableaux</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>int findMaxSubarraySum(int arr[], int n, int k);</code>
+        <p>Trouver la somme maximale de tout sous-tableau de longueur exactement <code>k</code> en temps <strong>O(n)</strong>. Cas limites : tableau vide, <code>k > n</code>, nombres négatifs partout.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 4 : Le Compresseur de Matrice Creuse</h2>
+        <span class="difficulty difficulty-4">⭐⭐⭐⭐</span>
+        <code>void compressSparseMatrix(int matrix[], int rows, int cols, int compressed[]);</code>
+        <p>Convertir une matrice creuse (beaucoup de zéros) en format compressé : <code>[valeur1, col1, valeur2, col2, ...]</code> contenant seulement les éléments non-zéros. Utiliser un espace <strong>O(m)</strong> où <code>m</code> est le nombre d'éléments non-zéros.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 5 : Le Maître de l'Union de Tableaux</h2>
+        <span class="difficulty difficulty-4">⭐⭐⭐⭐</span>
+        <code>int* findUnion(int arr1[], int n1, int arr2[], int n2, int* resultSize);</code>
+        <p>Trouver l'union de deux tableaux triés (avec doublons) sans utiliser un espace proportionnel à la taille d'entrée. Le résultat doit être trié et ne contenir que des éléments uniques. Retourner à la fois le tableau et la taille.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 6 : Le Chasseur d'Élément Majoritaire</h2>
+        <span class="difficulty difficulty-4">⭐⭐⭐⭐</span>
+        <code>int findMajorityElement(int arr[], int n);</code>
+        <p>Trouver l'élément apparaissant plus de <code>n/2</code> fois en utilisant l'algorithme <strong>Boyer-Moore</strong> en temps <strong>O(n)</strong> et espace <strong>O(1)</strong>. Vérifiez votre réponse - il pourrait ne pas toujours exister.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 7 : Le Générateur de Chemin en Spirale</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>void generateSpiralMatrix(int matrix[][], int n);</code>
+        <p>Générer une matrice <code>n x n</code> remplie avec les nombres 1 à <code>n²</code> en ordre spiralé (sens horaire, en partant du coin supérieur gauche). Retourner la matrice via le paramètre.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 8 : L'Optimiseur de la Somme de Deux</h2>
+        <span class="difficulty difficulty-3">⭐⭐⭐</span>
+        <code>int* findTwoSum(int arr[], int n, int target, int* resultSize);</code>
+        <p>Trouver deux indices distincts dont les valeurs s'additionnent pour donner <code>target</code>. Retourner leurs indices. Doit être en temps <strong>O(n)</strong> et espace <strong>O(n)</strong>. Retourner "non trouvé" si aucune solution n'existe.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 9 : Le Traqueur de Fréquence de Tableau</h2>
+        <span class="difficulty difficulty-4">⭐⭐⭐⭐</span>
+        <code>void updateFrequency(int arr[], int n, int updates[], int m);</code>
+        <p>Étant donné un tableau initial <code>arr</code> et une liste de <code>m</code> mises à jour (valeurs à incrémenter), suivre efficacement les fréquences. Chaque mise à jour incrémente la fréquence de cette valeur. Contrainte de temps : <strong>O(n + m)</strong> au total.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 10 : La Médiane des Médianes</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>int findMedian(int arr1[], int n1, int arr2[], int n2);</code>
+        <p>Trouver la médiane de deux tableaux triés en temps <strong>O(log(min(n1,n2)))</strong>. Fusion non autorisée. Gérer élégamment les cas de longueur totale paire/impaire.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 11 : La Permutation en Place</h2>
+        <span class="difficulty difficulty-4">⭐⭐⭐⭐</span>
+        <code>void applyPermutation(int arr[], int perm[], int n);</code>
+        <p>Réorganiser le tableau <code>arr</code> selon la permutation <code>perm</code> où <code>perm[i]</code> indique où l'élément à la position <code>i</code> doit aller. Résoudre <strong>en place</strong> en utilisant <strong>O(1)</strong> espace supplémentaire avec détection de cycle.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 12 : Le Détecteur de Séquence</h2>
+        <span class="difficulty difficulty-4">⭐⭐⭐⭐</span>
+        <code>int isSubsequence(char text[], int textLen, char pattern[], int patLen);</code>
+        <p>Vérifier si <code>pattern</code> est une sous-séquence de <code>text</code> (pas nécessairement contiguë). Retourner 1 si oui, 0 si non. Optimiser pour les grandes entrées où <code>text</code> est beaucoup plus long que <code>pattern</code>.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 13 : L'Algorithme de Prochaine Permutation</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>int nextPermutation(int arr[], int n);</code>
+        <p>Générer la prochaine permutation lexicographique des éléments du tableau en place. Retourner 1 si la prochaine permutation existe, 0 si la permutation actuelle est la dernière. Implémenter l'algorithme célèbre utilisé dans <code>next_permutation()</code> de C++.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 14 : Le Préprocesseur de Somme de Plage</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>void buildPrefixSum(int arr[], int n, int prefix[]);<br>int rangeSumQuery(int prefix[], int l, int r);</code>
+        <p>Étant donné un tableau, construire un tableau de somme préfixe pour des requêtes de somme de plage efficaces en temps <strong>O(1)</strong>. Démontrer avec plusieurs requêtes. Gérer les cas limites (plages vides, indices invalides).</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 15 : Le Maximum de Fenêtre Coulissante</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>int* slidingWindowMax(int arr[], int n, int k, int* resultSize);</code>
+        <p>Trouver le maximum dans chaque fenêtre coulissante de taille <code>k</code> à travers le tableau. Résoudre en temps <strong>O(n)</strong> en utilisant une file double. Retourner le tableau de résultats et sa taille.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 16 : Le Problème de Partition de Tableau</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>int canPartitionArray(int arr[], int n, int targetSum);</code>
+        <p>Déterminer si un tableau peut être partitionné en deux sous-ensembles avec une somme égale (problème de somme de sous-ensemble). Utiliser la programmation dynamique avec temps <strong>O(n*sum)</strong> et optimiser l'espace à <strong>O(sum)</strong>.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 17 : La Fusion de K Tableaux Triés</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>int* mergeKSortedArrays(int arrays[][MAX_SIZE], int sizes[], int k, int* resultSize);</code>
+        <p>Fusionner <code>k</code> tableaux triés en un tableau trié unique. Optimiser en temps <strong>O(n log k)</strong> en utilisant un tas minimum ou diviser-pour-régner. Gérer les tableaux de longueurs différentes.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 18 : Le Sous-tableau de Produit Maximum</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>int maxProductSubarray(int arr[], int n);</code>
+        <p>Trouver le sous-tableau contigu avec le produit maximum. Gérer les nombres positifs et négatifs, y compris les zéros. Cas limite quand le tableau ne contient qu'un seul élément.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 19 : Le Validateur de Sudoku</h2>
+        <span class="difficulty difficulty-4">⭐⭐⭐⭐</span>
+        <code>int isValidSudoku(int board[][9]);</code>
+        <p>Valider un plateau de Sudoku partiellement rempli. Vérifier que chaque ligne, colonne et sous-grille 3x3 contient des chiffres uniques (1-9) ou des cellules vides. Retourner 1 si valide, 0 sinon.</p>
+    </div>
+
+    <div class="exercise">
+        <h2>Exercice 20 : Le Compteur de Sous-séquence Croissante Longue</h2>
+        <span class="difficulty difficulty-5">⭐⭐⭐⭐⭐</span>
+        <code>int longestIncreasingSubsequenceLength(int arr[], int n);</code>
+        <p>Trouver la longueur de la sous-séquence croissante la plus longue. Optimiser en temps <strong>O(n log n)</strong> en utilisant la recherche binaire avec la programmation dynamique. Compter aussi combien de LIS différentes existent.</p>
+    </div>
+
+    <div class="rules">
+        <h3>🎯 Règles du Défi :</h3>
+        <ol>
+            <li><strong>Aucune variable globale</strong> - tout via les paramètres</li>
+            <li><strong>Gestion d'erreurs appropriée</strong> pour les cas limites</li>
+            <li><strong>Documentation claire</strong> de l'approche algorithmique</li>
+            <li><strong>Analyse de complexité temporelle/spatiale</strong> efficace</li>
+            <li><strong>Tester avec divers cas limites</strong> (tableaux vides, éléments uniques, toutes valeurs identiques, etc.)</li>
+        </ol>
+
+        <h3>🏆 Défi Bonus :</h3>
+        <p>Créez votre propre exercice complexe de fonction de tableau avec :</p>
+        <ul>
+            <li>Énoncé court (max 2 lignes)</li>
+            <li>Concepts algorithmiques multiples combinés</li>
+            <li>Scénario d'application du monde réel</li>
+            <li>Nécessite une réflexion créative au-delà des algorithmes de base</li>
+        </ul>
+    </div>
+
+    <div class="author">
+        <p><strong>Auteur :</strong> MiniMax Agent</p>
+        <p><em>Conçu pour défier et développer vos compétences algorithmiques en C</em></p>
+    </div>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"9a34580de951e1c5","serverTiming":{"name":{"cfExtPri":true,"cfEdge":true,"cfOrigin":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"version":"2025.9.1","token":"e72945439c264b3b85d2e3b689102d27"}' crossorigin="anonymous"></script>
+</body>
+</html>

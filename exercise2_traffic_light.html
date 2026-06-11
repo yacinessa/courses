@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise 2: Traffic Light Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .traffic-light {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+            padding: 30px;
+            background: #2c3e50;
+            border-radius: 15px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+        
+        .light-slot {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 10px;
+            background: #34495e;
+            border: 3px solid #1a252f;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+        
+        .light-slot.red.on {
+            background: #e74c3c;
+            box-shadow: 0 0 20px #e74c3c, inset 0 0 20px #c0392b;
+        }
+        
+        .light-slot.yellow.on {
+            background: #f1c40f;
+            box-shadow: 0 0 20px #f1c40f, inset 0 0 20px #f39c12;
+        }
+        
+        .light-slot.green.on {
+            background: #27ae60;
+            box-shadow: 0 0 20px #27ae60, inset 0 0 20px #2ecc71;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin: 0 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .state-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .state-display {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 15px;
+            background: #3498db;
+            color: white;
+            border-radius: 8px;
+        }
+        
+        .timer-display {
+            text-align: center;
+            font-size: 20px;
+            color: #e74c3c;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .code-example {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        .explanation {
+            background: #e8f5e8;
+            padding: 15px;
+            border-left: 4px solid #27ae60;
+            margin: 20px 0;
+        }
+        
+        .sequence-timeline {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .sequence-step {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+            margin: 5px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .step-red { background: #ffe6e6; color: #721c24; }
+        .step-red-yellow { background: #fff3cd; color: #856404; }
+        .step-green { background: #d4edda; color: #155724; }
+        .step-yellow { background: #fff3cd; color: #856404; }
+        
+        .step-time {
+            font-weight: bold;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Exercise 2: Traffic Light Simulation</h1>
+        
+        <div class="explanation">
+            <h3>Objective:</h3>
+            <p>Create a traffic light simulation with 3 LEDs (Red, Yellow, Green) that light up according to a realistic cycle.</p>
+            <p><strong>Sequence:</strong> Red (5s) → Red + Yellow (2s) → Green (5s) → Yellow (2s) → repeat</p>
+        </div>
+        
+        <div class="state-display" id="stateDisplay">Ready to Start</div>
+        <div class="timer-display" id="timerDisplay">Timer: 0.0s</div>
+        
+        <div class="traffic-light">
+            <div class="light-slot red" id="redLight"></div>
+            <div class="light-slot yellow" id="yellowLight"></div>
+            <div class="light-slot green" id="greenLight"></div>
+        </div>
+        
+        <div class="controls">
+            <button onclick="startTrafficLight()">Start Traffic Light</button>
+            <button onclick="stopTrafficLight()">Stop</button>
+            <button onclick="resetTrafficLight()">Reset</button>
+        </div>
+        
+        <div class="state-info">
+            <h3>Traffic Light Sequence:</h3>
+            <div class="sequence-timeline">
+                <div class="sequence-step step-red">
+                    <strong>RED</strong><br>
+                    <div class="step-time">5 seconds</div>
+                </div>
+                <div class="sequence-step step-red-yellow">
+                    <strong>RED + YELLOW</strong><br>
+                    <div class="step-time">2 seconds</div>
+                </div>
+                <div class="sequence-step step-green">
+                    <strong>GREEN</strong><br>
+                    <div class="step-time">5 seconds</div>
+                </div>
+                <div class="sequence-step step-yellow">
+                    <strong>YELLOW</strong><br>
+                    <div class="step-time">2 seconds</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="code-example">
+            <h3>STM32 C Code:</h3>
+            <pre>
+// GPIO Configuration
+// LED Red:   GPIOA, Pin 0
+// LED Yellow: GPIOA, Pin 1  
+// LED Green:  GPIOA, Pin 2
+
+#include "stm32f1xx.h"
+
+void setRed() {
+    GPIOA->ODR |= (1 << 0);    // Red ON
+    GPIOA->ODR &= ~((1 << 1) | (1 << 2)); // Yellow & Green OFF
+}
+
+void setRedYellow() {
+    GPIOA->ODR |= ((1 << 0) | (1 << 1));  // Red & Yellow ON
+    GPIOA->ODR &= ~(1 << 2);               // Green OFF
+}
+
+void setGreen() {
+    GPIOA->ODR |= (1 << 2);    // Green ON
+    GPIOA->ODR &= ~((1 << 0) | (1 << 1)); // Red & Yellow OFF
+}
+
+void setYellow() {
+    GPIOA->ODR |= (1 << 1);    // Yellow ON
+    GPIOA->ODR &= ~((1 << 0) | (1 << 2)); // Red & Green OFF
+}
+
+void allOff() {
+    GPIOA->ODR &= ~((1 << 0) | (1 << 1) | (1 << 2)); // All OFF
+}
+
+int main(void) {
+    // Initialize GPIOA pins 0,1,2 as outputs
+    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
+    GPIOA->CRL &= ~0xFFF;      // Clear pins 0,1,2
+    GPIOA->CRL |= 0x222;       // Push-pull output, 50MHz
+    
+    while(1) {
+        // Red (5 seconds)
+        setRed();
+        HAL_Delay(5000);
+        
+        // Red + Yellow (2 seconds)
+        setRedYellow();
+        HAL_Delay(2000);
+        
+        // Green (5 seconds)
+        setGreen();
+        HAL_Delay(5000);
+        
+        // Yellow (2 seconds)
+        setYellow();
+        HAL_Delay(2000);
+    }
+}
+            </pre>
+        </div>
+    </div>
+
+    <script>
+        let isRunning = false;
+        let currentState = 0;
+        let timerInterval;
+        let stateStartTime;
+        let timerDisplayInterval;
+        
+        // Traffic light states
+        const states = [
+            { name: "RED", duration: 5000, red: true, yellow: false, green: false },
+            { name: "RED + YELLOW", duration: 2000, red: true, yellow: true, green: false },
+            { name: "GREEN", duration: 5000, red: false, yellow: false, green: true },
+            { name: "YELLOW", duration: 2000, red: false, yellow: true, green: false }
+        ];
+        
+        function updateLights() {
+            const state = states[currentState];
+            
+            // Update red light
+            const redLight = document.getElementById('redLight');
+            if(state.red) redLight.classList.add('on');
+            else redLight.classList.remove('on');
+            
+            // Update yellow light
+            const yellowLight = document.getElementById('yellowLight');
+            if(state.yellow) yellowLight.classList.add('on');
+            else yellowLight.classList.remove('on');
+            
+            // Update green light
+            const greenLight = document.getElementById('greenLight');
+            if(state.green) greenLight.classList.add('on');
+            else greenLight.classList.remove('on');
+            
+            // Update state display
+            document.getElementById('stateDisplay').textContent = 
+                `Current State: ${state.name}`;
+        }
+        
+        function startTimer() {
+            stateStartTime = Date.now();
+            
+            timerDisplayInterval = setInterval(() => {
+                const elapsed = Date.now() - stateStartTime;
+                const seconds = (elapsed / 1000).toFixed(1);
+                document.getElementById('timerDisplay').textContent = 
+                    `Timer: ${seconds}s`;
+            }, 100);
+        }
+        
+        function stopTimer() {
+            clearInterval(timerDisplayInterval);
+            document.getElementById('timerDisplay').textContent = 'Timer: 0.0s';
+        }
+        
+        function executeState() {
+            const state = states[currentState];
+            updateLights();
+            startTimer();
+            
+            setTimeout(() => {
+                stopTimer();
+                if(isRunning) {
+                    currentState = (currentState + 1) % states.length;
+                    executeState();
+                }
+            }, state.duration);
+        }
+        
+        function startTrafficLight() {
+            if(isRunning) return;
+            
+            isRunning = true;
+            currentState = 0;
+            executeState();
+        }
+        
+        function stopTrafficLight() {
+            isRunning = false;
+            stopTimer();
+            clearTimeout(executeState);
+        }
+        
+        function resetTrafficLight() {
+            stopTrafficLight();
+            currentState = 0;
+            // Turn off all lights
+            document.getElementById('redLight').classList.remove('on');
+            document.getElementById('yellowLight').classList.remove('on');
+            document.getElementById('greenLight').classList.remove('on');
+            document.getElementById('stateDisplay').textContent = 'Ready to Start';
+        }
+        
+        // Initialize
+        resetTrafficLight();
+    </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"9a3bcd673e403c2c","serverTiming":{"name":{"cfExtPri":true,"cfEdge":true,"cfOrigin":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"version":"2025.9.1","token":"e72945439c264b3b85d2e3b689102d27"}' crossorigin="anonymous"></script>
+</body>
+</html>

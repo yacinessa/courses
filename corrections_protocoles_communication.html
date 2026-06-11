@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corrections - Protocoles de Communication</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #34495e;
+            background-color: #3498db;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #2980b9;
+            border-left: 4px solid #3498db;
+            padding-left: 10px;
+            margin-top: 20px;
+        }
+        .exercise {
+            background-color: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .question {
+            font-weight: bold;
+            color: #e74c3c;
+            margin-top: 15px;
+        }
+        .answer {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-left: 4px solid #27ae60;
+            margin: 10px 0;
+        }
+        .formula {
+            background-color: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
+        .important {
+            background-color: #ffe6e6;
+            padding: 10px;
+            border-left: 4px solid #e74c3c;
+            margin: 10px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .code {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        .note {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>📡 Corrections des Exercices<br>Protocoles de Communication</h1>
+
+    <!-- ======================== RS232 ======================== -->
+    <h2>1. Protocole RS-232</h2>
+
+    <div class="exercise">
+        <h3>Question 1 - Trame logique</h3>
+        <div class="question">
+            Soit la trame logique d'une liaison série asynchrone avec 1 bit de start, des données, 1 bit de parité et 1 bit de stop. Retrouvez la donnée transmise en hexadécimale.
+        </div>
+        <div class="answer">
+            <p><strong>Trame donnée:</strong> 1 1 0 0 0 1 1 0 1</p>
+            <p><strong>Analyse:</strong></p>
+            <ul>
+                <li>Start = 1</li>
+                <li>Données (LSB en premier) = 1 0 0 0 1 1 0</li>
+                <li>Parité = 1</li>
+                <li>Stop = 1</li>
+            </ul>
+            <p><strong>Reconstruction:</strong></p>
+            <p>Données en ordre MSB: 0 1 1 0 0 0 1 = 0x31 (caractère '1' en ASCII)</p>
+            <p class="formula"><strong>Réponse: 0x31 (ou 49 en décimal)</strong></p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Question 2 - Type de parité</h3>
+        <div class="question">
+            Quel est le type de parité utilisé?
+        </div>
+        <div class="answer">
+            <p>Pour déterminer le type de parité:</p>
+            <p>Données: 1 0 0 0 1 1 0 → Nombre de 1 = 3 (impair)</p>
+            <p>Bit de parité = 1</p>
+            <p>Total de 1 (données + parité) = 4 (pair)</p>
+            <p class="formula"><strong>Réponse: Parité PAIRE (EVEN)</strong></p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Question 3 - Type de logique</h3>
+        <div class="question">
+            Quel est le type de logique utilisé (positive ou négative)?
+        </div>
+        <div class="answer">
+            <p>En observant le bit de START:</p>
+            <ul>
+                <li>Au repos, la ligne est au niveau 1 (logique)</li>
+                <li>Le START est un front descendant (1 → 0)</li>
+                <li>En RS-232: 1 logique = tension négative, 0 logique = tension positive</li>
+            </ul>
+            <p class="formula"><strong>Réponse: Logique NÉGATIVE</strong></p>
+            <div class="note">
+                En RS-232: 1 logique → -3V à -25V, 0 logique → +3V à +25V
+            </div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Question 4 - Trame électrique pour 'é'</h3>
+        <div class="question">
+            Représentez la trame électrique RS-232 pour le caractère 'é' (130 décimal = 0x82 = 10000010 binaire) avec:
+            - Donnée sur 8 bits
+            - Parité paire
+            - 1 bit de stop
+        </div>
+        <div class="answer">
+            <p><strong>Valeur:</strong> 'é' = 130₁₀ = 0x82 = 1000 0010₂</p>
+            <p><strong>Trame logique (LSB en premier):</strong></p>
+            <div class="code">
+Start | D0 | D1 | D2 | D3 | D4 | D5 | D6 | D7 | Parité | Stop
+  0   | 0  | 1  | 0  | 0  | 0  | 0  | 0  | 1  |   1    |  1
+            </div>
+            <p><strong>Calcul de parité:</strong></p>
+            <p>Nombre de 1 dans les données = 2 (pair) → Bit de parité = 0 pour parité paire</p>
+            <p class="important">Correction: Le bit de parité devrait être 0, pas 1!</p>
+            <p><strong>Trame électrique RS-232:</strong></p>
+            <ul>
+                <li>0 logique → +12V</li>
+                <li>1 logique → -12V</li>
+            </ul>
+            <p>Séquence: +12V, +12V, -12V, +12V, +12V, +12V, +12V, +12V, -12V, +12V, -12V</p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Question 5 - Donnée transmise en décimal</h3>
+        <div class="question">
+            D'après la trame électrique RS-232 avec signaux TTL 5V, retrouvez la donnée transmise en décimal.
+        </div>
+        <div class="answer">
+            <p><strong>Analyse de la trame TTL (5V signal):</strong></p>
+            <p>En TTL: 0V = 0 logique, 5V = 1 logique</p>
+            <p>Séquence observée: 1 1 0 0 0 1 1 1</p>
+            <p>En ordre MSB: 1 1 1 0 0 0 1 1 = 0xE3 = 227₁₀</p>
+            <p class="formula"><strong>Réponse: 227 en décimal</strong></p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Question 6 - Mode de transmission</h3>
+        <div class="question">
+            Quel mode de transmission nécessite la transmission du signal d'horloge?
+        </div>
+        <div class="answer">
+            <p class="formula"><strong>Réponse: Transmission SYNCHRONE</strong></p>
+            <div class="note">
+                <p><strong>Transmission asynchrone:</strong> Pas de signal d'horloge transmis, synchronisation sur le bit de START</p>
+                <p><strong>Transmission synchrone:</strong> Signal d'horloge transmis avec les données</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Question 7 - Rôle du bit de parité</h3>
+        <div class="question">
+            Quel est le rôle du bit de parité dans une trame asynchrone?
+        </div>
+        <div class="answer">
+            <p><strong>Rôle du bit de parité:</strong></p>
+            <ul>
+                <li>Détection d'erreur de transmission</li>
+                <li>Permet de vérifier l'intégrité des données reçues</li>
+                <li>Détecte les erreurs impaires (1, 3, 5... bits erronés)</li>
+            </ul>
+            <div class="note">
+                <p><strong>Parité paire (EVEN):</strong> Nombre total de 1 (données + parité) doit être pair</p>
+                <p><strong>Parité impaire (ODD):</strong> Nombre total de 1 (données + parité) doit être impair</p>
+            </div>
+            <p class="important">
+                <strong>Limitation:</strong> Ne peut pas détecter les erreurs paires (2, 4, 6... bits erronés) ni corriger les erreurs.
+            </p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Question 8 - Temps de transmission</h3>
+        <div class="question">
+            Déterminez le temps de transmission d'un fichier de 4 kio (kibioctets) à 9600 bits/s avec une trame de 8 bits de données, 1 bit de start, 1 bit de stop et pas de parité.
+        </div>
+        <div class="answer">
+            <p><strong>Données:</strong></p>
+            <ul>
+                <li>Taille du fichier: 4 kio = 4 × 1024 = 4096 octets</li>
+                <li>Débit: 9600 bits/s</li>
+                <li>Trame: 1 Start + 8 Data + 1 Stop = 10 bits par octet</li>
+            </ul>
+            <p><strong>Calculs:</strong></p>
+            <div class="formula">
+                Nombre total de bits = 4096 octets × 10 bits/octet = 40 960 bits<br>
+                Temps = 40 960 bits ÷ 9600 bits/s = 4.27 secondes
+            </div>
+            <p class="formula"><strong>Réponse: 4.27 secondes (environ 4 secondes et 267 ms)</strong></p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Exercice 2 - Détermination des valeurs décimales</h3>
+        <div class="question">
+            Déterminer la valeur en décimal de la donnée transmise dans les figures fournies (différentes configurations de longueur, parité et stop).
+        </div>
+        <div class="answer">
+            <p><strong>Méthodologie générale:</strong></p>
+            <ol>
+                <li>Identifier le type de représentation (Logique ou Électrique)</li>
+                <li>Repérer le bit de START</li>
+                <li>Lire les bits de données (LSB en premier)</li>
+                <li>Vérifier la parité si présente</li>
+                <li>Convertir en décimal</li>
+            </ol>
+            
+            <div class="note">
+                <p><strong>Pour chaque trame:</strong></p>
+                <ul>
+                    <li>Trame électrique RS-232: 0 = +12V, 1 = -12V</li>
+                    <li>Trame logique: Observer directement les niveaux 0 et 1</li>
+                    <li>7 bits de données: Valeurs de 0 à 127</li>
+                    <li>8 bits de données: Valeurs de 0 à 255</li>
+                </ul>
+            </div>
+            
+            <p class="important">
+                <strong>Exemples de conversion:</strong><br>
+                - Pour 0110001 (7 bits): 1 + 16 + 32 = 49 (caractère '1' ASCII)<br>
+                - Pour 01000001 (8 bits): 1 + 64 = 65 (caractère 'A' ASCII)
+            </p>
+        </div>
+    </div>
+
+    <!-- ======================== SPI ======================== -->
+    <h2>2. Protocole SPI</h2>
+
+    <div class="exercise">
+        <h3>Informations générales SPI</h3>
+        <div class="answer">
+            <p><strong>Caractéristiques du bus SPI:</strong></p>
+            <table>
+                <tr>
+                    <th>Caractéristique</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Type</td>
+                    <td>Communication série synchrone full-duplex</td>
+                </tr>
+                <tr>
+                    <td>Signaux</td>
+                    <td>SCK (Clock), MOSI (Master Out Slave In), MISO (Master In Slave Out), SS (Slave Select)</td>
+                </tr>
+                <tr>
+                    <td>Modes</td>
+                    <td>4 modes selon CPOL (polarité) et CPHA (phase)</td>
+                </tr>
+                <tr>
+                    <td>Vitesse</td>
+                    <td>Jusqu'à 5 Mbps (peut aller au-delà selon l'implémentation)</td>
+                </tr>
+                <tr>
+                    <td>Maîtres</td>
+                    <td>1 seul maître actif à la fois</td>
+                </tr>
+                <tr>
+                    <td>Esclaves</td>
+                    <td>Jusqu'à 4 (limité par le nombre de SS disponibles)</td>
+                </tr>
+            </table>
+            
+            <div class="note">
+                <p><strong>Avantages du SPI:</strong></p>
+                <ul>
+                    <li>Communication full-duplex (émission et réception simultanées)</li>
+                    <li>Vitesse élevée</li>
+                    <li>Protocole simple</li>
+                    <li>Pas de résistances de pull-up nécessaires</li>
+                </ul>
+            </div>
+            
+            <div class="important">
+                <p><strong>Inconvénients du SPI:</strong></p>
+                <ul>
+                    <li>Nombre de fils important (minimum 4)</li>
+                    <li>Un fil SS supplémentaire par esclave</li>
+                    <li>Pas d'acquittement</li>
+                    <li>Portée limitée (20 cm maximum en pratique)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================== I2C ======================== -->
+    <h2>3. Protocole I²C</h2>
+
+    <div class="exercise">
+        <h3>Exercice 1 - Question 1: Équation logique</h3>
+        <div class="question">
+            D'après le circuit, DEV1 désire prendre la parole (START). Avant de pouvoir émettre, il doit s'assurer que le bus est libre. Donnez l'équation logique de EMISSION = f(SCL_IN, SDA_IN) autorisant l'émission.
+        </div>
+        <div class="answer">
+            <p><strong>Conditions pour émettre:</strong></p>
+            <ul>
+                <li>Le bus doit être libre: SDA = 1 ET SCL = 1 (niveau de repos)</li>
+                <li>Les deux lignes doivent être au niveau haut (récessif)</li>
+            </ul>
+            <p class="formula">
+                <strong>EMISSION = SCL_IN · SDA_IN</strong><br>
+                (ET logique: les deux signaux doivent être à 1)
+            </p>
+            <div class="note">
+                En I²C, les lignes sont au repos quand elles sont au niveau haut grâce aux résistances de pull-up.
+            </div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Exercice 1 - Question 2: État des transistors au START</h3>
+        <div class="question">
+            Lors d'une prise de parole du circuit DEV1 (START), indiquez, dans l'ordre chronologique, l'état des transistors T1 et T2.
+        </div>
+        <div class="answer">
+            <p><strong>Condition de START en I²C:</strong></p>
+            <p>Transition de SDA de 1 → 0 pendant que SCL = 1</p>
+            
+            <div class="code">
+Étapes pour générer un START:
+1. État initial: SCL = 1, SDA = 1
+   → T1 = BLOQUÉ, T2 = BLOQUÉ
+
+2. Générer START: SDA passe à 0 (SCL reste à 1)
+   → T1 = BLOQUÉ, T2 = SATURÉ (conduit)
+            </div>
+            
+            <p class="formula">
+                <strong>Ordre chronologique:</strong><br>
+                1. T1 = BLOQUÉ, T2 = BLOQUÉ (bus au repos)<br>
+                2. T1 = BLOQUÉ, T2 = SATURÉ (condition START)
+            </p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Exercice 1 - Question 3: État de T2 pour le dernier bit</h3>
+        <div class="question">
+            Dans quel état doit se trouver T2 afin de signifier au destinataire de la donnée que le dernier bit a été transmis?
+        </div>
+        <div class="answer">
+            <p><strong>Bit d'acquittement (ACK):</strong></p>
+            <p>Après le dernier bit de données, l'émetteur:</p>
+            <ul>
+                <li>Relâche la ligne SDA (met SDA = 1)</li>
+                <li>Le récepteur tire SDA à 0 pour acquitter</li>
+            </ul>
+            <p class="formula">
+                <strong>T2 = BLOQUÉ</strong>
+            </p>
+            <div class="note">
+                L'émetteur met T2 à l'état BLOQUÉ pour permettre au récepteur de contrôler la ligne SDA et générer le bit d'acquittement.
+            </div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Exercice 1 - Question 4: État des transistors au STOP</h3>
+        <div class="question">
+            Le circuit DEV1 désire clôturer la prise de parole (STOP). Indiquez, dans l'ordre chronologique, l'état des transistors T1 et T2.
+        </div>
+        <div class="answer">
+            <p><strong>Condition de STOP en I²C:</strong></p>
+            <p>Transition de SDA de 0 → 1 pendant que SCL = 1</p>
+            
+            <div class="code">
+Étapes pour générer un STOP:
+1. État avant STOP: SCL = 1, SDA = 0
+   → T1 = BLOQUÉ, T2 = SATURÉ
+
+2. Relâcher SCL puis SDA
+   → T1 = BLOQUÉ, T2 = BLOQUÉ
+
+3. État final: SCL = 1, SDA = 1 (repos)
+   → T1 = BLOQUÉ, T2 = BLOQUÉ
+            </div>
+            
+            <p class="formula">
+                <strong>Ordre chronologique:</strong><br>
+                1. T1 = BLOQUÉ, T2 = SATURÉ (avant STOP)<br>
+                2. T1 = BLOQUÉ, T2 = BLOQUÉ (condition STOP et repos)
+            </p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Exercice 1 - Question 5: Temps de transmission à 3.2 Mbps</h3>
+        <div class="question">
+            Dans le cas d'un circuit nouvelle génération haut débit (3.2 Mbps), quel temps mettra un circuit pour transmettre un octet (hors temps de START et de STOP)?
+        </div>
+        <div class="answer">
+            <p><strong>Données:</strong></p>
+            <ul>
+                <li>Débit: 3.2 Mbps = 3 200 000 bits/s</li>
+                <li>Nombre de bits pour un octet complet:
+                    <ul>
+                        <li>11 bits ID</li>
+                        <li>1 bit R/W</li>
+                        <li>1 bit ACK</li>
+                        <li>8 bits d'adresse</li>
+                        <li>1 bit ACK</li>
+                        <li>8 bits de données</li>
+                        <li>1 bit ACK</li>
+                        <li>Total: 31 bits minimum</li>
+                    </ul>
+                </li>
+            </ul>
+            
+            <p><strong>Calcul simplifié pour 1 octet de données (avec ACK):</strong></p>
+            <div class="formula">
+                9 bits (8 données + 1 ACK)<br>
+                Temps par bit = 1 / 3 200 000 = 0.3125 µs<br>
+                Temps total = 9 × 0.3125 = 2.8125 µs
+            </div>
+            
+            <p class="formula">
+                <strong>Réponse: 2.81 µs pour transmettre 1 octet avec ACK</strong>
+            </p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Exercice 2 - Question 1: Trames d'écriture en mémoire</h3>
+        <div class="question">
+            On désire écrire les données $A7 et $5C dans les mémoires d'adresse $01F et $5D1 respectivement. Établissez les trames (en binaire).
+        </div>
+        <div class="answer">
+            <p><strong>Format mémoire I²C avec adressage 11 bits:</strong></p>
+            <p>Code mémoire: 1010 (fixe pour les mémoires I²C)</p>
+            
+            <div class="code">
+<strong>Écriture à l'adresse $01F avec donnée $A7:</strong>
+- Adresse: $01F = 0000 0001 1111
+  - Ad10-Ad8: 000
+  - Ad7-Ad0: 0001 1111
+
+START | 1010 000 0 | ACK | 0001 1111 | ACK | 1010 0111 | ACK | STOP
+      | Code + Ad  | S→M | Adr basse | S→M | Donnée    | S→M |
+      | 1010000    |  0  | 00011111  |  0  | 10100111  |  0  |
+
+<strong>Écriture à l'adresse $5D1 avec donnée $5C:</strong>
+- Adresse: $5D1 = 0101 1101 0001
+  - Ad10-Ad8: 101
+  - Ad7-Ad0: 1101 0001
+
+START | 1010 101 0 | ACK | 1101 0001 | ACK | 0101 1100 | ACK | STOP
+      | Code + Ad  | S→M | Adr basse | S→M | Donnée    | S→M |
+      | 1010101    |  0  | 11010001  |  0  | 01011100  |  0  |
+            </div>
+            
+            <div class="note">
+                <p>M→S : Maître vers Esclave (Slave)</p>
+                <p>S→M : Esclave vers Maître (ACK = 0 pour acquittement)</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Exercice 2 - Question 2: Trame de lecture en mémoire</h3>
+        <div class="question">
+            On désire lire la donnée $8D stockée à l'adresse $2FA. Établissez la trame (en binaire).
+        </div>
+        <div class="answer">
+            <p><strong>Lecture en mémoire I²C (adressage 11 bits):</strong></p>
+            <p>Adresse: $2FA = 0010 1111 1010</p>
+            <ul>
+                <li>Ad10-Ad8: 010</li>
+                <li>Ad7-Ad0: 1111 1010</li>
+            </ul>
+            
+            <div class="code">
+<strong>Phase 1: Positionnement de l'adresse (écriture)</strong>
+START | 1010 010 0 | ACK | 1111 1010 | ACK |
+      | Code + Ad  | S→M | Adr basse | S→M |
+
+<strong>Phase 2: Lecture de la donnée (lecture)</strong>
+RESTART | 1010 010 1 | ACK | 1000 1101 | NACK | STOP
+        | Code + Ad  | S→M | Donnée    | M→S  |
+        | (Read bit) |     | $8D       |      |
+            </div>
+            
+            <p class="formula">
+                <strong>Trame complète:</strong><br>
+                S | 10100100 | A | 11111010 | A | Sr | 10100101 | A | 10001101 | N | P
+            </p>
+            
+            <div class="note">
+                <p>S = START, Sr = Repeated START, P = STOP</p>
+                <p>A = ACK (0), N = NACK (1)</p>
+                <p>Le NACK final indique au slave que c'est le dernier octet à lire</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================== CAN BUS ======================== -->
+    <h2>4. Protocole CAN Bus</h2>
+
+    <div class="exercise">
+        <h3>Question 1 - Nombre de capteurs/actionneurs TOR</h3>
+        <div class="question">
+            Déterminez le nombre de capteurs/actionneurs TOR (Tout Ou Rien) différents qu'un nœud peut gérer dans une seule trame de données.
+        </div>
+        <div class="answer">
+            <p><strong>Analyse:</strong></p>
+            <p>Une trame CAN peut contenir jusqu'à 8 octets de données.</p>
+            <p>Chaque capteur/actionneur TOR nécessite 1 bit (0 ou 1).</p>
+            
+            <div class="formula">
+                Nombre de bits disponibles = 8 octets × 8 bits/octet = 64 bits
+            </div>
+            
+            <p class="formula">
+                <strong>Réponse: 64 capteurs/actionneurs TOR différents</strong>
+            </p>
+            
+            <div class="note">
+                Chaque bit peut représenter l'état d'un capteur/actionneur TOR:
+                <ul>
+                    <li>0 = Éteint/Inactif/Ouvert</li>
+                    <li>1 = Allumé/Actif/Fermé</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Question 2 - Longueur mini et maxi de la trame</h3>
+        <div class="question">
+            Dans le cas d'une trame au format CAN 2.0A standard et au format étendu CAN 2.0B, calculez la longueur mini et maxi de la trame.
+        </div>
+        <div class="answer">
+            <p><strong>Format CAN 2.0A (Standard - 11 bits ID):</strong></p>
+            <table>
+                <tr>
+                    <th>Champ</th>
+                    <th>Taille</th>
+                </tr>
+                <tr>
+                    <td>SOF (Start Of Frame)</td>
+                    <td>1 bit</td>
+                </tr>
+                <tr>
+                    <td>Identificateur</td>
+                    <td>11 bits</td>
+                </tr>
+                <tr>
+                    <td>RTR</td>
+                    <td>1 bit</td>
+                </tr>
+                <tr>
+                    <td>IDE + r0</td>
+                    <td>2 bits</td>
+                </tr>
+                <tr>
+                    <td>DLC</td>
+                    <td>4 bits</td>
+                </tr>
+                <tr>
+                    <td>Données</td>
+                    <td>0 à 64 bits (0 à 8 octets)</td>
+                </tr>
+                <tr>
+                    <td>CRC</td>
+                    <td>15 bits</td>
+                </tr>
+                <tr>
+                    <td>CRC Delimiter</td>
+                    <td>1 bit</td>
+                </tr>
+                <tr>
+                    <td>ACK Slot</td>
+                    <td>1 bit</td>
+                </tr>
+                <tr>
+                    <td>ACK Delimiter</td>
+                    <td>1 bit</td>
+                </tr>
+                <tr>
+                    <td>EOF</td>
+                    <td>7 bits</td>
+                </tr>
+                <tr>
+                    <td>IFS</td>
+                    <td>3 bits</td>
+                </tr>
+            </table>
+            
+            <div class="formula">
+                <strong>CAN 2.0A Standard:</strong><br>
+                Base fixe = 1+11+1+2+4+15+1+1+1+7+3 = 47 bits<br>
+                Minimum (0 octet) = 47 bits<br>
+                Maximum (8 octets) = 47 + 64 = 111 bits
+            </div>
+            
+            <p><strong>Format CAN 2.0B (Étendu - 29 bits ID):</strong></p>
+            <div class="formula">
+                <strong>CAN 2.0B Étendu:</strong><br>
+                Base fixe = 1+11+1+1+18+1+2+4+15+1+1+1+7+3 = 67 bits<br>
+                Minimum (0 octet) = 67 bits<br>
+                Maximum (8 octets) = 67 + 64 = 131 bits
+            </div>
+            
+            <p class="important">
+                <strong>Note:</strong> Ces calculs ne tiennent pas compte du bit-stuffing qui peut ajouter des bits supplémentaires (jusqu'à 20% de bits en plus dans le pire cas).
+            </p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Question 3 - Rendement du protocole CAN</h3>
+        <div class="question">
+            Calculez le rendement du protocole CAN lorsqu'il émet une trame de données complète (CAN 2.0A standard).
+        </div>
+        <div class="answer">
+            <p><strong>Définition du rendement:</strong></p>
+            <p>Rendement = (Bits de données utiles) / (Bits totaux de la trame)</p>
+            
+            <div class="formula">
+                <strong>Trame CAN 2.0A avec 8 octets de données:</strong><br>
+                Bits de données utiles = 64 bits<br>
+                Bits totaux (sans stuffing) = 111 bits<br>
+                <br>
+                Rendement = 64 / 111 = 0.577 = 57.7%
+            </div>
+            
+            <p class="formula">
+                <strong>Réponse: 57.7% (environ 58%)</strong>
+            </p>
+            
+            <div class="note">
+                <p><strong>Rendement selon le nombre d'octets:</strong></p>
+                <ul>
+                    <li>1 octet: 8/55 = 14.5%</li>
+                    <li>2 octets: 16/63 = 25.4%</li>
+                    <li>4 octets: 32/79 = 40.5%</li>
+                    <li>8 octets: 64/111 = 57.7%</li>
+                </ul>
+            </div>
+            
+            <p class="important">
+                Le rendement est meilleur lorsqu'on transmet le maximum de données (8 octets).
+            </p>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Question 4 - Nombre maximum de trames par seconde</h3>
+        <div class="question">
+            Avec des trames de 60 bits en moyenne, calculez le nombre maximum de trames pouvant circuler sur le bus en une seconde pour un débit maximum de 1 Mbit/s.
+        </div>
+        <div class="answer">
+            <p><strong>Données:</strong></p>
+            <ul>
+                <li>Débit: 1 Mbit/s = 1 000 000 bits/s</li>
+                <li>Taille moyenne d'une trame: 60 bits</li>
+            </ul>
+            
+            <div class="formula">
+                Nombre de trames/seconde = Débit / Taille de trame<br>
+                = 1 000 000 / 60<br>
+                = 16 666.67 trames/s
+            </div>
+            
+            <p class="formula">
+                <strong>Réponse: Environ 16 667 trames par seconde</strong>
+            </p>
+            
+            <div class="note">
+                <p><strong>En pratique:</strong></p>
+                <p>Ce nombre théorique ne tient pas compte:</p>
+                <ul>
+                    <li>Du bit-stuffing (peut ajouter 20%)</li>
+                    <li>Des temps d'inter-trame</li>
+                    <li>Des éventuelles retransmissions en cas d'erreur</li>
+                    <li>Du temps de traitement des contrôleurs</li>
+                </ul>
+                <p>Le nombre réel sera donc inférieur, environ 13 000 à 14 000 trames/s.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Question 5 - Arbitrage sur le bus CAN</h3>
+        <div class="question">
+            Complétez le chronogramme (résultante sur le bus : arbitrage) et indiquez le nœud qui a réussi à émettre sa trame.
+        </div>
+        <div class="answer">
+            <p><strong>Principe de l'arbitrage CAN:</strong></p>
+            <ul>
+                <li>Bit dominant (0) écrase un bit récessif (1)</li>
+                <li>ET câblé: si un nœud émet 0, le bus sera à 0</li>
+                <li>Le nœud qui émet un bit récessif (1) alors que le bus est dominant (0) perd l'arbitrage</li>
+            </ul>
+            
+            <div class="code">
+Nœud 2: 0 0 1 0 1 0 0 1 0 1
+Nœud 1: 0 0 1 0 1 0 0 1 0 1
+        ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+Bus:    0 0 1 0 1 0 0 1 0 1
+
+Analyse bit par bit:
+- Bits 1-2: Les deux émettent 0 → Bus = 0
+- Bit 3: Les deux émettent 1 → Bus = 1
+- Bit 4: Les deux émettent 0 → Bus = 0
+- Bit 5: Nœud 2 émet 1, Nœud 1 émet 1 → Bus = 1
+  (selon le schéma donné)
+            </div>
+            
+            <p class="formula">
+                <strong>Résultat:</strong> Le nœud avec l'ID le plus bas (valeur binaire la plus petite) gagne l'arbitrage.
+            </p>
+            
+            <div class="note">
+                <p><strong>Règle générale:</strong></p>
+                <p>Plus l'identificateur est petit (numériquement), plus le message est prioritaire.</p>
+                <p>ID = 0x001 est plus prioritaire que ID = 0x7FF</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Question 6 - Priorité entre trame de données et trame de requête</h3>
+        <div class="question">
+            Que se passe-t-il si 2 nœuds émettent chacun une trame possédant le même identificateur mais une des 2 trames est une trame de données et l'autre une trame de requête? Conclusion sur la priorité.
+        </div>
+        <div class="answer">
+            <p><strong>Analyse:</strong></p>
+            <p>Le bit RTR (Remote Transmission Request) détermine le type de trame:</p>
+            <ul>
+                <li><strong>Trame de données:</strong> RTR = 0 (dominant)</li>
+                <li><strong>Trame de requête:</strong> RTR = 1 (récessif)</li>
+            </ul>
+            
+            <div class="code">
+Scénario:
+- Nœud A: ID identique + RTR = 0 (trame de données)
+- Nœud B: ID identique + RTR = 1 (trame de requête)
+
+Arbitrage:
+- Les bits d'ID sont identiques → pas de différence
+- Au niveau du bit RTR:
+  * Nœud A émet 0 (dominant)
+  * Nœud B émet 1 (récessif)
+  * Bus = 0 (dominant l'emporte)
+
+Résultat:
+- Nœud A continue (trame de données)
+- Nœud B perd l'arbitrage (trame de requête)
+            </div>
+            
+            <p class="formula">
+                <strong>Conclusion: La trame de DONNÉES a toujours priorité sur la trame de REQUÊTE</strong>
+            </p>
+            
+            <div class="note">
+                <p><strong>Principe logique:</strong></p>
+                <p>Il est plus important de transmettre les données réelles que de demander des données. Si un nœud a déjà les données à envoyer, il n'est pas nécessaire qu'un autre nœud les demande en même temps.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Question 7 - Compléter une trame CAN</h3>
+        <div class="question">
+            Complétez la trame (jusqu'au champ CRC exclu) dans le cas où un nœud émet les données 'B' (0x42) suivi de la valeur 6.
+        </div>
+        <div class="answer">
+            <p><strong>Données à transmettre:</strong></p>
+            <ul>
+                <li>Octet 1: 'B' = 0x42 = 0100 0010</li>
+                <li>Octet 2: 6 = 0x06 = 0000 0110</li>
+            </ul>
+            
+            <p><strong>Structure de la trame:</strong></p>
+            <div class="code">
+SOF: 0 (1 bit dominant)
+
+Identificateur: (supposons ID = 0x100 = 0001 0000 000)
+1 0 0 0 1 0 0 0 0 0 0 (11 bits)
+
+RTR: 0 (trame de données)
+
+IDE: 0 (format standard)
+r0: 0 (réservé)
+
+DLC: 0010 (2 octets de données)
+
+Données:
+Octet 1 (0x42): 0 1 0 0 0 0 1 0
+Octet 2 (0x06): 0 0 0 0 0 1 1 0
+
+[CRC: 15 bits à calculer...]
+            </div>
+            
+            <p class="formula">
+                <strong>Trame complète (sans CRC):</strong><br>
+                0 | 10001000000 | 0 | 00 | 0010 | 01000010 | 00000110 |
+            </p>
+            
+            <div class="note">
+                <p><strong>Note sur le DLC:</strong></p>
+                <p>DLC = 0010 (binaire) = 2 (décimal) indique 2 octets de données</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Question 8a - Identification des champs de vitesse</h3>
+        <div class="question">
+            Identifiez et relevez les valeurs des champs données qui contiennent la vitesse du vent dans la trame d'identifiant 09FD0201h.
+        </div>
+        <div class="answer">
+            <p><strong>Trame capturée:</strong></p>
+            <p>Message: 09FD0201h avec données: FF BE 00 5F F5 FA FF FF</p>
+            
+            <p><strong>Analyse selon la documentation:</strong></p>
+            <ul>
+                <li>DATA 7 (LSB) = FF = 255</li>
+                <li>DATA 6 (MSB) = FF = 255</li>
+            </ul>
+            
+            <div class="formula">
+                <strong>Valeur de vitesse (LSB, MSB):</strong><br>
+                DATA 7 = 0xFF (LSB)<br>
+                DATA 6 = 0xFF (MSB)
+            </div>
+            
+            <div class="note">
+                La valeur FF FF (65535) peut indiquer une valeur invalide ou un capteur non connecté/défaillant.
+            </div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Question 8b - Conversion de la vitesse</h3>
+        <div class="question">
+            Sachant que l'unité dans laquelle est codée l'information de vitesse sont des m/min, à quelle valeur décimale cela correspond-t-il? Et en m/s?
+        </div>
+        <div class="answer">
+            <p><strong>Si on avait des valeurs valides (exemple avec DATA6=0x00, DATA7=0x5F):</strong></p>
+            
+            <div class="formula">
+                Valeur 16 bits = (MSB × 256) + LSB<br>
+                = (0x00 × 256) + 0x5F<br>
+                = 0 + 95<br>
+                = 95 m/min
+            </div>
+            
+            <p><strong>Conversion en m/s:</strong></p>
+            <div class="formula">
+                Vitesse (m/s) = Vitesse (m/min) ÷ 60<br>
+                = 95 ÷ 60<br>
+                = 1.583 m/s
+            </div>
+            
+            <p class="formula">
+                <strong>Exemple: 95 m/min = 1.58 m/s</strong>
+            </p>
+            
+            <div class="important">
+                <strong>Pour les valeurs réelles (0xFFFF):</strong><br>
+                0xFFFF = 65535 m/min = 1092.25 m/s<br>
+                Cette valeur irréaliste indique probablement une erreur ou l'absence de données valides.
+            </div>
+        </div>
+    </div>
+
+    <div class="exercise">
+        <h3>Question 9 - Bit Stuffing</h3>
+        <div class="question">
+            Complétez le diagramme suivant en respectant la méthode de "Bit Stuffing".
+        </div>
+        <div class="answer">
+            <p><strong>Règle du Bit Stuffing:</strong></p>
+            <p>Après 5 bits consécutifs de même valeur, insérer un bit de valeur opposée.</p>
+            
+            <p><strong>Trame avant stuffing:</strong></p>
+            <div class="code">
+1 0 1 1 1 1 1 0 0 0 0 0 0 1 1 1 1 1 1 0
+            </div>
+            
+            <p><strong>Application du Bit Stuffing:</strong></p>
+            <div class="code">
+Position: 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20
+Original: 1  0  1  1  1  1  1  0  0  0  0  0  0  1  1  1  1  1  1  0
+                      ↑___↑
+                    5 fois 1
+                    → Insérer 0
+
+Stuffed:  1  0  1  1  1  1  1  [0] 0  0  0  0  0  0  [1] 1  1  1  1  1  1  [0] 0
+                               ↑              ↑                          ↑
+                          Bit stuffé    Bit stuffé                 Bit stuffé
+            </div>
+            
+            <p class="formula">
+                <strong>Trame avec stuffing:</strong><br>
+                1 0 1 1 1 1 1 | 0 | 0 0 0 0 0 0 | 1 | 1 1 1 1 1 1 | 0 | 0
+            </p>
+            
+            <div class="note">
+                <p><strong>Bits stuffés ajoutés:</strong></p>
+                <ul>
+                    <li>Position 8: 0 (après cinq 1 consécutifs)</li>
+                    <li>Position 15: 1 (après six 0 consécutifs)</li>
+                    <li>Position 22: 0 (après six 1 consécutifs)</li>
+                </ul>
+            </div>
+            
+            <p class="important">
+                <strong>Important:</strong> Le récepteur détecte et retire automatiquement les bits de stuffing pour reconstituer la trame originale.
+            </p>
+        </div>
+    </div>
+
+    <!-- ======================== RÉSUMÉ COMPARATIF ======================== -->
+    <h2>5. Tableau Comparatif des Protocoles</h2>
+
+    <div class="exercise">
+        <div class="answer">
+            <table>
+                <tr>
+                    <th>Caractéristique</th>
+                    <th>RS-232</th>
+                    <th>SPI</th>
+                    <th>I²C</th>
+                    <th>CAN Bus</th>
+                </tr>
+                <tr>
+                    <td><strong>Type</strong></td>
+                    <td>Série asynchrone</td>
+                    <td>Série synchrone</td>
+                    <td>Série synchrone</td>
+                    <td>Série asynchrone</td>
+                </tr>
+                <tr>
+                    <td><strong>Fils nécessaires</strong></td>
+                    <td>2-3 (Tx, Rx, GND)</td>
+                    <td>4+ (SCK, MOSI, MISO, SS)</td>
+                    <td>2 (SDA, SCL) + GND</td>
+                    <td>2 (CAN_H, CAN_L) + GND</td>
+                </tr>
+                <tr>
+                    <td><strong>Vitesse max</strong></td>
+                    <td>115.2 kbps (standard)<br>921.6 kbps (étendu)</td>
+                    <td>5+ Mbps</td>
+                    <td>100 kbps (standard)<br>400 kbps (fast)<br>3.2 Mbps (high-speed)</td>
+                    <td>1 Mbps (40m)<br>500 kbps (100m)</td>
+                </tr>
+                <tr>
+                    <td><strong>Distance max</strong></td>
+                    <td>15 m @ 19.2 kbps</td>
+                    <td>~20 cm</td>
+                    <td>~1 m (carte)</td>
+                    <td>40 m @ 1 Mbps<br>1000 m @ 20 kbps</td>
+                </tr>
+                <tr>
+                    <td><strong>Nombre de maîtres</strong></td>
+                    <td>1 (point-à-point)</td>
+                    <td>1</td>
+                    <td>Multi-maître</td>
+                    <td>Multi-maître</td>
+                </tr>
+                <tr>
+                    <td><strong>Nombre d'esclaves</strong></td>
+                    <td>1</td>
+                    <td>4 (limité par SS)</td>
+                    <td>127 (adressage 7 bits)</td>
+                    <td>Illimité (par ID)</td>
+                </tr>
+                <tr>
+                    <td><strong>Communication</strong></td>
+                    <td>Full-duplex</td>
+                    <td>Full-duplex</td>
+                    <td>Half-duplex</td>
+                    <td>Half-duplex</td>
+                </tr>
+                <tr>
+                    <td><strong>Acquittement</strong></td>
+                    <td>Non (hardware)</td>
+                    <td>Non</td>
+                    <td>Oui (bit ACK)</td>
+                    <td>Oui (bit ACK)</td>
+                </tr>
+                <tr>
+                    <td><strong>Détection d'erreur</strong></td>
+                    <td>Parité (optionnel)</td>
+                    <td>Non (hardware)</td>
+                    <td>Non (hardware)</td>
+                    <td>CRC 15 bits</td>
+                </tr>
+                <tr>
+                    <td><strong>Arbitrage</strong></td>
+                    <td>N/A</td>
+                    <td>SS (Chip Select)</td>
+                    <td>Start Condition + Adresse</td>
+                    <td>CSMA/CR (bit dominant)</td>
+                </tr>
+                <tr>
+                    <td><strong>Applications</strong></td>
+                    <td>PC, modems, GPS</td>
+                    <td>Mémoires, ADC/DAC, écrans</td>
+                    <td>Capteurs, RTC, EEPROM</td>
+                    <td>Automobile, industrie</td>
+                </tr>
+                <tr>
+                    <td><strong>Avantages</strong></td>
+                    <td>Simple, longue distance</td>
+                    <td>Rapide, full-duplex</td>
+                    <td>2 fils, multi-maître, adressage</td>
+                    <td>Robuste, temps réel, multi-maître</td>
+                </tr>
+                <tr>
+                    <td><strong>Inconvénients</strong></td>
+                    <td>Lent, point-à-point</td>
+                    <td>Beaucoup de fils, 1 maître</td>
+                    <td>Lent, half-duplex</td>
+                    <td>Complexe, coût élevé</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ======================== CONCLUSION ======================== -->
+    <h2>6. Conclusion et Recommandations</h2>
+
+    <div class="exercise">
+        <div class="answer">
+            <h3>Choix du protocole selon l'application</h3>
+            
+            <div class="note">
+                <p><strong>Utilisez RS-232 quand:</strong></p>
+                <ul>
+                    <li>Communication point-à-point simple</li>
+                    <li>Compatibilité avec équipements anciens</li>
+                    <li>Distance moyenne requise (jusqu'à 15 m)</li>
+                    <li>Débit modéré suffisant</li>
+                </ul>
+            </div>
+            
+            <div class="note">
+                <p><strong>Utilisez SPI quand:</strong></p>
+                <ul>
+                    <li>Vitesse élevée requise</li>
+                    <li>Communication full-duplex nécessaire</li>
+                    <li>Courtes distances (sur PCB)</li>
+                    <li>Peu d'esclaves (1-4)</li>
+                </ul>
+            </div>
+            
+            <div class="note">
+                <p><strong>Utilisez I²C quand:</strong></p>
+                <ul>
+                    <li>Nombre de fils limité</li>
+                    <li>Plusieurs périphériques à connecter</li>
+                    <li>Sur PCB ou courtes distances</li>
+                    <li>Vitesse modérée acceptable</li>
+                </ul>
+            </div>
+            
+            <div class="note">
+                <p><strong>Utilisez CAN Bus quand:</strong></p>
+                <ul>
+                    <li>Environnement bruité (automobile, industrie)</li>
+                    <li>Communication temps réel critique</li>
+                    <li>Plusieurs nœuds communicants</li>
+                    <li>Fiabilité et robustesse essentielles</li>
+                    <li>Distances moyennes (jusqu'à 1 km)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 50px; padding: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 10px;">
+        <h2>Fin des Corrections</h2>
+        <p>Document créé pour le Centre Lycée Moulay Youssef, Tanger</p>
+        <p>BTS Électronique et Informatique Industrielle</p>
+        <p style="font-size: 0.9em; margin-top: 20px;">© 2024 - Protocoles de Communication</p>
+    </div>
+
+</body>
+</html>

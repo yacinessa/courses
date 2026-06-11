@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--primary:#00b894;--secondary:#00cec9;--accent:#55efc4;--bg-dark:#0d1117;--bg-card:#161b22;--text-primary:#e6edf3;--text-secondary:#8b949e;--border:#30363d;--success:#3fb950;--error:#f85149;--warning:#d29922;--ch1:#00b894;--ch2:#0984e3;--ch3:#6c5ce7;--ch4:#fdcb6e;--ch5:#e17055;--ch6:#00cec9;--ch7:#fd79a8;--ch8:#636e72;--ch9:#74b9ff;--ch10:#a29bfe;--ch11:#ffeaa7;--ch12:#fab1a0}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Outfit',sans-serif;background:var(--bg-dark);color:var(--text-primary);line-height:1.6}
+        .bg-pattern{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(ellipse at 20% 20%,rgba(0,184,148,0.08) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(0,206,201,0.08) 0%,transparent 50%)}
+        .header{background:linear-gradient(135deg,var(--bg-card) 0%,rgba(22,27,34,0.98) 100%);border-bottom:5px solid var(--primary);padding:45px 20px;text-align:center}
+        .header .logo{font-size:4.5rem;margin-bottom:12px;text-shadow:0 0 40px rgba(0,184,148,0.5)}
+        .header h1{font-size:2.6rem;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--secondary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px}
+        .header .subtitle{font-size:1.1rem;color:var(--text-secondary)}
+        .badges{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:18px}
+        .badge{padding:10px 20px;border-radius:25px;font-size:0.9rem;font-weight:600}
+        .badge.q{background:var(--secondary);color:white}.badge.ch{background:var(--primary);color:white}.badge.yr{background:var(--success);color:var(--bg-dark)}
+        .progress-section{position:sticky;top:0;z-index:100;background:rgba(13,17,23,0.95);backdrop-filter:blur(15px);padding:16px 20px;border-bottom:1px solid var(--border)}
+        .progress-inner{max-width:1000px;margin:0 auto}
+        .progress-stats{display:flex;justify-content:space-between;margin-bottom:10px;font-size:0.95rem;color:var(--text-secondary)}
+        .progress-stats span{color:var(--primary);font-weight:700;font-family:'JetBrains Mono',monospace}
+        .progress-bar{height:12px;background:var(--border);border-radius:12px;overflow:hidden}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--ch1),var(--ch6),var(--ch12));border-radius:12px;transition:width 0.4s;width:0%}
+        .main{max-width:1000px;margin:0 auto;padding:35px 20px}
+        .section-header{display:flex;align-items:center;gap:18px;margin:45px 0 22px;padding:22px;background:var(--bg-card);border-radius:16px;border-left:6px solid}
+        .section-header.ch1{border-color:var(--ch1)}.section-header.ch2{border-color:var(--ch2)}.section-header.ch3{border-color:var(--ch3)}.section-header.ch4{border-color:var(--ch4)}.section-header.ch5{border-color:var(--ch5)}.section-header.ch6{border-color:var(--ch6)}.section-header.ch7{border-color:var(--ch7)}.section-header.ch8{border-color:var(--ch8)}.section-header.ch9{border-color:var(--ch9)}.section-header.ch10{border-color:var(--ch10)}.section-header.ch11{border-color:var(--ch11)}.section-header.ch12{border-color:var(--ch12)}
+        .section-icon{width:60px;height:60px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:2rem}
+        .section-header.ch1 .section-icon{background:rgba(0,184,148,0.15)}.section-header.ch2 .section-icon{background:rgba(9,132,227,0.15)}.section-header.ch3 .section-icon{background:rgba(108,92,231,0.15)}.section-header.ch4 .section-icon{background:rgba(253,203,110,0.15)}.section-header.ch5 .section-icon{background:rgba(225,112,85,0.15)}.section-header.ch6 .section-icon{background:rgba(0,206,201,0.15)}.section-header.ch7 .section-icon{background:rgba(253,121,168,0.15)}.section-header.ch8 .section-icon{background:rgba(99,110,114,0.15)}.section-header.ch9 .section-icon{background:rgba(116,185,255,0.15)}.section-header.ch10 .section-icon{background:rgba(162,155,254,0.15)}.section-header.ch11 .section-icon{background:rgba(255,234,167,0.15)}.section-header.ch12 .section-icon{background:rgba(250,177,160,0.15)}
+        .section-info h2{font-size:1.4rem;font-weight:700}.section-info p{color:var(--text-secondary);font-size:0.9rem}
+        .section-header.ch1 h2{color:var(--ch1)}.section-header.ch2 h2{color:var(--ch2)}.section-header.ch3 h2{color:var(--ch3)}.section-header.ch4 h2{color:var(--ch4)}.section-header.ch5 h2{color:var(--ch5)}.section-header.ch6 h2{color:var(--ch6)}.section-header.ch7 h2{color:var(--ch7)}.section-header.ch8 h2{color:var(--ch8)}.section-header.ch9 h2{color:var(--ch9)}.section-header.ch10 h2{color:var(--ch10)}.section-header.ch11 h2{color:var(--ch11)}.section-header.ch12 h2{color:var(--ch12)}
+        .qcard{background:var(--bg-card);border-radius:14px;padding:24px;margin-bottom:16px;border:1px solid var(--border);position:relative}
+        .qcard::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%;border-radius:5px 0 0 5px}
+        .qcard.ch1::before{background:var(--ch1)}.qcard.ch2::before{background:var(--ch2)}.qcard.ch3::before{background:var(--ch3)}.qcard.ch4::before{background:var(--ch4)}.qcard.ch5::before{background:var(--ch5)}.qcard.ch6::before{background:var(--ch6)}.qcard.ch7::before{background:var(--ch7)}.qcard.ch8::before{background:var(--ch8)}.qcard.ch9::before{background:var(--ch9)}.qcard.ch10::before{background:var(--ch10)}.qcard.ch11::before{background:var(--ch11)}.qcard.ch12::before{background:var(--ch12)}
+        .qcard.answered::after{content:'✓';position:absolute;top:14px;right:14px;width:28px;height:28px;background:var(--success);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem;color:white;animation:pop 0.3s}
+        @keyframes pop{0%{transform:scale(0)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+        .qheader{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
+        .qnum{min-width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1rem}
+        .qcard.ch1 .qnum{background:rgba(0,184,148,0.15);color:var(--ch1)}.qcard.ch2 .qnum{background:rgba(9,132,227,0.15);color:var(--ch2)}.qcard.ch3 .qnum{background:rgba(108,92,231,0.15);color:var(--ch3)}.qcard.ch4 .qnum{background:rgba(253,203,110,0.15);color:var(--ch4)}.qcard.ch5 .qnum{background:rgba(225,112,85,0.15);color:var(--ch5)}.qcard.ch6 .qnum{background:rgba(0,206,201,0.15);color:var(--ch6)}.qcard.ch7 .qnum{background:rgba(253,121,168,0.15);color:var(--ch7)}.qcard.ch8 .qnum{background:rgba(99,110,114,0.15);color:var(--ch8)}.qcard.ch9 .qnum{background:rgba(116,185,255,0.15);color:var(--ch9)}.qcard.ch10 .qnum{background:rgba(162,155,254,0.15);color:var(--ch10)}.qcard.ch11 .qnum{background:rgba(255,234,167,0.15);color:var(--ch11)}.qcard.ch12 .qnum{background:rgba(250,177,160,0.15);color:var(--ch12)}
+        .qtext{font-size:1.05rem;font-weight:500;flex:1;padding-top:10px;padding-right:40px}
+        .qtext code{background:rgba(0,184,148,0.15);color:var(--primary);padding:3px 7px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:0.9rem}
+        .opts{display:grid;gap:12px}
+        .opt{display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--bg-dark);border:2px solid var(--border);border-radius:12px;cursor:pointer;transition:all 0.25s}
+        .opt:hover{border-color:var(--primary);transform:translateX(4px)}
+        .opt.selected{border-color:var(--primary);background:rgba(0,184,148,0.1)}
+        .opt.selected .marker{background:var(--primary);color:white}
+        .marker{min-width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:0.85rem;background:var(--border);color:var(--text-secondary);transition:all 0.25s}
+        .otxt{flex:1;font-size:0.95rem}
+        .otxt code{background:rgba(108,92,231,0.15);color:var(--ch3);padding:3px 6px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:0.88rem}
+        .submit-section{text-align:center;padding:55px 20px;margin-top:35px}
+        .submit-btn{padding:20px 65px;font-size:1.25rem;font-weight:700;font-family:'Outfit',sans-serif;background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;border:none;border-radius:18px;cursor:pointer;transition:all 0.3s;text-transform:uppercase;letter-spacing:2px}
+        .submit-btn:hover{transform:translateY(-4px);box-shadow:0 18px 45px rgba(0,184,148,0.35)}
+        .submit-btn:disabled{background:var(--border);cursor:not-allowed;transform:none;box-shadow:none}
+        .submit-warning{margin-top:18px;color:var(--warning);display:none;font-size:1.05rem}
+        .results{display:none;margin-top:55px;padding:45px;background:var(--bg-card);border-radius:22px;border:3px solid var(--primary)}
+        .results h2{text-align:center;font-size:2.4rem;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:35px}
+        .score-display{display:flex;justify-content:center;align-items:center;gap:35px;flex-wrap:wrap;margin:35px 0}
+        .score-circle{width:170px;height:170px;border-radius:50%;background:conic-gradient(var(--primary) 0deg,var(--border) 0deg);display:flex;align-items:center;justify-content:center}
+        .score-inner{width:140px;height:140px;border-radius:50%;background:var(--bg-card);display:flex;flex-direction:column;align-items:center;justify-content:center}
+        .score-pct{font-size:3rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--primary)}
+        .score-lbl{font-size:0.85rem;color:var(--text-secondary);text-transform:uppercase}
+        .score-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+        .score-card{padding:22px;background:var(--bg-dark);border-radius:14px;text-align:center}
+        .score-card .num{font-size:2.4rem;font-weight:800;font-family:'JetBrains Mono',monospace}
+        .score-card.correct .num{color:var(--success)}.score-card.incorrect .num{color:var(--error)}.score-card.total .num{color:var(--accent)}
+        .score-card .lbl{font-size:0.9rem;color:var(--text-secondary);margin-top:6px}
+        .appreciation{text-align:center;padding:35px;margin-top:35px;background:linear-gradient(135deg,rgba(0,184,148,0.1),rgba(0,206,201,0.1));border-radius:18px}
+        .appreciation h4{font-size:1.7rem;margin-bottom:10px}.appreciation p{color:var(--text-secondary);font-size:1.05rem}
+        .appreciation.excellent h4{color:var(--success)}.appreciation.good h4{color:var(--primary)}.appreciation.average h4{color:var(--warning)}.appreciation.poor h4{color:var(--error)}
+        .answers-section{margin-top:45px}
+        .answers-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:12px}
+        .answers-header h3{font-size:1.6rem;color:var(--secondary)}
+        .filter-btns{display:flex;gap:10px}
+        .filter-btn{padding:8px 16px;border:2px solid var(--border);border-radius:20px;background:transparent;color:var(--text-secondary);cursor:pointer;font-family:'Outfit',sans-serif;font-size:0.85rem;transition:all 0.3s}
+        .filter-btn:hover,.filter-btn.active{border-color:var(--primary);color:var(--primary)}
+        .filter-btn.active{background:rgba(0,184,148,0.1)}
+        .ans-card{background:var(--bg-dark);border-radius:12px;padding:18px;margin-bottom:12px;border-left:5px solid;display:flex;align-items:flex-start;gap:14px}
+        .ans-card.correct{border-color:var(--success)}.ans-card.incorrect{border-color:var(--error)}
+        .ans-card.hidden{display:none}
+        .ans-status{min-width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+        .ans-status.correct{background:rgba(63,185,80,0.2);color:var(--success)}.ans-status.incorrect{background:rgba(248,81,73,0.2);color:var(--error)}
+        .ans-content{flex:1}
+        .ans-q{font-weight:600;margin-bottom:8px;font-size:0.95rem}
+        .ans-info{display:flex;gap:14px;flex-wrap:wrap;font-size:0.85rem}
+        .ans-info span{padding:4px 10px;border-radius:6px}
+        .your-ans{background:rgba(139,148,158,0.1);color:var(--text-secondary)}.correct-ans{background:rgba(63,185,80,0.15);color:var(--success)}
+        .footer{text-align:center;padding:35px;margin-top:45px;border-top:1px solid var(--border);color:var(--text-secondary)}
+        .footer .author{color:var(--primary);font-weight:600}
+        @media(max-width:768px){.header h1{font-size:2rem}.section-header{flex-direction:column;text-align:center}.qheader{flex-direction:column}.score-display{flex-direction:column}.score-cards{grid-template-columns:1fr}.submit-btn{padding:16px 45px;font-size:1.05rem}}
+    </style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+<header class="header">
+    <div class="logo">🌐</div>
+    <h1>QCM Internet des Objets</h1>
+    <p class="subtitle">Referentiel BTS | ESP32 - MQTT - Node-RED - Android</p>
+    <div class="badges">
+        <span class="badge q">📝 100 Questions</span>
+        <span class="badge ch">📚 12 Chapitres</span>
+    </div>
+</header>
+<div class="progress-section">
+    <div class="progress-inner">
+        <div class="progress-stats">
+            <span>Progression : <span id="progressValue">0/100</span></span>
+            <span>Complete : <span id="progressPercent">0%</span></span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
+    </div>
+</div>
+<main class="main" id="questionsContainer"></main>
+<div class="main">
+    <div class="submit-section">
+        <button class="submit-btn" id="submitBtn" onclick="submitQuiz()">🌐 Valider mes 100 Reponses</button>
+        <p class="submit-warning" id="submitWarning">⚠️ Repondez a toutes les questions avant de valider</p>
+    </div>
+    <div class="results" id="results">
+        <h2>📊 Resultats du QCM IoT</h2>
+        <div class="score-display">
+            <div class="score-circle" id="scoreCircle"><div class="score-inner"><span class="score-pct" id="scorePct">0%</span><span class="score-lbl">Score</span></div></div>
+            <div class="score-cards">
+                <div class="score-card correct"><div class="num" id="correctCount">0</div><div class="lbl">Correctes</div></div>
+                <div class="score-card incorrect"><div class="num" id="incorrectCount">0</div><div class="lbl">Incorrectes</div></div>
+                <div class="score-card total"><div class="num">100</div><div class="lbl">Total</div></div>
+            </div>
+        </div>
+        <div class="appreciation" id="appreciation"><h4 id="appTitle"></h4><p id="appText"></p></div>
+        <div class="answers-section">
+            <div class="answers-header">
+                <h3>📋 Correction Detaillee</h3>
+                <div class="filter-btns">
+                    <button class="filter-btn active" onclick="filterAnswers('all',this)">Toutes</button>
+                    <button class="filter-btn" onclick="filterAnswers('correct',this)">Correctes</button>
+                    <button class="filter-btn" onclick="filterAnswers('incorrect',this)">Incorrectes</button>
+                </div>
+            </div>
+            <div id="answersContainer"></div>
+        </div>
+    </div>
+</div>
+<footer class="footer">
+</footer>
+<script>
+const questions = [
+// CH1: Structure IoT (8 questions)
+{q:1,ch:1,txt:"Que signifie IoT ?",opts:["Internet of Technology","Internet of Things","Integrated Online Tools","Internal Operating Terminal"],ans:"b"},
+{q:2,ch:1,txt:"Quelle couche de l'architecture IoT contient les capteurs ?",opts:["Application","Traitement","Reseau","Perception"],ans:"d"},
+{q:3,ch:1,txt:"Combien d'objets connectes sont prevus en 2025 ?",opts:["10 milliards","25 milliards","75 milliards","100 milliards"],ans:"c"},
+{q:4,ch:1,txt:"Quel protocole est couramment utilise en couche application IoT ?",opts:["I2C","SPI","MQTT","UART"],ans:"c"},
+{q:5,ch:1,txt:"Qu'est-ce que l'Edge Computing ?",opts:["Calcul dans le cloud","Calcul sur l'objet lui-meme","Calcul sur smartphone","Calcul differe"],ans:"b"},
+{q:6,ch:1,txt:"Quelle caracteristique n'est PAS propre a un objet connecte ?",opts:["Identifiable","Connecte","Tres puissant","Autonome"],ans:"c"},
+{q:7,ch:1,txt:"Quelle application n'est PAS un domaine de l'IoT ?",opts:["Smart Home","Industrie 4.0","Impression 3D","Agriculture connectee"],ans:"c"},
+{q:8,ch:1,txt:"Qu'est-ce qu'un broker dans l'architecture IoT ?",opts:["Un capteur","Un serveur qui route les messages","Un actionneur","Un protocole"],ans:"b"},
+// CH2: Controleurs IoT ESP32 (9 questions)
+{q:9,ch:2,txt:"Quel fabricant produit l'ESP32 ?",opts:["STMicroelectronics","Microchip","Espressif Systems","Texas Instruments"],ans:"c"},
+{q:10,ch:2,txt:"Quelle est la frequence max du CPU ESP32 ?",opts:["80 MHz","160 MHz","240 MHz","400 MHz"],ans:"c"},
+{q:11,ch:2,txt:"L'ESP32 possede combien de coeurs CPU ?",opts:["1","2","4","8"],ans:"b"},
+{q:12,ch:2,txt:"Quelle connectivite sans fil l'ESP32 integre-t-il ?",opts:["WiFi uniquement","Bluetooth uniquement","WiFi et Bluetooth","LoRa et WiFi"],ans:"c"},
+{q:13,ch:2,txt:"Quelle est la tension d'alimentation de l'ESP32 ?",opts:["1.8V","3.3V","5V","12V"],ans:"b"},
+{q:14,ch:2,txt:"Combien de GPIO possede l'ESP32 ?",opts:["20","34","40","64"],ans:"b"},
+{q:15,ch:2,txt:"Quelle resolution a l'ADC de l'ESP32 ?",opts:["8 bits","10 bits","12 bits","16 bits"],ans:"c"},
+{q:16,ch:2,txt:"Quelle est la consommation en Deep Sleep ?",opts:["10 µA","100 µA","1 mA","10 mA"],ans:"a"},
+{q:17,ch:2,txt:"Quel framework permet de programmer l'ESP32 facilement ?",opts:["STM32CubeIDE","Arduino","Keil","IAR"],ans:"b"},
+// CH3: Capteurs/Actionneurs (8 questions)
+{q:18,ch:3,txt:"Le DHT22 mesure quelle grandeur ?",opts:["Distance","Temperature et humidite","Lumiere","Pression"],ans:"b"},
+{q:19,ch:3,txt:"Quelle interface utilise le capteur BME280 ?",opts:["Analogique","GPIO numerique","I2C ou SPI","1-Wire"],ans:"c"},
+{q:20,ch:3,txt:"Quel capteur mesure la distance par ultrasons ?",opts:["DHT22","BME280","HC-SR04","MPU6050"],ans:"c"},
+{q:21,ch:3,txt:"Quel composant permet de commuter une charge AC 220V ?",opts:["LED","Transistor","Relais","Resistance"],ans:"c"},
+{q:22,ch:3,txt:"Que signifie PWM ?",opts:["Power Width Mode","Pulse Width Modulation","Periodic Wave Modulator","Programmable Watt Meter"],ans:"b"},
+{q:23,ch:3,txt:"Quel capteur detecte les mouvements par infrarouge ?",opts:["LDR","PIR (HC-SR501)","DHT22","BMP180"],ans:"b"},
+{q:24,ch:3,txt:"Quelle fonction ESP32 configure un canal PWM ?",opts:["analogWrite()","ledcSetup()","pwmConfig()","setPWM()"],ans:"b"},
+{q:25,ch:3,txt:"Combien de temps minimum entre deux lectures DHT22 ?",opts:["100 ms","500 ms","2 secondes","10 secondes"],ans:"c"},
+// CH4: WiFi (8 questions)
+{q:26,ch:4,txt:"Quel mode WiFi permet a l'ESP32 de se connecter a un routeur ?",opts:["Access Point","Station","Ad-hoc","Mesh"],ans:"b"},
+{q:27,ch:4,txt:"Quel mode WiFi cree un reseau auquel d'autres appareils se connectent ?",opts:["Station","Access Point","Bridge","Client"],ans:"b"},
+{q:28,ch:4,txt:"Quelle est l'adresse IP par defaut en mode AP ?",opts:["192.168.0.1","192.168.1.1","192.168.4.1","10.0.0.1"],ans:"c"},
+{q:29,ch:4,txt:"Quelle fonction connecte l'ESP32 au WiFi ?",opts:["WiFi.connect()","WiFi.begin()","WiFi.start()","WiFi.init()"],ans:"b"},
+{q:30,ch:4,txt:"Quelle constante indique une connexion WiFi reussie ?",opts:["WIFI_OK","WIFI_READY","WL_CONNECTED","WIFI_CONNECTED"],ans:"c"},
+{q:31,ch:4,txt:"Quelle fonction retourne l'adresse IP locale ?",opts:["WiFi.IP()","WiFi.localIP()","WiFi.getIP()","WiFi.address()"],ans:"b"},
+{q:32,ch:4,txt:"Que retourne <code>WiFi.RSSI()</code> ?",opts:["Adresse MAC","Force du signal en dBm","Vitesse de connexion","Nom du reseau"],ans:"b"},
+{q:33,ch:4,txt:"Quelle bande de frequence utilise le WiFi ESP32 ?",opts:["433 MHz","868 MHz","2.4 GHz","5 GHz"],ans:"c"},
+// CH5: Bluetooth/BLE (8 questions)
+{q:34,ch:5,txt:"Que signifie BLE ?",opts:["Bluetooth Low Energy","Bluetooth Link Extension","Basic Local Exchange","Binary Link Encryption"],ans:"a"},
+{q:35,ch:5,txt:"Quelle bibliotheque permet le Bluetooth Serial sur ESP32 ?",opts:["BLEDevice.h","BluetoothSerial.h","BTSerial.h","ESP32BT.h"],ans:"b"},
+{q:36,ch:5,txt:"Quelle est la portee typique du Bluetooth ?",opts:["1 m","10 m","100 m","1 km"],ans:"c"},
+{q:37,ch:5,txt:"Que signifie GATT en BLE ?",opts:["General Attribute Profile","Generic Access Transfer","Global Addressing Table","Group Authentication Token"],ans:"a"},
+{q:38,ch:5,txt:"Un service BLE contient quoi ?",opts:["Des topics","Des caracteristiques","Des brokers","Des packets"],ans:"b"},
+{q:39,ch:5,txt:"Quelle propriete BLE envoie des donnees sans demande ?",opts:["Read","Write","Notify","Indicate"],ans:"c"},
+{q:40,ch:5,txt:"Quelle consommation a le BLE compare au Bluetooth Classic ?",opts:["Plus elevee","Identique","Plus faible","Variable"],ans:"c"},
+{q:41,ch:5,txt:"Combien de bits pour un UUID BLE standard ?",opts:["8 bits","16 bits","32 bits","128 bits"],ans:"b"},
+// CH6: LoRa (8 questions)
+{q:42,ch:6,txt:"Que signifie LoRa ?",opts:["Low Range","Long Range","Local Radio","Light Radiation"],ans:"b"},
+{q:43,ch:6,txt:"Quelle est la portee maximale de LoRa en zone rurale ?",opts:["100 m","1 km","15 km","100 km"],ans:"c"},
+{q:44,ch:6,txt:"Quelle frequence utilise LoRa en Europe ?",opts:["433 MHz","868 MHz","915 MHz","2.4 GHz"],ans:"b"},
+{q:45,ch:6,txt:"Que signifie LPWAN ?",opts:["Low Power Wide Area Network","Long Protocol Wireless Access Node","Local Private WAN","Light Power Wave Antenna"],ans:"a"},
+{q:46,ch:6,txt:"Plus le Spreading Factor (SF) est eleve, plus...",opts:["Le debit est eleve","La portee est grande","La consommation est faible","La latence est basse"],ans:"b"},
+{q:47,ch:6,txt:"Quel debit maximum offre LoRa ?",opts:["50 kbps","1 Mbps","10 Mbps","100 Mbps"],ans:"a"},
+{q:48,ch:6,txt:"LoRaWAN est...",opts:["Une modulation radio","Un protocole reseau","Un type de capteur","Une marque"],ans:"b"},
+{q:49,ch:6,txt:"Quelle est l'autonomie typique d'un capteur LoRa sur pile ?",opts:["1 mois","1 an","10 ans","100 ans"],ans:"c"},
+// CH7: MQTT (9 questions)
+{q:50,ch:7,txt:"Que signifie MQTT ?",opts:["Message Queue Telemetry Transport","Multi Query Transfer Technology","Mobile Quick Text Transmission","Managed Queue Task Transfer"],ans:"a"},
+{q:51,ch:7,txt:"Quel est le port par defaut de MQTT ?",opts:["80","443","1883","8080"],ans:"c"},
+{q:52,ch:7,txt:"Comment s'appelle le serveur central MQTT ?",opts:["Server","Hub","Broker","Router"],ans:"c"},
+{q:53,ch:7,txt:"Quel wildcard remplace UN niveau dans un topic MQTT ?",opts:["*","#","+","?"],ans:"c"},
+{q:54,ch:7,txt:"Quel wildcard remplace TOUS les niveaux ?",opts:["*","#","+","?"],ans:"b"},
+{q:55,ch:7,txt:"Quel QoS garantit la livraison au moins une fois ?",opts:["QoS 0","QoS 1","QoS 2","QoS 3"],ans:"b"},
+{q:56,ch:7,txt:"Quelle bibliotheque Arduino pour MQTT ?",opts:["MQTT.h","PubSubClient.h","MQTTClient.h","ArduinoMQTT.h"],ans:"b"},
+{q:57,ch:7,txt:"Un message 'retain' est...",opts:["Supprime immediatement","Stocke par le broker","Crypte","Compresse"],ans:"b"},
+{q:58,ch:7,txt:"Quelle fonction publie un message MQTT ?",opts:["client.send()","client.publish()","client.post()","client.write()"],ans:"b"},
+// CH8: Mosquitto (8 questions)
+{q:59,ch:8,txt:"Mosquitto est un...",opts:["Client MQTT","Broker MQTT","Protocole","Capteur"],ans:"b"},
+{q:60,ch:8,txt:"Quelle commande installe Mosquitto sur Raspberry Pi ?",opts:["pip install mosquitto","npm install mosquitto","sudo apt install mosquitto","brew install mosquitto"],ans:"c"},
+{q:61,ch:8,txt:"Quelle commande s'abonne a un topic en ligne de commande ?",opts:["mosquitto_pub","mosquitto_sub","mosquitto_listen","mosquitto_recv"],ans:"b"},
+{q:62,ch:8,txt:"Quelle commande publie un message ?",opts:["mosquitto_pub","mosquitto_sub","mosquitto_send","mosquitto_post"],ans:"a"},
+{q:63,ch:8,txt:"Quel fichier configure Mosquitto ?",opts:["mosquitto.cfg","mosquitto.conf","mosquitto.ini","mosquitto.xml"],ans:"b"},
+{q:64,ch:8,txt:"Quel broker public peut etre utilise pour les tests ?",opts:["mqtt.google.com","broker.hivemq.com","aws.mqtt.io","azure.mqtt.net"],ans:"b"},
+{q:65,ch:8,txt:"Quel port utilise MQTT avec TLS ?",opts:["443","1883","8080","8883"],ans:"d"},
+{q:66,ch:8,txt:"Comment activer l'authentification Mosquitto ?",opts:["auth_enable true","allow_anonymous false","require_password true","secure_mode on"],ans:"b"},
+// CH9: Node-RED (8 questions)
+{q:67,ch:9,txt:"Node-RED est base sur quelle technologie ?",opts:["Python","Java","Node.js","PHP"],ans:"c"},
+{q:68,ch:9,txt:"Quel port utilise Node-RED par defaut ?",opts:["80","1880","3000","8080"],ans:"b"},
+{q:69,ch:9,txt:"Quel noeud affiche les messages de debug ?",opts:["console","output","debug","log"],ans:"c"},
+{q:70,ch:9,txt:"Quel noeud permet d'ecrire du JavaScript ?",opts:["script","code","function","javascript"],ans:"c"},
+{q:71,ch:9,txt:"Quel noeud recoit les messages MQTT ?",opts:["mqtt out","mqtt in","mqtt subscribe","mqtt receive"],ans:"b"},
+{q:72,ch:9,txt:"Qui a developpe Node-RED a l'origine ?",opts:["Google","Microsoft","IBM","Amazon"],ans:"c"},
+{q:73,ch:9,txt:"Quel bouton deploie les modifications ?",opts:["Run","Execute","Deploy","Start"],ans:"c"},
+{q:74,ch:9,txt:"Comment installer des noeuds supplementaires ?",opts:["npm install","Manage palette","apt install","pip install"],ans:"b"},
+// CH10: Dashboard Node-RED (8 questions)
+{q:75,ch:10,txt:"Quel module ajoute le dashboard a Node-RED ?",opts:["node-red-ui","node-red-dashboard","node-red-web","node-red-gui"],ans:"b"},
+{q:76,ch:10,txt:"A quelle URL accede-t-on au dashboard ?",opts:["/dashboard","/ui","/web","/view"],ans:"b"},
+{q:77,ch:10,txt:"Quel widget affiche une jauge circulaire ?",opts:["meter","dial","gauge","circle"],ans:"c"},
+{q:78,ch:10,txt:"Quel widget affiche un graphique temporel ?",opts:["graph","plot","chart","timeline"],ans:"c"},
+{q:79,ch:10,txt:"Quel widget permet un interrupteur ON/OFF ?",opts:["button","toggle","switch","checkbox"],ans:"c"},
+{q:80,ch:10,txt:"Comment organise-t-on les widgets ?",opts:["Par pages et groupes","Par dossiers","Par categories","Par priorite"],ans:"a"},
+{q:81,ch:10,txt:"Quel widget affiche une notification pop-up ?",opts:["alert","popup","notification","message"],ans:"c"},
+{q:82,ch:10,txt:"Le dashboard est accessible depuis...",opts:["Arduino IDE uniquement","Un navigateur web","Une app mobile dediee","SSH uniquement"],ans:"b"},
+// CH11: MIT App Inventor (9 questions)
+{q:83,ch:11,txt:"MIT App Inventor permet de creer des apps pour...",opts:["iOS","Windows","Android","Linux"],ans:"c"},
+{q:84,ch:11,txt:"Comment programme-t-on dans App Inventor ?",opts:["En Java","En Python","Par blocs visuels","En C++"],ans:"c"},
+{q:85,ch:11,txt:"Quelle vue permet de creer l'interface graphique ?",opts:["Blocks","Designer","Layout","Visual"],ans:"b"},
+{q:86,ch:11,txt:"Quel composant permet la communication Bluetooth ?",opts:["BluetoothAdapter","BluetoothClient","BTConnection","BluetoothManager"],ans:"b"},
+{q:87,ch:11,txt:"Quel composant permet de faire des requetes HTTP ?",opts:["HTTP","Internet","Web","Network"],ans:"c"},
+{q:88,ch:11,txt:"Quel composant affiche une liste de selection ?",opts:["Dropdown","Select","ListPicker","ComboBox"],ans:"c"},
+{q:89,ch:11,txt:"Comment tester une app App Inventor ?",opts:["Emulateur ou MIT AI2 Companion","Xcode Simulator","Android Studio","Visual Studio"],ans:"a"},
+{q:90,ch:11,txt:"Ou accede-t-on a MIT App Inventor ?",opts:["Application desktop","ai2.appinventor.mit.edu","play.google.com","github.com"],ans:"b"},
+{q:91,ch:11,txt:"Quel bloc envoie du texte via Bluetooth ?",opts:["BluetoothClient.Write","BluetoothClient.SendText","BluetoothClient.Transmit","BluetoothClient.Send"],ans:"b"},
+// CH12: Android Studio (9 questions)
+{q:92,ch:12,txt:"Android Studio est developpe par...",opts:["Microsoft","Apple","Google","Oracle"],ans:"c"},
+{q:93,ch:12,txt:"Quel langage est recommande pour Android ?",opts:["Java ou Kotlin","Python","Swift","C#"],ans:"a"},
+{q:94,ch:12,txt:"Quel fichier definit l'interface XML ?",opts:["main.java","activity_main.xml","layout.xml","interface.xml"],ans:"b"},
+{q:95,ch:12,txt:"Quelle permission est necessaire pour Internet ?",opts:["NETWORK","INTERNET","WEB_ACCESS","ONLINE"],ans:"b"},
+{q:96,ch:12,txt:"Quel fichier contient les permissions Android ?",opts:["permissions.xml","config.xml","AndroidManifest.xml","settings.gradle"],ans:"c"},
+{q:97,ch:12,txt:"Quelle classe permet les requetes HTTP ?",opts:["HTTPRequest","WebClient","HttpURLConnection","NetworkRequest"],ans:"c"},
+{q:98,ch:12,txt:"Les requetes reseau doivent etre executees dans...",opts:["Le thread principal","Un thread separe","Une activite","Un fragment"],ans:"b"},
+{q:99,ch:12,txt:"Quel widget Android affiche du texte ?",opts:["Label","Text","TextView","TextLabel"],ans:"c"},
+{q:100,ch:12,txt:"Quel avantage a Android Studio sur App Inventor ?",opts:["Plus simple","Gratuit","Controle total et performance","Fonctionne hors ligne"],ans:"c"}
+];
+
+const chapterNames={1:"Structure IoT",2:"Controleurs ESP32",3:"Capteurs/Actionneurs",4:"WiFi",5:"Bluetooth/BLE",6:"LoRa",7:"MQTT",8:"Mosquitto",9:"Node-RED",10:"Dashboard",11:"App Inventor",12:"Android Studio"};
+const chapterIcons={1:"🌐",2:"📟",3:"🌡️",4:"📶",5:"📱",6:"📡",7:"📬",8:"🖥️",9:"🔴",10:"📊",11:"📱",12:"🤖"};
+const userAnswers={};
+
+function init(){
+    const container=document.getElementById('questionsContainer');
+    let currentChapter=0;
+    let html='';
+    
+    questions.forEach(q=>{
+        if(q.ch!==currentChapter){
+            currentChapter=q.ch;
+            const count=questions.filter(x=>x.ch===currentChapter).length;
+            html+=`<div class="section-header ch${currentChapter}">
+                <div class="section-icon">${chapterIcons[currentChapter]}</div>
+                <div class="section-info">
+                    <h2>Chapitre ${currentChapter}: ${chapterNames[currentChapter]}</h2>
+                    <p>${count} questions</p>
+                </div>
+            </div>`;
+        }
+        
+        const letters=['a','b','c','d'];
+        let optsHtml=q.opts.map((o,i)=>{
+            const isCode=/^WiFi\.|^client\.|^Serial\.|^BluetoothClient|^mosquitto_|^node-red|\.h>?$|\.xml$|^\d+\.\d+\.\d+\.\d+$|^WL_|^WIFI_|localhost|192\.168|ledcSetup|MQTT|HTTP/.test(o);
+            const text=isCode?`<code>${o}</code>`:o;
+            return`<div class="opt" data-value="${letters[i]}"><span class="marker">${letters[i].toUpperCase()}</span><span class="otxt">${text}</span></div>`;
+        }).join('');
+        
+        html+=`<div class="qcard ch${q.ch}" data-q="${q.q}" data-ans="${q.ans}">
+            <div class="qheader">
+                <div class="qnum">Q${q.q}</div>
+                <div class="qtext">${q.txt}</div>
+            </div>
+            <div class="opts">${optsHtml}</div>
+        </div>`;
+    });
+    
+    container.innerHTML=html;
+    
+    document.querySelectorAll('.opt').forEach(opt=>{
+        opt.addEventListener('click',function(){
+            const card=this.closest('.qcard');
+            const qNum=card.dataset.q;
+            card.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+            this.classList.add('selected');
+            userAnswers[qNum]=this.dataset.value;
+            card.classList.add('answered');
+            updateProgress();
+        });
+    });
+}
+
+function updateProgress(){
+    const answered=Object.keys(userAnswers).length;
+    const pct=(answered/100)*100;
+    document.getElementById('progressBar').style.width=pct+'%';
+    document.getElementById('progressValue').textContent=answered+'/100';
+    document.getElementById('progressPercent').textContent=Math.round(pct)+'%';
+    if(answered===100)document.getElementById('submitWarning').style.display='none';
+}
+
+function submitQuiz(){
+    const answered=Object.keys(userAnswers).length;
+    if(answered<100){
+        document.getElementById('submitWarning').style.display='block';
+        const unanswered=document.querySelector('.qcard:not(.answered)');
+        if(unanswered)unanswered.scrollIntoView({behavior:'smooth',block:'center'});
+        return;
+    }
+    
+    let correct=0;
+    questions.forEach(q=>{if(userAnswers[q.q]===q.ans)correct++;});
+    
+    const pct=Math.round((correct/100)*100);
+    document.getElementById('correctCount').textContent=correct;
+    document.getElementById('incorrectCount').textContent=100-correct;
+    document.getElementById('scorePct').textContent=pct+'%';
+    document.getElementById('scoreCircle').style.background=`conic-gradient(var(--primary) ${pct*3.6}deg, var(--border) ${pct*3.6}deg)`;
+    
+    const app=document.getElementById('appreciation');
+    const appTitle=document.getElementById('appTitle');
+    const appText=document.getElementById('appText');
+    app.className='appreciation';
+    
+    if(pct>=90){app.classList.add('excellent');appTitle.textContent='🏆 Excellent !';appText.textContent='Maitrise parfaite de l\'IoT et des systemes connectes !';}
+    else if(pct>=75){app.classList.add('good');appTitle.textContent='👍 Tres Bien !';appText.textContent='Solides connaissances en Internet des Objets.';}
+    else if(pct>=50){app.classList.add('average');appTitle.textContent='📚 Peut mieux faire';appText.textContent='Revisez les chapitres moins maitrises.';}
+    else{app.classList.add('poor');appTitle.textContent='⚠️ A revoir';appText.textContent='Score insuffisant. Retravaillez le cours IoT.';}
+    
+    const ansContainer=document.getElementById('answersContainer');
+    ansContainer.innerHTML='';
+    
+    questions.forEach(q=>{
+        const isCorrect=userAnswers[q.q]===q.ans;
+        const userAns=userAnswers[q.q]?userAnswers[q.q].toUpperCase():'-';
+        const correctAns=q.ans.toUpperCase();
+        const shortTxt=q.txt.length>60?q.txt.substring(0,60).replace(/<[^>]*>/g,'')+'...':q.txt.replace(/<[^>]*>/g,'');
+        
+        ansContainer.innerHTML+=`<div class="ans-card ${isCorrect?'correct':'incorrect'}" data-status="${isCorrect?'correct':'incorrect'}">
+            <div class="ans-status ${isCorrect?'correct':'incorrect'}">${isCorrect?'✓':'✗'}</div>
+            <div class="ans-content">
+                <div class="ans-q"><strong>Q${q.q}:</strong> ${shortTxt}</div>
+                <div class="ans-info">
+                    <span class="your-ans">Reponse: <strong>${userAns}</strong></span>
+                    ${!isCorrect?`<span class="correct-ans">Correcte: <strong>${correctAns}</strong></span>`:''}
+                </div>
+            </div>
+        </div>`;
+    });
+    
+    document.getElementById('results').style.display='block';
+    document.getElementById('results').scrollIntoView({behavior:'smooth'});
+    document.getElementById('submitBtn').disabled=true;
+    document.getElementById('submitBtn').textContent='✅ QCM Termine';
+}
+
+function filterAnswers(filter,btn){
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.ans-card').forEach(card=>{
+        if(filter==='all')card.classList.remove('hidden');
+        else card.classList.toggle('hidden',card.dataset.status!==filter);
+    });
+}
+
+init();
+</script>
+</body>
+</html>

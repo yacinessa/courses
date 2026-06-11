@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise 3: Button Press Counter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .button-section {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            padding: 30px;
+            background: #ecf0f1;
+            border-radius: 10px;
+        }
+        
+        .push-button {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #95a5a6;
+            border: 4px solid #7f8c8d;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .push-button:hover {
+            background: #bdc3c7;
+        }
+        
+        .push-button.pressed {
+            background: #7f8c8d;
+            transform: scale(0.95);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .button-label {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .binary-display {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            padding: 20px;
+            background: #34495e;
+            border-radius: 10px;
+        }
+        
+        .bit-container {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .binary-led {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #2c3e50;
+            border: 2px solid #1a252f;
+            margin-bottom: 10px;
+            transition: all 0.1s ease;
+        }
+        
+        .binary-led.on {
+            background: #f39c12;
+            box-shadow: 0 0 15px #f39c12, inset 0 0 15px #f1c40f;
+        }
+        
+        .bit-label {
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .value-label {
+            color: #ecf0f1;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin: 0 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .counter-display {
+            text-align: center;
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 20px;
+            background: #3498db;
+            color: white;
+            border-radius: 10px;
+        }
+        
+        .binary-representation {
+            text-align: center;
+            font-size: 20px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            padding: 15px;
+            background: #2c3e50;
+            color: #ecf0f1;
+            border-radius: 5px;
+        }
+        
+        .code-example {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        .explanation {
+            background: #e8f5e8;
+            padding: 15px;
+            border-left: 4px solid #27ae60;
+            margin: 20px 0;
+        }
+        
+        .setup-info {
+            background: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #f39c12;
+            margin: 20px 0;
+        }
+        
+        .bit-values {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        
+        .bit-value {
+            text-align: center;
+            padding: 10px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            min-width: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Exercise 3: Button Press Counter</h1>
+        
+        <div class="explanation">
+            <h3>Objective:</h3>
+            <p>Create a counter that increments each time a button is pressed and displays the count in binary using 4 LEDs (4 bits: 0-15).</p>
+        </div>
+        
+        <div class="setup-info">
+            <h3>Hardware Setup:</h3>
+            <ul>
+                <li><strong>Button:</strong> GPIOC, Pin 13 (pull-up internal)</li>
+                <li><strong>LED Bit 0 (LSB):</strong> GPIOA, Pin 0</li>
+                <li><strong>LED Bit 1:</strong> GPIOA, Pin 1</li>
+                <li><strong>LED Bit 2:</strong> GPIOA, Pin 2</li>
+                <li><strong>LED Bit 3 (MSB):</strong> GPIOA, Pin 3</li>
+                <li><strong>Count Range:</strong> 0-15 (returns to 0 after 15)</li>
+            </ul>
+        </div>
+        
+        <div class="button-section">
+            <div>
+                <div class="push-button" id="pushButton" onclick="handleButtonPress()"></div>
+                <div class="button-label">Push Button (PC13)</div>
+            </div>
+        </div>
+        
+        <div class="counter-display" id="counterDisplay">0</div>
+        <div class="binary-representation" id="binaryDisplay">Binary: 0000</div>
+        
+        <div class="binary-display">
+            <div class="bit-container">
+                <div class="binary-led" id="bit0"></div>
+                <div class="bit-label">Bit 0</div>
+                <div class="value-label">1</div>
+            </div>
+            <div class="bit-container">
+                <div class="binary-led" id="bit1"></div>
+                <div class="bit-label">Bit 1</div>
+                <div class="value-label">2</div>
+            </div>
+            <div class="bit-container">
+                <div class="binary-led" id="bit2"></div>
+                <div class="bit-label">Bit 2</div>
+                <div class="value-label">4</div>
+            </div>
+            <div class="bit-container">
+                <div class="binary-led" id="bit3"></div>
+                <div class="bit-label">Bit 3</div>
+                <div class="value-label">8</div>
+            </div>
+        </div>
+        
+        <div class="bit-values">
+            <div class="bit-value">LSB (Least Significant Bit)</div>
+            <div class="bit-value">MSB (Most Significant Bit)</div>
+        </div>
+        
+        <div class="controls">
+            <button onclick="resetCounter()">Reset Counter</button>
+            <button onclick="setDemoMode()">Demo Mode</button>
+        </div>
+        
+        <div class="code-example">
+            <h3>STM32 C Code:</h3>
+            <pre>
+#include "stm32f1xx.h"
+
+volatile uint8_t button_count = 0;
+volatile uint32_t last_button_time = 0;
+volatile uint8_t button_pressed = 0;
+
+// Button debounce function
+uint8_t debounce_button(void) {
+    static uint32_t last_read = 0;
+    static uint8_t button_state = 1; // Pull-up, so idle = 1
+    uint8_t current_read;
+    
+    current_read = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
+    
+    if(current_read != button_state) {
+        last_read = HAL_GetTick();
+        button_state = current_read;
+    }
+    
+    // 50ms debounce time
+    if((HAL_GetTick() - last_read) > 50) {
+        if(current_read == 0) { // Button pressed (active low)
+            return 1;
+        }
+    }
+    return 0;
+}
+
+// Display count on LEDs
+void display_count(uint8_t count) {
+    // Clear all bits first
+    GPIOA->ODR &= ~0xF; // Clear bits 0-3
+    
+    // Set bits according to count (binary)
+    GPIOA->ODR |= (count & 0xF);
+}
+
+// Get button state with debouncing
+uint8_t get_button_pressed(void) {
+    if(debounce_button() && !button_pressed) {
+        button_pressed = 1;
+        return 1;
+    } else if(!debounce_button()) {
+        button_pressed = 0;
+    }
+    return 0;
+}
+
+int main(void) {
+    // Initialize GPIOA pins 0-3 as outputs (LEDs)
+    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
+    GPIOA->CRL &= ~0xFFFF;        // Clear pins 0-3
+    GPIOA->CRL |= 0x2222;         // Push-pull output, 50MHz
+    
+    // Initialize GPIOC pin 13 as input (button)
+    RCC->APB2ENR |= RCC_APB2ENR_IOPCEN;
+    GPIOA->CRL &= ~(0xF << 20);   // Clear PC13 config
+    
+    while(1) {
+        // Check for button press
+        if(get_button_pressed()) {
+            button_count++;
+            if(button_count > 15) {
+                button_count = 0; // Reset after 15
+            }
+            
+            // Update display
+            display_count(button_count);
+            
+            // Simple delay to avoid multiple counts
+            HAL_Delay(200);
+        }
+    }
+}
+            </pre>
+        </div>
+    </div>
+
+    <script>
+        let counter = 0;
+        let lastPressTime = 0;
+        let demoInterval;
+        let isDemoMode = false;
+        
+        function updateDisplay() {
+            // Update counter display
+            document.getElementById('counterDisplay').textContent = counter;
+            
+            // Update binary representation
+            const binary = counter.toString(2).padStart(4, '0');
+            document.getElementById('binaryDisplay').textContent = `Binary: ${binary}`;
+            
+            // Update LEDs
+            for(let i = 0; i < 4; i++) {
+                const bit = (counter >> i) & 1;
+                const led = document.getElementById(`bit${i}`);
+                if(bit) {
+                    led.classList.add('on');
+                } else {
+                    led.classList.remove('on');
+                }
+            }
+        }
+        
+        function handleButtonPress() {
+            const button = document.getElementById('pushButton');
+            
+            // Visual feedback
+            button.classList.add('pressed');
+            setTimeout(() => {
+                button.classList.remove('pressed');
+            }, 100);
+            
+            // Debounce check
+            const currentTime = Date.now();
+            if(currentTime - lastPressTime < 200) {
+                return; // Ignore rapid presses
+            }
+            lastPressTime = currentTime;
+            
+            // Increment counter
+            counter++;
+            if(counter > 15) {
+                counter = 0; // Reset after 15
+            }
+            
+            updateDisplay();
+        }
+        
+        function resetCounter() {
+            counter = 0;
+            updateDisplay();
+        }
+        
+        function setDemoMode() {
+            if(isDemoMode) {
+                // Stop demo mode
+                clearInterval(demoInterval);
+                isDemoMode = false;
+            } else {
+                // Start demo mode
+                isDemoMode = true;
+                counter = 0;
+                updateDisplay();
+                
+                demoInterval = setInterval(() => {
+                    handleButtonPress();
+                }, 800);
+            }
+            
+            // Update button text
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(btn => {
+                if(btn.textContent.includes('Demo Mode')) {
+                    btn.textContent = isDemoMode ? 'Stop Demo Mode' : 'Demo Mode';
+                }
+            });
+        }
+        
+        // Keyboard support (spacebar)
+        document.addEventListener('keydown', (event) => {
+            if(event.code === 'Space') {
+                event.preventDefault();
+                handleButtonPress();
+            }
+        });
+        
+        // Initialize display
+        updateDisplay();
+    </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"9a3bcd71dc393c2c","serverTiming":{"name":{"cfExtPri":true,"cfEdge":true,"cfOrigin":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"version":"2025.9.1","token":"e72945439c264b3b85d2e3b689102d27"}' crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>STM32F4 · CAN — Du Zéro à l'Expert</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════════ */
+:root{
+  --bg:#04060f;
+  --s1:#080c1a;
+  --s2:#0c1226;
+  --border:rgba(255,255,255,.06);
+  --text:#dce8ff;
+  --muted:rgba(220,232,255,.38);
+  --cyan:#00d4ff;
+  --orange:#ff7c3a;
+  --green:#00ff9d;
+  --violet:#c47aff;
+  --yellow:#ffe566;
+  --red:#ff4d6d;
+  --code-bg:#030610;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Space Grotesk',sans-serif;
+  overflow-x:hidden;
+  cursor:none;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── cursor ── */
+#cursor{position:fixed;width:10px;height:10px;background:var(--cyan);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);mix-blend-mode:screen;transition:width .2s,height .2s,background .2s;}
+#cursor.expand{width:40px;height:40px;background:rgba(0,212,255,.12);border:1px solid var(--cyan);}
+#cursor-ring{position:fixed;width:36px;height:36px;border:1px solid rgba(0,212,255,.28);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:transform .1s ease-out;}
+
+/* ── bg grid ── */
+body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,212,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.022) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;}
+/* ── scanline ── */
+body::after{content:'';position:fixed;top:-100%;left:0;right:0;height:200%;z-index:0;background:linear-gradient(transparent 0%,rgba(0,212,255,.009) 50%,transparent 100%);animation:scandown 10s linear infinite;pointer-events:none;}
+@keyframes scandown{to{transform:translateY(50%);}}
+
+/* ── noise ── */
+#noise{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");}
+
+/* ── orbs ── */
+.orbs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.orb{position:absolute;border-radius:50%;filter:blur(120px);}
+.o1{width:700px;height:700px;background:rgba(0,212,255,.065);top:-200px;left:-200px;animation:float1 20s ease-in-out infinite alternate;}
+.o2{width:500px;height:500px;background:rgba(196,122,255,.055);bottom:-150px;right:-100px;animation:float2 25s ease-in-out infinite alternate;}
+.o3{width:350px;height:350px;background:rgba(0,255,157,.04);top:40%;right:5%;animation:float1 18s ease-in-out infinite alternate-reverse;}
+@keyframes float1{to{transform:translate(60px,40px);}}
+@keyframes float2{to{transform:translate(-40px,60px);}}
+
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+/* ── LAYOUT ── */
+#root{position:relative;z-index:2;min-height:100vh;}
+.container{max-width:1200px;margin:0 auto;padding:0 2rem;}
+
+/* ═══════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════ */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(4,6,15,.92);
+  backdrop-filter:blur(28px);
+  border-bottom:1px solid var(--border);
+  padding:0 2rem;
+}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;gap:.2rem;}
+.nav-inner::-webkit-scrollbar{display:none;}
+.nav-logo{
+  font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.12em;
+  color:var(--cyan);margin-right:1.5rem;white-space:nowrap;flex-shrink:0;
+  text-shadow:0 0 20px rgba(0,212,255,.5);
+}
+nav a{
+  font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;padding:1.1rem .9rem;white-space:nowrap;
+  border-bottom:2px solid transparent;transition:all .22s;
+}
+nav a:hover,nav a.actif{color:var(--cyan);border-bottom-color:var(--cyan);}
+
+/* ═══════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════ */
+.hero{
+  padding:6rem 0 4rem;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.6rem;
+  border:1px solid rgba(255,124,58,.25);background:rgba(255,124,58,.04);
+  padding:.55em 1.5em;border-radius:4px;
+  font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.28em;text-transform:uppercase;
+  color:rgba(255,124,58,.8);margin-bottom:2.5rem;
+  animation:fadeup .8s ease both;
+}
+.hero-badge .pulse{width:6px;height:6px;border-radius:50%;background:var(--orange);animation:blink 1.8s ease-in-out infinite;flex-shrink:0;}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 8px var(--orange);}50%{opacity:.2;}}
+
+.hero-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(3.5rem,10vw,8.5rem);
+  line-height:.9;letter-spacing:.04em;
+  margin-bottom:1.2rem;
+  animation:fadeup .7s ease .1s both;
+}
+.hero-title .l1{display:block;color:var(--text);}
+.hero-title .l2{
+  display:block;
+  background:linear-gradient(135deg,var(--cyan) 0%,#006eff 60%,var(--violet) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 40px rgba(0,212,255,.35));
+}
+.hero-title .l3{
+  display:block;font-size:.38em;letter-spacing:.12em;
+  background:linear-gradient(135deg,var(--orange),var(--yellow));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{
+  max-width:640px;margin:0 auto 3rem;
+  color:var(--muted);font-size:1.05rem;line-height:1.7;
+  animation:fadeup .7s ease .2s both;
+}
+.hero-stats{
+  display:inline-flex;align-items:center;gap:2.5rem;
+  border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02);
+  padding:1em 3em;border-radius:6px;
+  animation:fadeup .7s ease .3s both;
+  flex-wrap:wrap;justify-content:center;
+}
+.stat{display:flex;flex-direction:column;align-items:center;gap:.15rem;}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;line-height:1;color:var(--cyan);}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:.48rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);}
+.stat-div{width:1px;height:44px;background:var(--border);}
+
+.hero-rule{position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:.35;}
+
+/* ── Hero circuit SVG ── */
+.hero-circuit{position:absolute;width:100%;height:100%;top:0;left:0;pointer-events:none;opacity:.7;}
+
+@keyframes fadeup{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+/* ═══════════════════════════════════════════
+   SECTIONS
+═══════════════════════════════════════════ */
+section{padding:80px 0;position:relative;z-index:2;}
+section+section{border-top:1px solid var(--border);}
+
+.sec-overline{
+  display:flex;align-items:center;gap:1rem;
+  font-family:'JetBrains Mono',monospace;font-size:.52rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--orange);margin-bottom:.8rem;
+}
+.sec-overline::before{content:'';width:24px;height:1px;background:var(--orange);}
+.sec-overline .sec-num{color:rgba(255,124,58,.4);}
+
+h2.sec-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(2rem,5vw,3.8rem);
+  letter-spacing:.04em;color:var(--text);
+  line-height:1;margin-bottom:1rem;
+}
+h2.sec-title em{font-style:normal;color:var(--cyan);}
+.sec-sub{color:var(--muted);max-width:700px;font-size:1rem;line-height:1.75;margin-bottom:3rem;}
+
+/* ═══════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════ */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;}
+.grid-auto{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.2rem;}
+@media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+.card{
+  background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:1.75rem;
+  position:relative;overflow:hidden;
+  transition:transform .3s cubic-bezier(.16,1,.3,1),box-shadow .3s,border-color .3s;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  opacity:0;transition:opacity .3s;
+}
+.card:hover::before{opacity:1;}
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 0 1px rgba(0,212,255,.15),0 0 40px -15px var(--cyan);
+  border-color:rgba(0,212,255,.12);
+}
+.card h3{
+  font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:.06em;
+  color:var(--cyan);margin-bottom:.75rem;display:flex;align-items:center;gap:.6rem;
+}
+.card p,.card li{color:var(--muted);font-size:.93rem;line-height:1.75;}
+.card ul{padding-left:1.2rem;}
+.card li{margin-bottom:.4rem;}
+
+/* ═══════════════════════════════════════════
+   CODE BLOCKS
+═══════════════════════════════════════════ */
+.code-wrap{
+  background:var(--code-bg);
+  border:1px solid rgba(0,212,255,.08);
+  border-left:3px solid var(--cyan);
+  border-radius:6px;padding:1.75rem 2rem;
+  overflow-x:auto;position:relative;margin:1.25rem 0;
+}
+.code-wrap::before{
+  content:attr(data-lang);position:absolute;top:10px;right:14px;
+  font-family:'JetBrains Mono',monospace;font-size:.48rem;
+  color:var(--cyan);letter-spacing:.2em;opacity:.45;
+}
+.code-wrap pre{
+  font-family:'JetBrains Mono',monospace;font-size:.82rem;
+  line-height:1.85;color:#c0d8f0;white-space:pre;tab-size:2;
+}
+.kw{color:#f48fb1;}.fn{color:#69f0ae;}.cm{color:#4a6a8a;font-style:italic;}
+.str{color:#fff176;}.num{color:var(--orange);}.tp{color:#80deea;}
+.mac{color:#ffcc80;}.reg{color:var(--yellow);}
+
+/* ═══════════════════════════════════════════
+   CALLOUTS
+═══════════════════════════════════════════ */
+.callout{
+  border-radius:6px;padding:1.1rem 1.4rem;margin:1.2rem 0;
+  border-left:3px solid;display:flex;gap:1rem;align-items:flex-start;
+}
+.callout.tip{background:rgba(0,255,157,.05);border-color:var(--green);}
+.callout.warn{background:rgba(255,124,58,.05);border-color:var(--orange);}
+.callout.info{background:rgba(0,212,255,.05);border-color:var(--cyan);}
+.callout.key{background:rgba(196,122,255,.05);border-color:var(--violet);}
+.callout .ico{font-size:1.2rem;flex-shrink:0;margin-top:2px;}
+.callout .body{flex:1;}
+.callout .body strong{
+  display:block;font-family:'JetBrains Mono',monospace;font-size:.6rem;
+  letter-spacing:.12em;margin-bottom:.4rem;
+}
+.callout.tip  .body strong{color:var(--green);}
+.callout.warn .body strong{color:var(--orange);}
+.callout.info .body strong{color:var(--cyan);}
+.callout.key  .body strong{color:var(--violet);}
+.callout p{color:var(--muted);font-size:.88rem;margin:0;}
+
+/* ═══════════════════════════════════════════
+   FORMULA
+═══════════════════════════════════════════ */
+.formula{
+  background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.18);
+  border-radius:6px;padding:.9rem 1.5rem;
+  font-family:'JetBrains Mono',monospace;font-size:1rem;
+  color:var(--cyan);text-align:center;margin:.9rem 0;
+  letter-spacing:.04em;
+}
+
+/* ═══════════════════════════════════════════
+   DIAGRAMS
+═══════════════════════════════════════════ */
+.diag{
+  background:var(--code-bg);border:1px solid var(--border);
+  border-radius:8px;padding:2rem;margin:1.5rem 0;
+  overflow-x:auto;text-align:center;
+}
+.diag svg{max-width:100%;height:auto;}
+.diag-cap{text-align:center;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:rgba(220,232,255,.25);margin-top:.75rem;letter-spacing:.08em;}
+
+/* ═══════════════════════════════════════════
+   TABLES
+═══════════════════════════════════════════ */
+table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:.78rem;margin:1rem 0;}
+th{background:rgba(0,212,255,.06);color:var(--cyan);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;padding:.85rem 1rem;text-align:left;border-bottom:1px solid var(--border);}
+td{padding:.75rem 1rem;border-bottom:1px solid rgba(255,255,255,.03);color:var(--muted);}
+tr:hover td{background:rgba(0,212,255,.02);}
+
+/* ═══════════════════════════════════════════
+   STEPS
+═══════════════════════════════════════════ */
+.steps{display:flex;flex-direction:column;position:relative;}
+.steps::before{content:'';position:absolute;left:27px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--cyan),var(--violet),var(--orange));opacity:.35;}
+.step{display:flex;gap:1.75rem;padding:1.75rem 0;position:relative;}
+.step-num{
+  width:54px;height:54px;min-width:54px;border-radius:50%;
+  background:var(--s2);border:1px solid rgba(0,212,255,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.06em;
+  color:var(--cyan);position:relative;z-index:2;
+  box-shadow:0 0 20px -6px rgba(0,212,255,.4);
+}
+.step-body{flex:1;}
+.step-body h4{
+  font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.06em;
+  color:var(--text);margin-bottom:.6rem;margin-top:.75rem;
+}
+.step-body p{color:var(--muted);font-size:.93rem;}
+
+/* ═══════════════════════════════════════════
+   REG MAP
+═══════════════════════════════════════════ */
+.reg-map{display:flex;gap:3px;margin:1rem 0;overflow-x:auto;padding-bottom:.5rem;}
+.reg-bit{flex:1;min-width:38px;text-align:center;}
+.reg-bit .bn{font-family:'JetBrains Mono',monospace;font-size:.5rem;color:rgba(220,232,255,.2);display:block;margin-bottom:3px;}
+.reg-bit .bb{
+  background:var(--s2);border:1px solid var(--border);
+  padding:.5rem 2px;font-family:'JetBrains Mono',monospace;
+  font-size:.62rem;color:var(--muted);border-radius:3px;
+  transition:all .2s;cursor:default;
+}
+.reg-bit .bb:hover{background:rgba(0,212,255,.08);border-color:rgba(0,212,255,.3);color:var(--cyan);}
+.reg-bit .bb.u{background:rgba(0,212,255,.06);border-color:rgba(0,212,255,.25);color:var(--cyan);}
+.reg-bit .bb.k{background:rgba(255,124,58,.08);border-color:rgba(255,124,58,.35);color:var(--orange);}
+.reg-bit .bb.r{background:rgba(15,20,40,.5);color:rgba(220,232,255,.15);}
+
+/* ═══════════════════════════════════════════
+   TAGS / PILLS
+═══════════════════════════════════════════ */
+.tag{
+  display:inline-block;font-family:'JetBrains Mono',monospace;
+  font-size:.48rem;letter-spacing:.16em;padding:.22em .7em;border-radius:3px;
+  text-transform:uppercase;margin:.15rem;
+}
+.tc{background:rgba(0,212,255,.08);color:var(--cyan);border:1px solid rgba(0,212,255,.25);}
+.to{background:rgba(255,124,58,.08);color:var(--orange);border:1px solid rgba(255,124,58,.25);}
+.tg{background:rgba(0,255,157,.08);color:var(--green);border:1px solid rgba(0,255,157,.25);}
+.tv{background:rgba(196,122,255,.08);color:var(--violet);border:1px solid rgba(196,122,255,.25);}
+code{
+  font-family:'JetBrains Mono',monospace;
+  background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.14);
+  color:var(--cyan);padding:.1em .5em;border-radius:3px;font-size:.85em;
+}
+mark{background:rgba(255,124,58,.15);color:var(--orange);padding:.05em .35em;border-radius:3px;}
+
+/* ═══════════════════════════════════════════
+   PROBLEMS
+═══════════════════════════════════════════ */
+.problem{
+  background:var(--s1);border:1px solid var(--border);border-radius:10px;
+  margin-bottom:3rem;overflow:hidden;
+  transition:box-shadow .3s,border-color .3s;
+  position:relative;
+}
+.problem::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--orange),transparent);
+}
+.problem:hover{
+  box-shadow:0 20px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,124,58,.15);
+  border-color:rgba(255,124,58,.1);
+}
+.prob-head{
+  padding:1.75rem 2rem;
+  background:rgba(8,12,26,.6);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;gap:1.2rem;
+}
+.prob-icon{
+  width:56px;height:56px;min-width:56px;
+  background:rgba(255,124,58,.06);border:1px solid rgba(255,124,58,.2);
+  border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;
+}
+.prob-meta .prob-num{
+  font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--orange);
+  letter-spacing:.25em;text-transform:uppercase;margin-bottom:.25rem;
+}
+.prob-meta .prob-title{
+  font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.05em;
+  color:var(--text);margin-bottom:.2rem;
+}
+.prob-meta .prob-diff{font-size:.8rem;color:var(--muted);}
+.prob-meta .prob-diff span{color:var(--yellow);}
+.prob-body{padding:2rem;}
+
+.enonce{
+  background:rgba(0,212,255,.03);border:1px solid rgba(0,212,255,.1);
+  border-radius:6px;padding:1.5rem;margin-bottom:1.75rem;
+}
+.enonce-label{
+  font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.25em;
+  color:var(--cyan);text-transform:uppercase;margin-bottom:.75rem;
+}
+.enonce p{color:var(--muted);font-size:.93rem;line-height:1.8;}
+.enonce ul{padding-left:1.2rem;margin-top:.6rem;}
+.enonce ul li{color:var(--muted);font-size:.92rem;margin-bottom:.35rem;}
+
+.q-label{
+  font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.25em;
+  color:var(--orange);text-transform:uppercase;margin-bottom:1rem;
+  display:flex;align-items:center;gap:.75rem;
+}
+.q-label::before{content:'';width:20px;height:1px;background:var(--orange);}
+.question{
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:6px;padding:1rem 1.25rem;margin-bottom:.75rem;
+  display:flex;gap:1rem;align-items:flex-start;
+  transition:border-color .22s;
+}
+.question:hover{border-color:rgba(255,124,58,.3);}
+.q-num{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.85rem;color:var(--orange);min-width:24px;margin-top:2px;}
+.q-text{color:var(--muted);font-size:.92rem;flex:1;line-height:1.65;}
+.q-text strong{color:var(--text);}
+.q-hint{
+  display:inline-block;font-family:'JetBrains Mono',monospace;
+  font-size:.58rem;color:var(--violet);
+  background:rgba(196,122,255,.07);border:1px solid rgba(196,122,255,.18);
+  padding:.15rem .6rem;border-radius:3px;margin-top:.5rem;
+}
+
+.toggle-btn{
+  width:100%;background:rgba(0,255,157,.04);
+  border:1px solid rgba(0,255,157,.2);border-radius:6px;
+  padding:.9rem 1.4rem;display:flex;align-items:center;gap:.75rem;
+  cursor:pointer;transition:all .22s;
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.88rem;
+  color:var(--green);text-align:left;
+}
+.toggle-btn:hover{background:rgba(0,255,157,.08);border-color:rgba(0,255,157,.35);}
+.toggle-btn .arr{margin-left:auto;transition:transform .3s;font-size:1rem;}
+.toggle-btn.open .arr{transform:rotate(180deg);}
+.sol-body{
+  display:none;background:rgba(0,255,157,.02);
+  border:1px solid rgba(0,255,157,.1);border-top:none;
+  border-radius:0 0 6px 6px;padding:1.75rem;
+}
+.sol-body.show{display:block;}
+.ans{
+  background:var(--code-bg);border:1px solid rgba(0,212,255,.07);
+  border-left:3px solid var(--green);border-radius:6px;
+  padding:1rem 1.25rem;margin-bottom:1rem;
+}
+.ans .ans-num{font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--green);letter-spacing:.2em;margin-bottom:.4rem;}
+.ans p{color:var(--muted);font-size:.88rem;}
+
+/* ═══════════════════════════════════════════
+   INTERACTIVE — SHANNON
+═══════════════════════════════════════════ */
+.interactive{
+  background:var(--code-bg);border:1px solid var(--border);
+  border-radius:8px;padding:2rem;margin:1.5rem 0;
+}
+.interactive-title{
+  font-family:'JetBrains Mono',monospace;font-size:.52rem;letter-spacing:.25em;
+  color:var(--violet);text-transform:uppercase;margin-bottom:1.2rem;
+}
+.slider-track{
+  -webkit-appearance:none;width:100%;height:3px;
+  background:linear-gradient(90deg,var(--green),var(--yellow),var(--orange));
+  border-radius:2px;outline:none;margin:.75rem 0;
+}
+.slider-track::-webkit-slider-thumb{
+  -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+  background:var(--cyan);cursor:pointer;box-shadow:0 0 16px rgba(0,212,255,.5);
+}
+.shannon-status{
+  text-align:center;font-family:'JetBrains Mono',monospace;font-size:.88rem;
+  padding:.85rem;border-radius:5px;margin-top:.75rem;transition:all .3s;
+}
+.s-ok{background:rgba(0,255,157,.08);color:var(--green);border:1px solid rgba(0,255,157,.25);}
+.s-limit{background:rgba(255,229,102,.08);color:var(--yellow);border:1px solid rgba(255,229,102,.25);}
+.s-bad{background:rgba(255,124,58,.08);color:var(--orange);border:1px solid rgba(255,124,58,.25);}
+.nl{position:relative;height:5px;background:linear-gradient(90deg,var(--orange),var(--yellow),var(--green));border-radius:3px;margin:1rem 0;}
+.nl-m{position:absolute;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:50%;background:var(--cyan);border:2px solid #fff;box-shadow:0 0 12px var(--cyan);transition:left .3s;}
+
+/* ── SAR interactive ── */
+.sar-wrap{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:2rem;margin:1.5rem 0;}
+.sar-input{
+  background:var(--s2);border:1px solid var(--border);color:var(--text);
+  font-family:'JetBrains Mono',monospace;font-size:.88rem;
+  padding:.5rem .9rem;border-radius:4px;
+}
+.sar-input:focus{outline:none;border-color:var(--cyan);}
+.btn{
+  background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.25);color:var(--cyan);
+  font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.12em;
+  padding:.6rem 1.2rem;border-radius:4px;cursor:pointer;transition:all .2s;text-transform:uppercase;
+}
+.btn:hover{background:rgba(0,212,255,.15);box-shadow:0 0 20px -5px rgba(0,212,255,.4);}
+.btn.orange{border-color:rgba(255,124,58,.35);color:var(--orange);background:rgba(255,124,58,.05);}
+.btn.orange:hover{background:rgba(255,124,58,.12);}
+.sar-bit-display{display:flex;flex-wrap:wrap;gap:4px;}
+.sar-bit{
+  width:38px;height:38px;border-radius:4px;border:1px solid var(--border);
+  background:var(--s2);display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:.9rem;transition:all .35s;
+}
+.sar-bit.test{background:rgba(255,229,102,.15);border-color:var(--yellow);color:var(--yellow);}
+.sar-bit.one{background:rgba(0,255,157,.12);border-color:var(--green);color:var(--green);}
+.sar-bit.zero{background:rgba(255,124,58,.1);border-color:var(--orange);color:var(--orange);}
+.sar-bit.done{background:rgba(0,212,255,.08);border-color:var(--cyan);color:var(--cyan);}
+.dac-bar{flex:1;background:rgba(0,212,255,.03);border:1px solid var(--border);border-radius:3px;height:40px;position:relative;overflow:hidden;}
+.dac-fill{height:100%;width:0;background:linear-gradient(90deg,rgba(0,212,255,.3),rgba(0,212,255,.08));transition:width .5s ease;border-right:2px solid var(--cyan);}
+.dac-target{position:absolute;top:0;bottom:0;width:2px;background:var(--orange);opacity:.8;}
+
+/* ── SH Phases ── */
+.phases{display:flex;gap:0;border:1px solid var(--border);border-radius:6px;overflow:hidden;margin:1.2rem 0;}
+.phase{flex:1;padding:1.1rem .75rem;text-align:center;border-right:1px solid var(--border);background:var(--s2);transition:all .25s;cursor:default;}
+.phase:last-child{border-right:none;}
+.phase:hover{background:rgba(0,212,255,.05);}
+.phase-num{font-family:'JetBrains Mono',monospace;font-size:.48rem;color:var(--muted);letter-spacing:.2em;margin-bottom:.25rem;}
+.phase-name{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.06em;color:var(--cyan);margin-bottom:.35rem;}
+.phase-desc{font-size:.74rem;color:var(--muted);line-height:1.5;}
+
+/* ── Quiz ── */
+.quiz-card{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:1.75rem;margin-bottom:1.25rem;}
+.quiz-card h4{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--text);font-size:.95rem;margin-bottom:1rem;}
+.quiz-opts{display:flex;flex-direction:column;gap:.5rem;margin-top:.75rem;}
+.quiz-opt{
+  background:var(--s1);border:1px solid var(--border);border-radius:4px;
+  padding:.75rem 1rem;cursor:pointer;font-size:.88rem;color:var(--muted);
+  transition:all .18s;display:flex;align-items:center;gap:.75rem;
+}
+.quiz-opt:hover{border-color:rgba(0,212,255,.25);color:var(--text);}
+.quiz-opt.correct{background:rgba(0,255,157,.08);border-color:var(--green);color:var(--green);}
+.quiz-opt.wrong{background:rgba(255,124,58,.07);border-color:var(--orange);color:var(--orange);}
+.opt-l{font-family:'JetBrains Mono',monospace;font-size:.65rem;opacity:.55;}
+.quiz-fb{margin-top:.75rem;padding:.75rem 1rem;border-radius:4px;font-size:.85rem;display:none;}
+.quiz-fb.show{display:block;}
+.quiz-fb.ok{background:rgba(0,255,157,.06);border-left:3px solid var(--green);color:var(--green);}
+.quiz-fb.err{background:rgba(255,124,58,.06);border-left:3px solid var(--orange);color:var(--orange);}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+footer{
+  position:relative;z-index:2;text-align:center;
+  padding:3rem 2rem;border-top:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace;font-size:.52rem;
+  letter-spacing:.1em;color:rgba(220,232,255,.15);
+}
+footer span{color:var(--cyan);}
+
+/* ─ animations ─ */
+@keyframes sampleDot1{0%,7%{opacity:0;r:0}8%{opacity:1;r:6}100%{opacity:1;r:5}}
+@keyframes sampleDot2{0%,20%{opacity:0;r:0}21%{opacity:1;r:6}100%{opacity:1;r:5}}
+@keyframes sampleDot3{0%,34%{opacity:0;r:0}35%{opacity:1;r:6}100%{opacity:1;r:5}}
+@keyframes sampleDot4{0%,48%{opacity:0;r:0}49%{opacity:1;r:6}100%{opacity:1;r:5}}
+@keyframes sampleDot5{0%,61%{opacity:0;r:0}62%{opacity:1;r:6}100%{opacity:1;r:5}}
+@keyframes sampleDot6{0%,74%{opacity:0;r:0}75%{opacity:1;r:6}100%{opacity:1;r:5}}
+@keyframes revealSignal{0%{stroke-dashoffset:600;}100%{stroke-dashoffset:0;}}
+@keyframes switchClose{0%,30%{transform:rotate(-30deg);}40%,80%{transform:rotate(0deg);}90%,100%{transform:rotate(-30deg);}}
+</style>
+</head>
+<body>
+<div id="noise"></div>
+<div class="orbs"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+<canvas id="stars"></canvas>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<div id="root">
+
+<!-- ═══ NAV ═══ -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">STM32·CAN</div>
+    <a href="#mF">Fondamentaux</a>
+    <a href="#mF1">Échantillonnage</a>
+    <a href="#mF2">S&amp;H</a>
+    <a href="#mF3">Shannon</a>
+    <a href="#mF4">SAR</a>
+    <a href="#m0">CAN ?</a>
+    <a href="#m1">Architecture</a>
+    <a href="#m2">Registres</a>
+    <a href="#m3">HAL</a>
+    <a href="#m4">Scrutation</a>
+    <a href="#m5">DMA</a>
+    <a href="#m6">Multi-CH</a>
+    <a href="#m7">Problèmes</a>
+    <a href="#m8">Conseils Pro</a>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<header class="hero">
+  <svg class="hero-circuit" viewBox="0 0 1400 700" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    <g stroke="rgba(0,212,255,.07)" stroke-width="1" fill="none">
+      <line x1="0" y1="130" x2="280" y2="130"/><line x1="280" y1="130" x2="280" y2="220"/>
+      <line x1="280" y1="220" x2="480" y2="220"/><line x1="480" y1="220" x2="480" y2="70"/>
+      <line x1="480" y1="70" x2="660" y2="70"/>
+      <line x1="1400" y1="180" x2="1080" y2="180"/><line x1="1080" y1="180" x2="1080" y2="320"/>
+      <line x1="1080" y1="320" x2="860" y2="320"/>
+      <line x1="0" y1="520" x2="230" y2="520"/><line x1="230" y1="520" x2="230" y2="390"/>
+      <line x1="230" y1="390" x2="440" y2="390"/>
+      <line x1="1400" y1="600" x2="1020" y2="600"/><line x1="1020" y1="600" x2="1020" y2="460"/>
+    </g>
+    <g fill="rgba(0,212,255,.2)">
+      <circle cx="280" cy="220" r="3.5"/><circle cx="480" cy="220" r="3.5"/>
+      <circle cx="1080" cy="320" r="3.5"/><circle cx="230" cy="390" r="3.5"/>
+    </g>
+    <rect x="620" y="200" width="170" height="220" rx="4" stroke="rgba(0,212,255,.14)" fill="rgba(0,40,100,.05)" stroke-width="1.5"/>
+    <text x="705" y="310" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="13" fill="rgba(0,212,255,.28)" letter-spacing="3">STM32F4</text>
+  </svg>
+
+  <div class="container" style="position:relative;z-index:2;">
+    <div class="hero-badge"><span class="pulse"></span>Cours Maîtrise · Systèmes Embarqués · STM32F4</div>
+    <h1 class="hero-title">
+      <span class="l1">Convertisseur</span>
+      <span class="l2">Analogique-Numérique</span>
+      <span class="l3">sur STM32F4 — Du Zéro à l'Expert</span>
+    </h1>
+    <p class="hero-sub">Architecture CAN, registres, pilotes HAL, DMA et 5 problèmes réels avec code C complet. Zéro hypothèse, chaque octet expliqué.</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">8</span><span class="stat-label">Modules</span></div>
+      <div class="stat-div"></div>
+      <div class="stat"><span class="stat-num">5</span><span class="stat-label">Problèmes</span></div>
+      <div class="stat-div"></div>
+      <div class="stat"><span class="stat-num">12‑bit</span><span class="stat-label">Résolution</span></div>
+      <div class="stat-div"></div>
+      <div class="stat"><span class="stat-num">2.4 MSPS</span><span class="stat-label">Vitesse Max</span></div>
+    </div>
+  </div>
+  <div class="hero-rule"></div>
+</header>
+
+<!-- ═══════════════════════ FONDAMENTAUX ═══════════════════════ -->
+<section id="mF">
+<div class="container">
+  <div class="sec-overline"><span class="sec-num">00</span> Module Fondamentaux</div>
+  <h2 class="sec-title">Fondements de la <em>Conversion Numérique</em></h2>
+  <p class="sec-sub">Avant de toucher un registre du STM32, maîtrisez les quatre piliers théoriques universels — ils s'appliquent à tout CAN, pas seulement au STM32.</p>
+
+  <div class="diag">
+    <svg viewBox="0 0 820 80" xmlns="http://www.w3.org/2000/svg" width="820" height="80">
+      <defs><marker id="arrF" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="rgba(0,212,255,.6)"/></marker></defs>
+      <rect x="10" y="18" width="160" height="44" rx="4" fill="rgba(0,212,255,.06)" stroke="rgba(0,212,255,.35)" stroke-width="1.5"/>
+      <text x="90" y="36" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="10" fill="#00d4ff" letter-spacing="1">① ÉCHANTILLONNAGE</text>
+      <text x="90" y="52" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="rgba(220,232,255,.35)">Prendre des instantanés</text>
+      <line x1="170" y1="40" x2="200" y2="40" stroke="rgba(0,212,255,.35)" stroke-width="1.5" marker-end="url(#arrF)"/>
+      <rect x="200" y="18" width="160" height="44" rx="4" fill="rgba(255,229,102,.06)" stroke="rgba(255,229,102,.35)" stroke-width="1.5"/>
+      <text x="280" y="36" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="10" fill="#ffe566" letter-spacing="1">② BLOCAGE S&amp;H</text>
+      <text x="280" y="52" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="rgba(220,232,255,.35)">Maintenir la tension stable</text>
+      <line x1="360" y1="40" x2="390" y2="40" stroke="rgba(0,212,255,.35)" stroke-width="1.5" marker-end="url(#arrF)"/>
+      <rect x="390" y="18" width="160" height="44" rx="4" fill="rgba(196,122,255,.06)" stroke="rgba(196,122,255,.35)" stroke-width="1.5"/>
+      <text x="470" y="36" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="10" fill="#c47aff" letter-spacing="1">③ THÉORÈME SHANNON</text>
+      <text x="470" y="52" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="rgba(220,232,255,.35)">Choisir f_s correctement</text>
+      <line x1="550" y1="40" x2="580" y2="40" stroke="rgba(0,212,255,.35)" stroke-width="1.5" marker-end="url(#arrF)"/>
+      <rect x="580" y="18" width="230" height="44" rx="4" fill="rgba(255,124,58,.06)" stroke="rgba(255,124,58,.35)" stroke-width="1.5"/>
+      <text x="695" y="36" text-anchor="middle" font-family="'Bebas Neue',sans-serif" font-size="10" fill="#ff7c3a" letter-spacing="1">④ APPROX. SUCCESSIVES SAR</text>
+      <text x="695" y="52" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="rgba(220,232,255,.35)">Convertir en binaire</text>
+    </svg>
+  </div>
+</div>
+</section>
+
+<!-- ═══ F.1 ÉCHANTILLONNAGE ═══ -->
+<section id="mF1">
+<div class="container">
+  <div class="sec-overline"><span class="sec-num">F.1</span> Fondamentaux</div>
+  <h2 class="sec-title">① <em>Échantillonnage</em></h2>
+  <p class="sec-sub">Un signal analogique est <strong>continu dans le temps</strong>. Un système numérique ne peut pas traiter l'infini — il prélève des mesures à des instants discrets.</p>
+
+  <div class="diag">
+    <svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg" width="720" height="220">
+      <defs><linearGradient id="gS" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00d4ff" stop-opacity=".9"/><stop offset="100%" stop-color="#006eff" stop-opacity=".6"/></linearGradient></defs>
+      <line x1="30" y1="195" x2="710" y2="195" stroke="rgba(220,232,255,.15)" stroke-width="1"/>
+      <line x1="30" y1="15" x2="30" y2="200" stroke="rgba(220,232,255,.15)" stroke-width="1"/>
+      <text x="715" y="198" font-family="'JetBrains Mono',monospace" font-size="9" fill="rgba(220,232,255,.25)">t</text>
+      <text x="22" y="12" font-family="'JetBrains Mono',monospace" font-size="9" fill="rgba(220,232,255,.25)">V</text>
+      <g font-family="'JetBrains Mono',monospace" font-size="8" fill="rgba(220,232,255,.2)">
+        <text x="27" y="207">0</text><text x="118" y="207">Ts</text><text x="212" y="207">2Ts</text>
+        <text x="306" y="207">3Ts</text><text x="400" y="207">4Ts</text><text x="494" y="207">5Ts</text><text x="588" y="207">6Ts</text>
+      </g>
+      <g stroke="rgba(220,232,255,.06)" stroke-width="1" stroke-dasharray="3,4">
+        <line x1="125" y1="15" x2="125" y2="195"/><line x1="220" y1="15" x2="220" y2="195"/>
+        <line x1="315" y1="15" x2="315" y2="195"/><line x1="410" y1="15" x2="410" y2="195"/>
+        <line x1="505" y1="15" x2="505" y2="195"/><line x1="600" y1="15" x2="600" y2="195"/>
+      </g>
+      <path d="M30,105 C60,45 90,165 120,105 C150,45 180,165 210,105 C240,45 270,165 300,105 C330,45 360,165 390,105 C420,45 450,165 480,105 C510,45 540,165 570,105 C600,45 630,165 660,105 C690,45 710,105 710,105" stroke="url(#gS)" stroke-width="2.5" fill="none"/>
+      <g stroke="rgba(255,229,102,.4)" stroke-width="1" stroke-dasharray="4,3">
+        <line x1="125" y1="195" x2="125" y2="45" style="opacity:0;animation:sampleDot1 4s ease .5s infinite"/>
+        <line x1="220" y1="195" x2="220" y2="165" style="opacity:0;animation:sampleDot2 4s ease .5s infinite"/>
+        <line x1="315" y1="195" x2="315" y2="45" style="opacity:0;animation:sampleDot3 4s ease .5s infinite"/>
+        <line x1="410" y1="195" x2="410" y2="165" style="opacity:0;animation:sampleDot4 4s ease .5s infinite"/>
+        <line x1="505" y1="195" x2="505" y2="45" style="opacity:0;animation:sampleDot5 4s ease .5s infinite"/>
+        <line x1="600" y1="195" x2="600" y2="165" style="opacity:0;animation:sampleDot6 4s ease .5s infinite"/>
+      </g>
+      <circle cx="125" cy="45" r="0" fill="#ffe566" stroke="#fff" stroke-width="1.5" style="animation:sampleDot1 4s ease .5s infinite"/>
+      <circle cx="220" cy="165" r="0" fill="#ffe566" stroke="#fff" stroke-width="1.5" style="animation:sampleDot2 4s ease .5s infinite"/>
+      <circle cx="315" cy="45" r="0" fill="#ffe566" stroke="#fff" stroke-width="1.5" style="animation:sampleDot3 4s ease .5s infinite"/>
+      <circle cx="410" cy="165" r="0" fill="#ffe566" stroke="#fff" stroke-width="1.5" style="animation:sampleDot4 4s ease .5s infinite"/>
+      <circle cx="505" cy="45" r="0" fill="#ffe566" stroke="#fff" stroke-width="1.5" style="animation:sampleDot5 4s ease .5s infinite"/>
+      <circle cx="600" cy="165" r="0" fill="#ffe566" stroke="#fff" stroke-width="1.5" style="animation:sampleDot6 4s ease .5s infinite"/>
+      <text x="370" y="30" font-family="'Space Grotesk',sans-serif" font-size="10" fill="rgba(0,212,255,.6)" font-weight="700">Signal continu x(t)</text>
+      <text x="580" y="58" font-family="'JetBrains Mono',monospace" font-size="9" fill="rgba(255,229,102,.8)">← Échantillon</text>
+      <line x1="125" y1="208" x2="220" y2="208" stroke="rgba(0,212,255,.3)" stroke-width="1"/>
+      <line x1="125" y1="205" x2="125" y2="211" stroke="rgba(0,212,255,.3)" stroke-width="1"/>
+      <line x1="220" y1="205" x2="220" y2="211" stroke="rgba(0,212,255,.3)" stroke-width="1"/>
+      <text x="172" y="218" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="rgba(0,212,255,.6)">Ts = 1/fs</text>
+    </svg>
+    <div class="diag-cap">FIGURE F.1 — Points jaunes = échantillons prélevés à fréquence f<sub>s</sub> = 1/T<sub>s</sub></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>📐 Définitions Essentielles</h3>
+      <table>
+        <thead><tr><th>Symbole</th><th>Nom</th><th>Unité</th></tr></thead>
+        <tbody>
+          <tr><td><code>Ts</code></td><td>Période d'échantillonnage</td><td>secondes</td></tr>
+          <tr><td><code>fs</code></td><td>Fréquence d'échantillonnage</td><td>Hz = 1/Ts</td></tr>
+          <tr><td><code>x(t)</code></td><td>Signal analogique continu</td><td>volts [V]</td></tr>
+          <tr><td><code>x[n]</code></td><td>= x(n·Ts) — séquence discrète</td><td>n = 0,1,2…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>⚡ Ce qui se passe physiquement</h3>
+      <p>À chaque instant <code>nTs</code>, un transistor MOSFET interne se ferme quelques nanosecondes. La tension d'entrée est capturée sur le condensateur d'échantillonnage (~4 pF). Le MOSFET se rouvre. Le CAN convertit cette tension en binaire.</p>
+      <div class="callout info" style="margin-top:1rem;padding:.9rem;">
+        <div class="ico" style="font-size:1rem;">ℹ️</div>
+        <div class="body">
+          <strong>Sur STM32F4</strong>
+          <p>Le temps d'ouverture/fermeture est contrôlé par le registre SMPR (Sampling Time). 3 à 480 cycles d'horloge CAN disponibles.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ F.2 SAMPLE & HOLD ═══ -->
+<section id="mF2">
+<div class="container">
+  <div class="sec-overline"><span class="sec-num">F.2</span> Fondamentaux</div>
+  <h2 class="sec-title">② Blocage — <em>Sample &amp; Hold</em></h2>
+  <p class="sec-sub">La conversion SAR prend plusieurs cycles. Pendant ce temps, le signal d'entrée <strong>ne doit pas changer</strong>. Le S&amp;H "gèle" la tension le temps de la conversion.</p>
+
+  <div class="phases">
+    <div class="phase">
+      <div class="phase-num">PHASE 01</div>
+      <div class="phase-name">TRACK</div>
+      <div class="phase-desc">S1 fermé. Condensateur C se charge jusqu'à Vin. Vout = Vin en temps réel.</div>
+    </div>
+    <div class="phase">
+      <div class="phase-num">PHASE 02</div>
+      <div class="phase-name">HOLD</div>
+      <div class="phase-desc">S1 ouvert. Charge isolée. Vout reste constant même si Vin change. SAR commence.</div>
+    </div>
+    <div class="phase">
+      <div class="phase-num">PHASE 03</div>
+      <div class="phase-name">CONVERSION</div>
+      <div class="phase-desc">SAR compare Vout (bloqué) bit par bit. 12 cycles d'horloge pour 12 bits. Vout stable.</div>
+    </div>
+    <div class="phase">
+      <div class="phase-num">PHASE 04</div>
+      <div class="phase-name">ACQUISITION</div>
+      <div class="phase-desc">S1 se referme. Condensateur se recharge vers nouvelle valeur Vin. Durée ≥ t_s.</div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="ico">⚠️</div>
+    <div class="body">
+      <strong>Pourquoi le temps d'acquisition compte</strong>
+      <p>Le condensateur charge via la résistance source (capteur + filtre). Si R_source est grande (ex. thermistance 10 kΩ), il faut plus de temps. C'est pourquoi on utilise <code>ADC_SAMPLETIME_480CYCLES</code> pour sources haute impédance.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ F.3 SHANNON ═══ -->
+<section id="mF3">
+<div class="container">
+  <div class="sec-overline"><span class="sec-num">F.3</span> Fondamentaux</div>
+  <h2 class="sec-title">③ Théorème de <em>Shannon-Nyquist</em></h2>
+  <p class="sec-sub">À quelle fréquence faut-il échantillonner ? Trop lentement → <strong>repliement spectral (aliasing)</strong>. Shannon démontre la condition minimale.</p>
+
+  <div style="background:rgba(196,122,255,.05);border:2px solid rgba(196,122,255,.3);border-radius:8px;padding:2rem;margin:1.5rem 0;text-align:center;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--violet);letter-spacing:.3em;text-transform:uppercase;margin-bottom:1rem;">THÉORÈME DE SHANNON-NYQUIST (1949)</div>
+    <div class="formula" style="font-size:1.6rem;background:transparent;border:none;">f<sub>s</sub> ≥ 2 · f<sub>max</sub></div>
+    <p style="color:var(--muted);margin-top:1rem;font-size:.95rem;">Pour reconstruire parfaitement un signal de fréquence max <strong style="color:var(--text)">f_max</strong>, la fréquence d'échantillonnage <strong style="color:var(--text)">f_s</strong> doit être au moins le double.</p>
+    <div style="display:flex;gap:2.5rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap;">
+      <div style="text-align:center;"><div style="font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--violet);">f_Nyquist = f_s / 2</div><div style="font-size:.75rem;color:var(--muted);margin-top:.25rem;">Fréquence de Nyquist = limite max représentable</div></div>
+      <div style="text-align:center;"><div style="font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--cyan);">STM32F4 : f_s max = 2,4 MSPS</div><div style="font-size:.75rem;color:var(--muted);margin-top:.25rem;">→ Représente signaux jusqu'à 1,2 MHz</div></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--green);letter-spacing:.2em;margin-bottom:.5rem;">✅ BON ÉCHANTILLONNAGE (f_s &gt; 2·f_max)</div>
+      <div class="diag" style="padding:1rem;">
+        <svg viewBox="0 0 340 160" xmlns="http://www.w3.org/2000/svg" width="340" height="160">
+          <path d="M10,80 C30,30 50,130 70,80 C90,30 110,130 130,80 C150,30 170,130 190,80 C210,30 230,130 250,80 C270,30 290,130 310,80" stroke="rgba(0,212,255,.45)" stroke-width="2" fill="none" stroke-dasharray="6,3"/>
+          <circle cx="10" cy="80" r="5" fill="#ffe566"/><circle cx="52" cy="30" r="5" fill="#ffe566"/>
+          <circle cx="95" cy="130" r="5" fill="#ffe566"/><circle cx="138" cy="30" r="5" fill="#ffe566"/>
+          <circle cx="181" cy="130" r="5" fill="#ffe566"/><circle cx="224" cy="30" r="5" fill="#ffe566"/>
+          <circle cx="267" cy="130" r="5" fill="#ffe566"/><circle cx="310" cy="30" r="5" fill="#ffe566"/>
+          <path d="M10,80 C30,30 50,130 70,80 C90,30 110,130 130,80 C150,30 170,130 190,80 C210,30 230,130 250,80 C270,30 290,130 310,80" stroke="#00ff9d" stroke-width="2.5" fill="none" stroke-dasharray="300" stroke-dashoffset="300" style="animation:revealSignal 2s ease .5s forwards"/>
+          <text x="170" y="18" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="#00ff9d">Signal reconstruit = original ✓</text>
+        </svg>
+      </div>
+    </div>
+    <div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--orange);letter-spacing:.2em;margin-bottom:.5rem;">❌ REPLIEMENT SPECTRAL (f_s &lt; 2·f_max)</div>
+      <div class="diag" style="padding:1rem;">
+        <svg viewBox="0 0 340 160" xmlns="http://www.w3.org/2000/svg" width="340" height="160">
+          <path d="M10,80 C22,30 34,130 46,80 C58,30 70,130 82,80 C94,30 106,130 118,80 C130,30 142,130 154,80 C166,30 178,130 190,80 C202,30 214,130 226,80 C238,30 250,130 262,80 C274,30 286,130 298,80" stroke="rgba(0,212,255,.3)" stroke-width="1.5" fill="none" stroke-dasharray="5,3"/>
+          <circle cx="10" cy="80" r="5" fill="#ff7c3a"/><circle cx="95" cy="130" r="5" fill="#ff7c3a"/>
+          <circle cx="181" cy="80" r="5" fill="#ff7c3a"/><circle cx="267" cy="130" r="5" fill="#ff7c3a"/>
+          <path d="M10,80 C50,10 140,150 181,80 C222,10 252,150 267,130 C285,150 310,100 330,80" stroke="#ff7c3a" stroke-width="2.5" fill="none" opacity=".9" stroke-dasharray="400" stroke-dashoffset="400" style="animation:revealSignal 2s ease 1s forwards"/>
+          <text x="170" y="18" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="#ff7c3a">Signal fantôme — FAUX ! ✗</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shannon Interactive -->
+  <div class="interactive">
+    <div class="interactive-title">🎛️ Démo Interactive — Théorème de Shannon</div>
+    <div class="grid2" style="gap:2rem;align-items:center;">
+      <div>
+        <p style="color:var(--muted);font-size:.9rem;margin-bottom:.75rem;">Signal : <strong id="fSigVal" style="color:var(--cyan);">1 000 Hz</strong></p>
+        <label style="font-size:.78rem;color:var(--muted);">Fréquence signal f_max</label>
+        <input type="range" class="slider-track" id="fSig" min="100" max="10000" step="100" value="1000" oninput="updateShannon()">
+        <p style="color:var(--muted);font-size:.9rem;margin:.8rem 0 .4rem;">Échantillonnage : <strong id="fSampVal" style="color:var(--orange);">4 000 Hz</strong></p>
+        <label style="font-size:.78rem;color:var(--muted);">Fréquence d'échantillonnage f_s</label>
+        <input type="range" class="slider-track" id="fSamp" min="100" max="20000" step="100" value="4000" oninput="updateShannon()">
+      </div>
+      <div>
+        <div style="background:var(--s2);border-radius:6px;padding:1.25rem;text-align:center;margin-bottom:.75rem;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--muted);letter-spacing:.2em;margin-bottom:.5rem;">CONDITION DE NYQUIST</div>
+          <div id="nyqFormula" style="font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--text);margin:.4rem 0;">4 000 ≥ 2 × 1 000</div>
+          <div id="nyqResult" style="font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--green);">4 000 ≥ 2 000 ✅</div>
+          <div id="nyqNyq" style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);margin-top:.4rem;">f_Nyquist = 2 000 Hz</div>
+        </div>
+        <div id="shannonStatus" class="shannon-status s-ok">✅ Bon — f_s ≥ 2·f_max</div>
+        <div class="nl"><div class="nl-m" id="shannonMarker" style="left:30%;"></div></div>
+        <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--muted);">
+          <span>❌ Aliasing</span><span>⚠️ Limite</span><span>✅ Parfait</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.05em;color:var(--text);margin:2rem 0 1rem;">Exemples Pratiques de Fréquences d'Échantillonnage</h3>
+  <table>
+    <thead><tr><th>Application</th><th>f_max signal</th><th>f_s minimum</th><th>f_s pratique</th></tr></thead>
+    <tbody>
+      <tr><td>🌡️ Température (NTC)</td><td>~0,1 Hz</td><td>0,2 Hz</td><td>1 Hz</td></tr>
+      <tr><td>🔋 Tension batterie</td><td>~10 Hz</td><td>20 Hz</td><td>100 Hz</td></tr>
+      <tr><td>🕹️ Joystick</td><td>~50 Hz</td><td>100 Hz</td><td>1 kHz</td></tr>
+      <tr><td>🎙️ Son (voix)</td><td>~4 kHz</td><td>8 kHz</td><td>8–16 kHz</td></tr>
+      <tr><td>🎵 Audio haute qualité</td><td>~20 kHz</td><td>40 kHz</td><td>44,1 / 48 kHz</td></tr>
+      <tr><td>⚡ Courant DC/DC</td><td>~100 kHz</td><td>200 kHz</td><td>1 MHz+</td></tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<!-- ═══ F.4 SAR ═══ -->
+<section id="mF4">
+<div class="container">
+  <div class="sec-overline"><span class="sec-num">F.4</span> Fondamentaux</div>
+  <h2 class="sec-title">④ Approximations <em>Successives (SAR)</em></h2>
+  <p class="sec-sub">Comment transformer une tension en binaire ? Le SAR utilise la <strong>recherche binaire</strong>. N bits = N cycles. MSB d'abord, LSB en dernier.</p>
+
+  <div class="diag" style="padding:1.5rem 2rem;">
+    <svg viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg" width="720" height="380">
+      <text x="360" y="18" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="11" fill="rgba(220,232,255,.7)" font-weight="700">CAN 4 BITS — Vin = 2,2V / VREF = 3,3V → Résultat attendu = 1010</text>
+      <rect x="0" y="24" width="720" height="28" fill="rgba(0,212,255,.05)"/>
+      <text x="40" y="43" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="9" fill="var(--cyan)" font-weight="700">CYCLE</text>
+      <text x="110" y="43" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="9" fill="var(--cyan)" font-weight="700">BIT</text>
+      <text x="200" y="43" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="9" fill="var(--cyan)" font-weight="700">REGISTRE SAR</text>
+      <text x="310" y="43" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="9" fill="var(--cyan)" font-weight="700">V_DAC</text>
+      <text x="420" y="43" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="9" fill="var(--cyan)" font-weight="700">COMPARAISON</text>
+      <text x="590" y="43" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="9" fill="var(--cyan)" font-weight="700">DÉCISION</text>
+      <!-- Étape 1 -->
+      <rect x="0" y="52" width="720" height="70" fill="rgba(255,229,102,.03)"/>
+      <text x="40" y="79" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#ffe566" font-weight="700">1</text>
+      <text x="40" y="95" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="var(--muted)">MSB</text>
+      <text x="110" y="79" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="#ffe566" font-weight="700">B3</text>
+      <text x="110" y="95" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="var(--muted)">(valeur 8)</text>
+      <g font-family="'JetBrains Mono',monospace" font-size="12" text-anchor="middle">
+        <rect x="155" y="63" width="26" height="26" rx="2" fill="rgba(255,229,102,.18)" stroke="#ffe566" stroke-width="1.5"/><text x="168" y="80" fill="#ffe566">1</text>
+        <rect x="183" y="63" width="26" height="26" rx="2" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="196" y="80" fill="rgba(220,232,255,.2)">?</text>
+        <rect x="211" y="63" width="26" height="26" rx="2" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="224" y="80" fill="rgba(220,232,255,.2)">?</text>
+        <rect x="239" y="63" width="26" height="26" rx="2" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="252" y="80" fill="rgba(220,232,255,.2)">?</text>
+      </g>
+      <text x="310" y="76" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="var(--violet)">1,65 V</text>
+      <text x="310" y="92" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="var(--muted)">= 8/15 × 3,3</text>
+      <text x="420" y="76" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="var(--text)">Vin 2,2V &gt; 1,65V</text>
+      <text x="420" y="92" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="var(--cyan)">→ Vin &gt; V_DAC</text>
+      <rect x="520" y="63" width="160" height="30" rx="3" fill="rgba(0,255,157,.1)" stroke="rgba(0,255,157,.35)" stroke-width="1"/>
+      <text x="600" y="83" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="10" fill="#00ff9d" font-weight="700">✅ B3 = 1 — GARDER</text>
+      <!-- Étape 2 -->
+      <rect x="0" y="124" width="720" height="70" fill="rgba(0,212,255,.02)"/>
+      <text x="40" y="151" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#ffe566" font-weight="700">2</text>
+      <text x="110" y="151" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="var(--cyan)" font-weight="700">B2</text>
+      <g font-family="'JetBrains Mono',monospace" font-size="12" text-anchor="middle">
+        <rect x="155" y="135" width="26" height="26" rx="2" fill="rgba(0,212,255,.1)" stroke="rgba(0,212,255,.3)" stroke-width="1"/><text x="168" y="152" fill="var(--cyan)">1</text>
+        <rect x="183" y="135" width="26" height="26" rx="2" fill="rgba(255,229,102,.18)" stroke="#ffe566" stroke-width="1.5"/><text x="196" y="152" fill="#ffe566">1</text>
+        <rect x="211" y="135" width="26" height="26" rx="2" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="224" y="152" fill="rgba(220,232,255,.2)">?</text>
+        <rect x="239" y="135" width="26" height="26" rx="2" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="252" y="152" fill="rgba(220,232,255,.2)">?</text>
+      </g>
+      <text x="310" y="147" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="var(--violet)">2,42 V</text>
+      <text x="420" y="147" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="var(--text)">Vin 2,2V &lt; 2,42V</text>
+      <text x="420" y="163" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="var(--orange)">→ Vin &lt; V_DAC</text>
+      <rect x="520" y="135" width="160" height="30" rx="3" fill="rgba(255,124,58,.1)" stroke="rgba(255,124,58,.35)" stroke-width="1"/>
+      <text x="600" y="155" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="10" fill="#ff7c3a" font-weight="700">❌ B2 = 0 — EFFACER</text>
+      <!-- Étape 3 -->
+      <rect x="0" y="196" width="720" height="70" fill="rgba(255,229,102,.03)"/>
+      <text x="40" y="223" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#ffe566" font-weight="700">3</text>
+      <text x="110" y="223" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="var(--cyan)" font-weight="700">B1</text>
+      <g font-family="'JetBrains Mono',monospace" font-size="12" text-anchor="middle">
+        <rect x="155" y="207" width="26" height="26" rx="2" fill="rgba(0,212,255,.1)" stroke="rgba(0,212,255,.3)" stroke-width="1"/><text x="168" y="224" fill="var(--cyan)">1</text>
+        <rect x="183" y="207" width="26" height="26" rx="2" fill="rgba(255,124,58,.08)" stroke="rgba(255,124,58,.3)" stroke-width="1"/><text x="196" y="224" fill="var(--orange)">0</text>
+        <rect x="211" y="207" width="26" height="26" rx="2" fill="rgba(255,229,102,.18)" stroke="#ffe566" stroke-width="1.5"/><text x="224" y="224" fill="#ffe566">1</text>
+        <rect x="239" y="207" width="26" height="26" rx="2" fill="rgba(255,255,255,.03)" stroke="rgba(255,255,255,.08)" stroke-width="1"/><text x="252" y="224" fill="rgba(220,232,255,.2)">?</text>
+      </g>
+      <text x="310" y="219" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="var(--violet)">2,09 V</text>
+      <text x="420" y="219" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="var(--text)">Vin 2,2V &gt; 2,09V</text>
+      <text x="420" y="235" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="var(--cyan)">→ Vin &gt; V_DAC</text>
+      <rect x="520" y="207" width="160" height="30" rx="3" fill="rgba(0,255,157,.1)" stroke="rgba(0,255,157,.35)" stroke-width="1"/>
+      <text x="600" y="227" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="10" fill="#00ff9d" font-weight="700">✅ B1 = 1 — GARDER</text>
+      <!-- Étape 4 -->
+      <rect x="0" y="268" width="720" height="70" fill="rgba(0,212,255,.02)"/>
+      <text x="40" y="295" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#ffe566" font-weight="700">4</text>
+      <text x="110" y="295" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="13" fill="var(--cyan)" font-weight="700">B0</text>
+      <g font-family="'JetBrains Mono',monospace" font-size="12" text-anchor="middle">
+        <rect x="155" y="279" width="26" height="26" rx="2" fill="rgba(0,212,255,.1)" stroke="rgba(0,212,255,.3)" stroke-width="1"/><text x="168" y="296" fill="var(--cyan)">1</text>
+        <rect x="183" y="279" width="26" height="26" rx="2" fill="rgba(255,124,58,.08)" stroke="rgba(255,124,58,.3)" stroke-width="1"/><text x="196" y="296" fill="var(--orange)">0</text>
+        <rect x="211" y="279" width="26" height="26" rx="2" fill="rgba(0,212,255,.1)" stroke="rgba(0,212,255,.3)" stroke-width="1"/><text x="224" y="296" fill="var(--cyan)">1</text>
+        <rect x="239" y="279" width="26" height="26" rx="2" fill="rgba(255,229,102,.18)" stroke="#ffe566" stroke-width="1.5"/><text x="252" y="296" fill="#ffe566">1</text>
+      </g>
+      <text x="310" y="291" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="var(--violet)">2,20 V</text>
+      <text x="420" y="291" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="var(--text)">Vin 2,2V ≈ 2,20V</text>
+      <text x="420" y="307" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="var(--orange)">→ Vin ≤ V_DAC</text>
+      <rect x="520" y="279" width="160" height="30" rx="3" fill="rgba(255,124,58,.1)" stroke="rgba(255,124,58,.35)" stroke-width="1"/>
+      <text x="600" y="299" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="10" fill="#ff7c3a" font-weight="700">❌ B0 = 0 — EFFACER</text>
+      <!-- Result -->
+      <rect x="0" y="345" width="720" height="35" fill="rgba(0,255,157,.07)" rx="0"/>
+      <text x="360" y="367" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="11" fill="#00ff9d" font-weight="700">🏁 RÉSULTAT : 1010 = 10 → V = 10/15 × 3,3 = 2,20 V ✅</text>
+    </svg>
+    <div class="diag-cap">FIGURE F.4 — Trace complète SAR 4 bits. Sur STM32F4, le même processus sur 12 cycles.</div>
+  </div>
+
+  <div class="grid2" style="margin-top:1.5rem;">
+    <div class="card">
+      <h3>📊 Résolution et LSB</h3>
+      <div class="formula" style="font-size:.85rem;">1 LSB = V_REF / (2^N − 1)</div>
+      <table>
+        <thead><tr><th>Résolution</th><th>Niveaux</th><th>1 LSB @ 3,3V</th></tr></thead>
+        <tbody>
+          <tr><td>6 bits</td><td>64</td><td>51,6 mV</td></tr>
+          <tr><td>8 bits</td><td>256</td><td>12,9 mV</td></tr>
+          <tr><td>10 bits</td><td>1 024</td><td>3,22 mV</td></tr>
+          <tr><td style="color:var(--cyan);font-weight:700;">12 bits</td><td style="color:var(--cyan);">4 096</td><td style="color:var(--cyan);">0,806 mV</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>⏱️ Temps de Conversion Complet</h3>
+      <div class="formula" style="font-size:.85rem;">t_total = (t_éch + 12,5) / f_CAN</div>
+      <table>
+        <thead><tr><th>Échantillonnage</th><th>@ 21 MHz</th><th>Débit max</th></tr></thead>
+        <tbody>
+          <tr><td>3 cycles</td><td>738 ns</td><td>1,35 MSPS</td></tr>
+          <tr><td>84 cycles</td><td>4,60 µs</td><td>217 kSPS</td></tr>
+          <tr><td>480 cycles</td><td>23,4 µs</td><td>42,7 kSPS</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ F.5 SAR INTERACTIF ═══ -->
+<section id="mF5">
+<div class="container">
+  <div class="sec-overline"><span class="sec-num">F.5</span> Simulateur Interactif</div>
+  <h2 class="sec-title">🧪 Simulateur SAR <em>Interactif</em></h2>
+  <p class="sec-sub">Entrez une tension et regardez le SAR la convertir bit par bit.</p>
+
+  <div class="sar-wrap">
+    <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;">
+      <div><label style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--muted);letter-spacing:.18em;display:block;margin-bottom:.4rem;">TENSION V_in</label><input type="number" class="sar-input" id="sarVin" value="2.2" min="0" max="3.3" step="0.01" style="width:110px;"></div>
+      <div><label style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--muted);letter-spacing:.18em;display:block;margin-bottom:.4rem;">RÉSOLUTION</label>
+        <select class="sar-input" id="sarBits" style="cursor:pointer;width:150px;">
+          <option value="4">4 bits (0–15)</option>
+          <option value="8">8 bits (0–255)</option>
+          <option value="12" selected>12 bits (0–4095)</option>
+        </select>
+      </div>
+      <div><label style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--muted);letter-spacing:.18em;display:block;margin-bottom:.4rem;">VREF</label><input type="number" class="sar-input" id="sarVref" value="3.3" min="1" max="5" step="0.1" style="width:90px;"></div>
+    </div>
+    <div style="display:flex;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap;">
+      <button class="btn" onclick="sarInit()">↺ Réinitialiser</button>
+      <button class="btn" onclick="sarStep()">▶ Étape Suivante</button>
+      <button class="btn orange" onclick="sarAuto()">⚡ Auto</button>
+    </div>
+    <div id="sarInfo" style="background:rgba(0,212,255,.03);border:1px solid var(--border);border-radius:4px;padding:.85rem 1.1rem;margin-bottom:1rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--muted);min-height:44px;">Entrez une tension et cliquez Réinitialiser.</div>
+    <div style="margin-bottom:1rem;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--muted);letter-spacing:.18em;margin-bottom:.5rem;">REGISTRE SAR</div>
+      <div id="sarBitsDisplay" class="sar-bit-display"></div>
+    </div>
+    <div style="margin-bottom:.75rem;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--muted);letter-spacing:.18em;margin-bottom:.4rem;">V_DAC vs V_ENTRÉE</div>
+      <div class="dac-bar" style="height:44px;"><div id="sarDacFill" class="dac-fill"></div><div id="sarTarget" class="dac-target" style="left:0%;"></div></div>
+      <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted);margin-top:.3rem;">
+        <span>0 V</span><span id="sarVdacL" style="color:var(--violet);">V_DAC: —</span><span id="sarVinL" style="color:var(--orange);">V_in: —</span><span id="sarVrefL">3,3 V</span>
+      </div>
+    </div>
+    <div id="sarResult" style="display:none;background:rgba(0,255,157,.06);border:1px solid rgba(0,255,157,.25);border-radius:6px;padding:1.25rem;text-align:center;margin-top:1rem;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--green);letter-spacing:.25em;margin-bottom:.6rem;">🏁 CONVERSION TERMINÉE</div>
+      <div id="sarResBin" style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;color:var(--text);margin-bottom:.3rem;"></div>
+      <div id="sarResDec" style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--green);margin-bottom:.2rem;"></div>
+      <div id="sarResV" style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--cyan);"></div>
+    </div>
+  </div>
+
+  <!-- Quizzes -->
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.05em;color:var(--text);margin:2.5rem 0 1.25rem;">📝 Exercices de Vérification</h3>
+
+  <div class="quiz-card">
+    <h4>❓ Q1 — Théorème de Shannon</h4>
+    <p style="color:var(--muted);font-size:.9rem;">Un capteur de vibrations produit un signal dont la fréquence maximale est <strong style="color:var(--text);">8 kHz</strong>. Quelle est la fréquence d'échantillonnage <strong style="color:var(--text);">minimale</strong> ?</p>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="checkQ(this,'q1',false)"><span class="opt-l">A</span> 4 000 Hz</div>
+      <div class="quiz-opt" onclick="checkQ(this,'q1',false)"><span class="opt-l">B</span> 8 000 Hz</div>
+      <div class="quiz-opt" onclick="checkQ(this,'q1',true)"><span class="opt-l">C</span> 16 000 Hz</div>
+      <div class="quiz-opt" onclick="checkQ(this,'q1',false)"><span class="opt-l">D</span> 32 000 Hz</div>
+    </div>
+    <div id="fb-q1" class="quiz-fb">✅ <strong>C est correct !</strong> — f_s ≥ 2 × 8 000 = <strong>16 000 Hz</strong>. En pratique, on choisit 5–10× f_max pour une bonne marge.</div>
+  </div>
+
+  <div class="quiz-card">
+    <h4>❓ Q2 — Résolution et LSB</h4>
+    <p style="color:var(--muted);font-size:.9rem;">CAN 12 bits, V_REF = 3,3 V, valeur brute lue = <strong style="color:var(--text);">1638</strong>. Quelle est la tension d'entrée ?</p>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="checkQ(this,'q2',false)"><span class="opt-l">A</span> 1,638 V</div>
+      <div class="quiz-opt" onclick="checkQ(this,'q2',true)"><span class="opt-l">B</span> 1,320 V</div>
+      <div class="quiz-opt" onclick="checkQ(this,'q2',false)"><span class="opt-l">C</span> 1,650 V</div>
+      <div class="quiz-opt" onclick="checkQ(this,'q2',false)"><span class="opt-l">D</span> 0,400 V</div>
+    </div>
+    <div id="fb-q2" class="quiz-fb">✅ <strong>B est correct !</strong> — V = (1638 / 4095) × 3,3 = 0,4 × 3,3 = <strong>1,320 V</strong>. On divise par 4095 (= 2¹² − 1), pas 4096.</div>
+  </div>
+
+  <div class="quiz-card">
+    <h4>❓ Q3 — Cycles SAR</h4>
+    <p style="color:var(--muted);font-size:.9rem;">CAN SAR 12 bits — combien de cycles d'horloge CAN pour la <strong style="color:var(--text);">conversion seule</strong> (sans échantillonnage) ?</p>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="checkQ(this,'q3',false)"><span class="opt-l">A</span> 8 cycles</div>
+      <div class="quiz-opt" onclick="checkQ(this,'q3',false)"><span class="opt-l">B</span> 12 cycles</div>
+      <div class="quiz-opt" onclick="checkQ(this,'q3',true)"><span class="opt-l">C</span> 12,5 cycles</div>
+      <div class="quiz-opt" onclick="checkQ(this,'q3',false)"><span class="opt-l">D</span> 16 cycles</div>
+    </div>
+    <div id="fb-q3" class="quiz-fb">✅ <strong>C est correct !</strong> — <strong>12,5 cycles</strong> : 12 décisions de bits + 0,5 cycle de synchronisation. Les 3–480 cycles de S/H s'ajoutent avant.</div>
+  </div>
+
+  <div class="quiz-card">
+    <h4>❓ Q4 — Temps de conversion total</h4>
+    <p style="color:var(--muted);font-size:.9rem;">APB2 = 84 MHz, prédiviseur /4 → f_CAN = 21 MHz. Temps d'échantillonnage = <strong style="color:var(--text);">84 cycles</strong>. Durée totale en µs ?</p>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="checkQ(this,'q4',false)"><span class="opt-l">A</span> 0,595 µs</div>
+      <div class="quiz-opt" onclick="checkQ(this,'q4',false)"><span class="opt-l">B</span> 4,0 µs</div>
+      <div class="quiz-opt" onclick="checkQ(this,'q4',true)"><span class="opt-l">C</span> 4,595 µs</div>
+      <div class="quiz-opt" onclick="checkQ(this,'q4',false)"><span class="opt-l">D</span> 23,4 µs</div>
+    </div>
+    <div id="fb-q4" class="quiz-fb">✅ <strong>C est correct !</strong> — t = (84 + 12,5) / 21 000 000 = 96,5 / 21M = <strong>4,595 µs</strong>.</div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ M0 QU'EST-CE QU'UN CAN ═══ -->
+<section id="m0">
+<div class="container">
+  <div class="sec-overline"><span class="sec-num">01</span> Module</div>
+  <h2 class="sec-title">Qu'est-ce qu'un <em>CAN ?</em></h2>
+  <p class="sec-sub">Le monde réel est analogique. Les MCU ne comprennent que les 1 et 0. Le CAN est le pont qui traduit.</p>
+  <div class="formula" style="font-size:1.1rem;">V_entrée = (Valeur_CAN / (2^N − 1)) × V_REF</div>
+  <div class="grid3" style="margin-top:1.5rem;">
+    <div class="card"><h3>📡 Échantillonnage</h3><p>Instantanés à intervalles réguliers. Selon Nyquist : échantillonner à ≥ 2× f_max pour éviter l'aliasing.</p></div>
+    <div class="card"><h3>📊 Quantification</h3><p>Chaque échantillon est associé à un des 2^N niveaux. STM32F4 = <strong style="color:var(--cyan);">12 bits</strong> → 4096 niveaux (0 à 4095).</p></div>
+    <div class="card"><h3>🔢 Codage</h3><p>Le niveau est stocké en binaire dans ADC_DR. Le CPU lit ce registre et convertit en grandeur physique.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ M1 ARCHITECTURE ═══ -->
+<section id="m1">
+<div class="container">
+  <div class="sec-overline"><span class="sec-num">02</span> Module</div>
+  <h2 class="sec-title">Architecture du CAN <em>STM32F4</em></h2>
+  <p class="sec-sub">Jusqu'à <strong>trois CAN 12 bits</strong> (ADC1, ADC2, ADC3), jusqu'à 19 canaux, capteurs internes inclus.</p>
+  <div class="grid2">
+    <div class="card"><h3>⚡ Architecture SAR</h3><p>Recherche binaire : compare l'entrée bit par bit à une tension générée par un CNA interne. 12 cycles = résultat 12 bits.</p></div>
+    <div class="card"><h3>🕐 Horloge CAN</h3><p>Dérivée de l'horloge APB2 (max 84 MHz) divisée par 2, 4, 6 ou 8. Horloge CAN max = <mark>36 MHz</mark>.</p></div>
+    <div class="card"><h3>📦 Trois instances</h3><p>ADC1, ADC2, ADC3. Fonctionnent indépendamment ou en mode double/triple. Seul ADC1 est connecté au capteur de température interne.</p></div>
+    <div class="card"><h3>🎯 Modes de conversion</h3><ul><li><strong>Unique :</strong> Une conversion puis stop</li><li><strong>Continu :</strong> Boucle automatique</li><li><strong>Balayage :</strong> Séquence de canaux</li><li><strong>Discontinu :</strong> N canaux par déclenchement</li></ul></div>
+  </div>
+  <div class="callout warn" style="margin-top:1.5rem;">
+    <div class="ico">⚠️</div>
+    <div class="body"><strong>Plage de tension d'entrée</strong><p>Toujours entre V_REF− (GND) et V_REF+. Sur Nucleo/Discovery, V_REF+ = VDD = 3,3 V. N'appliquez jamais plus de 3,3 V sur une broche CAN.</p></div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ M2 REGISTRES ═══ -->
+<section id="m2">
+<div class="container">
+  <div class="sec-overline"><span class="sec-num">03</span> Module</div>
+  <h2 class="sec-title">Registres <em>Clés</em></h2>
+  <p class="sec-sub">Même avec HAL, comprendre les registres fait de vous un ingénieur bien meilleur. Chaque fonction HAL écrit finalement dedans.</p>
+  <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--text);margin-bottom:.75rem;">ADC_CR1 — Registre de Contrôle 1</h3>
+  <div class="reg-map">
+    <div class="reg-bit"><span class="bn">31</span><div class="bb r">—</div></div>
+    <div class="reg-bit"><span class="bn">26</span><div class="bb k">OVRIE</div></div>
+    <div class="reg-bit"><span class="bn">25</span><div class="bb k">RES[1]</div></div>
+    <div class="reg-bit"><span class="bn">24</span><div class="bb k">RES[0]</div></div>
+    <div class="reg-bit"><span class="bn">23</span><div class="bb u">AWDEN</div></div>
+    <div class="reg-bit"><span class="bn">13</span><div class="bb k">DISCNUM</div></div>
+    <div class="reg-bit"><span class="bn">10</span><div class="bb u">DISCEN</div></div>
+    <div class="reg-bit"><span class="bn">7</span><div class="bb k">SCAN</div></div>
+    <div class="reg-bit"><span class="bn">4</span><div class="bb k">EOCIE</div></div>
+    <div class="reg-bit"><span class="bn">0</span><div class="bb u">AWDCH</div></div>
+  </div>
+  <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--text);margin:1.75rem 0 .75rem;">ADC_CR2 — Registre de Contrôle 2</h3>
+  <div class="reg-map">
+    <div class="reg-bit"><span class="bn">31</span><div class="bb k">SWSTART</div></div>
+    <div class="reg-bit"><span class="bn">29</span><div class="bb u">EXTEN</div></div>
+    <div class="reg-bit"><span class="bn">11</span><div class="bb k">ALIGN</div></div>
+    <div class="reg-bit"><span class="bn">10</span><div class="bb k">EOCS</div></div>
+    <div class="reg-bit"><span class="bn">8</span><div class="bb k">DMA</div></div>
+    <div class="reg-bit"><span class="bn">1</span><div class="bb k">CONT</div></div>
+    <div class="reg-bit"><span class="bn">0</span><div class="bb k">ADON</div></div>
+  </div>
+  <table>
+    <thead><tr><th>Registre</th><th>Bit</th><th>Description</th><th>Équivalent HAL</th></tr></thead>
+    <tbody>
+      <tr><td>ADC_CR1</td><td>RES[1:0]</td><td>Résolution : 00=12b, 01=10b, 10=8b, 11=6b</td><td><code>hadc.Init.Resolution</code></td></tr>
+      <tr><td>ADC_CR1</td><td>SCAN</td><td>Mode balayage (multi-canaux)</td><td><code>hadc.Init.ScanConvMode</code></td></tr>
+      <tr><td>ADC_CR2</td><td>ADON</td><td>Mise sous tension du CAN</td><td><code>HAL_ADC_Start()</code></td></tr>
+      <tr><td>ADC_CR2</td><td>CONT</td><td>Mode continu : 1 = conversion permanente</td><td><code>hadc.Init.ContinuousConvMode</code></td></tr>
+      <tr><td>ADC_CR2</td><td>DMA</td><td>Active les requêtes DMA</td><td><code>HAL_ADC_Start_DMA()</code></td></tr>
+      <tr><td>ADC_CR2</td><td>SWSTART</td><td>Déclenchement logiciel</td><td><code>HAL_ADC_Start()</code></td></tr>
+      <tr><td>ADC_CR2</td><td>ALIGN</td><td>0 = droite, 1 = gauche</td><td><code>hadc.Init.DataAlign</code></td></tr>
+      <tr><td>ADC_DR</td><td>[15:0]</td><td>Registre de données converti</td><td><code>HAL_ADC_GetValue()</code></td></tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<!-- ═══ M3 HAL ═══ -->
+<section id="m3">
+<div class="container">
+  <div class="sec-overline"><span class="sec-num">04</span> Module</div>
+  <h2 class="sec-title">Configuration <em>CubeMX + HAL</em></h2>
+  <p class="sec-sub">Chaque option de configuration expliquée — pourquoi elle existe et ce qu'elle fait en coulisse.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-body">
+        <h4>Sélectionner le MCU</h4>
+        <p>STM32CubeMX → "Démarrer depuis MCU" → <code>STM32F407VGTx</code> → chaîne d'outils "STM32CubeIDE".</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-body">
+        <h4>Activer le périphérique CAN</h4>
+        <p>Analogique → ADC1 → activer <strong>IN0</strong> → PA0 en mode Analogique automatiquement. Le trigger de Schmitt est désactivé — minimise le bruit numérique.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-body">
+        <h4>Paramètres ADC1</h4>
+        <p>Prédiviseur /4 (21 MHz), Résolution 12b, Alignement Droit, Mode Balayage Désactivé, Mode Continu Désactivé, NbrOfConversion = 1.</p>
+        <div class="formula" style="font-size:.85rem;margin-top:.75rem;">Horloge_CAN = APB2_CLK / Prédiviseur ≤ 36 MHz</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-body">
+        <h4>Code généré par CubeMX</h4>
+        <div class="code-wrap" data-lang="C — HAL Init">
+<pre><span class="tp">static void</span> <span class="fn">MX_ADC1_Init</span>(<span class="kw">void</span>)
+{
+  ADC_ChannelConfTypeDef sConfig = {<span class="num">0</span>};
+
+  hadc1.Instance                   = <span class="reg">ADC1</span>;
+  hadc1.Init.ClockPrescaler        = ADC_CLOCK_SYNC_PCLK_DIV4;
+  hadc1.Init.Resolution            = ADC_RESOLUTION_12B;
+  hadc1.Init.ScanConvMode          = DISABLE;
+  hadc1.Init.ContinuousConvMode    = DISABLE;
+  hadc1.Init.ExternalTrigConv      = ADC_SOFTWARE_START;
+  hadc1.Init.DataAlign             = ADC_DATAALIGN_RIGHT;
+  hadc1.Init.NbrOfConversion       = <span class="num">1</span>;
+  hadc1.Init.EOCSelection          = ADC_EOC_SINGLE_CONV;
+
+  <span class="kw">if</span> (<span class="fn">HAL_ADC_Init</span>(&hadc1) != HAL_OK) { <span class="fn">Error_Handler</span>(); }
+
+  sConfig.Channel      = ADC_CHANNEL_0;  <span class="cm">/* PA0 */</span>
+  sConfig.Rank         = <span class="num">1</span>;
+  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+
+  <span class="kw">if</span> (<span class="fn">HAL_ADC_ConfigChannel</span>(&hadc1, &sConfig) != HAL_OK) { <span class="fn">Error_Handler</span>(); }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ═══ M4 SCRUTATION ═══ -->
+<section id="m4">
+<div class="container">
+  <div class="sec-overline"><span class="sec-num">05</span> Module</div>
+  <h2 class="sec-title">CAN en <em>Mode Scrutation</em></h2>
+  <p class="sec-sub">Le CPU démarre une conversion, attend (bloque) jusqu'à la fin, lit le résultat. Simple, parfait pour les lectures basse fréquence.</p>
+  <div class="code-wrap" data-lang="C — Mode Scrutation">
+<pre><span class="tp">uint32_t</span> can_brut;
+<span class="tp">float</span>    tension;
+<span class="tp">char</span>     buf[<span class="num">64</span>];
+
+<span class="kw">while</span> (<span class="num">1</span>)
+{
+  <span class="cm">/* 1 — Démarrer une conversion */</span>
+  <span class="fn">HAL_ADC_Start</span>(&hadc1);
+  <span class="cm">/*    → Met SWSTART dans ADC_CR2 → CAN commence à échantillonner PA0 */</span>
+
+  <span class="cm">/* 2 — Attendre la fin de conversion */</span>
+  <span class="fn">HAL_ADC_PollForConversion</span>(&hadc1, <span class="num">100</span>);
+  <span class="cm">/*    → Scrute le bit FCA dans ADC_SR en boucle serrée (timeout 100ms) */</span>
+
+  <span class="cm">/* 3 — Lire la valeur convertie */</span>
+  can_brut = <span class="fn">HAL_ADC_GetValue</span>(&hadc1);
+  <span class="cm">/*    → Lit ADC1→DR (0..4095) — la lecture efface aussi FCA */</span>
+
+  <span class="cm">/* 4 — Arrêter le CAN */</span>
+  <span class="fn">HAL_ADC_Stop</span>(&hadc1);
+
+  <span class="cm">/* 5 — Convertir brut → tension */</span>
+  tension = ((<span class="tp">float</span>)can_brut / <span class="num">4095.0f</span>) * <span class="num">3.3f</span>;
+
+  <span class="cm">/* 6 — Envoyer via UART */</span>
+  <span class="fn">sprintf</span>(buf, <span class="str">"CAN: %lu | V: %.3f V\r\n"</span>, can_brut, tension);
+  <span class="fn">HAL_UART_Transmit</span>(&huart2, (<span class="tp">uint8_t</span>*)buf, <span class="fn">strlen</span>(buf), <span class="num">100</span>);
+
+  <span class="fn">HAL_Delay</span>(<span class="num">500</span>);
+}</pre>
+  </div>
+</div>
+</section>
+
+<!-- ═══ M5 DMA ═══ -->
+<section id="m5">
+<div class="container">
+  <div class="sec-overline"><span class="sec-num">06</span> Module</div>
+  <h2 class="sec-title">CAN avec <em>DMA</em> — Charge CPU Nulle</h2>
+  <p class="sec-sub">Le DMA transfère les résultats directement en RAM <strong>sans intervention du CPU</strong>. Approche professionnelle pour l'acquisition continue haute vitesse.</p>
+  <div class="callout info">
+    <div class="ico">ℹ️</div>
+    <div class="body"><strong>Correspondance DMA pour ADC1</strong><p>Sur STM32F4, ADC1 → <strong>DMA2, Flux 0, Canal 0</strong>. Fixé en matériel. Vérifiez le tableau "DMA2 request mapping" dans le manuel de référence.</p></div>
+  </div>
+  <div class="code-wrap" data-lang="C — Mode DMA">
+<pre><span class="cm">/* Dans CubeMX : ADC1 → DMA Settings → Ajouter → DMA2 Flux0 → Circulaire */</span>
+
+<span class="tp">uint32_t</span> buf_dma[<span class="num">4</span>];            <span class="cm">/* 4 canaux, mis à jour en continu */</span>
+<span class="kw">volatile</span> <span class="tp">uint8_t</span> dma_pret = <span class="num">0</span>;
+
+<span class="cm">/* Dans main(), après MX_ADC1_Init() */</span>
+<span class="fn">HAL_ADC_Start_DMA</span>(&hadc1, buf_dma, <span class="num">4</span>);
+<span class="cm">/*   → Mode CIRCULAIRE : redémarre automatiquement. CPU LIBRE ! */</span>
+
+<span class="kw">while</span> (<span class="num">1</span>)
+{
+  <span class="kw">if</span> (dma_pret) {
+    dma_pret = <span class="num">0</span>;
+    <span class="tp">float</span> ch0 = (buf_dma[<span class="num">0</span>] / <span class="num">4095.0f</span>) * <span class="num">3.3f</span>;
+    <span class="tp">float</span> ch1 = (buf_dma[<span class="num">1</span>] / <span class="num">4095.0f</span>) * <span class="num">3.3f</span>;
+    <span class="fn">afficher_ecran</span>(ch0, ch1);
+  }
+}
+
+<span class="cm">/* Rappel DMA complet */</span>
+<span class="kw">void</span> <span class="fn">HAL_ADC_ConvCpltCallback</span>(ADC_HandleTypeDef *hadc)
+{
+  <span class="kw">if</span> (hadc->Instance == <span class="reg">ADC1</span>)
+    dma_pret = <span class="num">1</span>;
+}</pre>
+  </div>
+</div>
+</section>
+
+<!-- ═══ M6 MULTI-CH ═══ -->
+<section id="m6">
+<div class="container">
+  <div class="sec-overline"><span class="sec-num">07</span> Module</div>
+  <h2 class="sec-title">Mode <em>Multi-Canaux</em> et Balayage</h2>
+  <p class="sec-sub">En mode balayage, le CAN parcourt automatiquement une séquence de canaux. Combiné au DMA : tous les résultats en RAM sans aucune intervention CPU.</p>
+  <div class="code-wrap" data-lang="C — Balayage Multi-Canaux + DMA">
+<pre>hadc1.Init.ScanConvMode          = ENABLE;    <span class="cm">/* balayage tous canaux */</span>
+hadc1.Init.NbrOfConversion       = <span class="num">4</span>;        <span class="cm">/* longueur séquence    */</span>
+hadc1.Init.ContinuousConvMode    = ENABLE;    <span class="cm">/* cycle permanent      */</span>
+hadc1.Init.DMAContinuousRequests = ENABLE;    <span class="cm">/* DMA redémarre avec CAN */</span>
+
+ADC_ChannelConfTypeDef sConfig;
+
+<span class="cm">/* Rang 1 → Canal 0 (PA0) — Potentiomètre */</span>
+sConfig.Channel = ADC_CHANNEL_0; sConfig.Rank = <span class="num">1</span>;
+sConfig.SamplingTime = ADC_SAMPLETIME_84CYCLES;
+<span class="fn">HAL_ADC_ConfigChannel</span>(&hadc1, &sConfig);
+
+<span class="cm">/* Rang 2 → Canal 1 (PA1) — LDR */</span>
+sConfig.Channel = ADC_CHANNEL_1; sConfig.Rank = <span class="num">2</span>;
+<span class="fn">HAL_ADC_ConfigChannel</span>(&hadc1, &sConfig);
+
+<span class="cm">/* Rang 3 → Canal 4 (PA4) — Batterie */</span>
+sConfig.Channel = ADC_CHANNEL_4; sConfig.Rank = <span class="num">3</span>;
+<span class="fn">HAL_ADC_ConfigChannel</span>(&hadc1, &sConfig);
+
+<span class="cm">/* Rang 4 → Capteur Temp interne ⚠ Activer TSVREFE ! Min 480 cycles ! */</span>
+sConfig.Channel      = ADC_CHANNEL_TEMPSENSOR;
+sConfig.Rank         = <span class="num">4</span>;
+sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
+<span class="fn">HAL_ADC_ConfigChannel</span>(&hadc1, &sConfig);
+
+<span class="tp">uint32_t</span> buf_can[<span class="num">4</span>];
+<span class="fn">HAL_ADC_Start_DMA</span>(&hadc1, buf_can, <span class="num">4</span>);</pre>
+  </div>
+</div>
+</section>
+
+<!-- ═══ M7 PROBLÈMES ═══ -->
+<section id="m7">
+<div class="container">
+  <div class="sec-overline"><span class="sec-num">08</span> Module — Exercices Pratiques</div>
+  <h2 class="sec-title">5 <em>Problèmes</em> à Résoudre</h2>
+  <p class="sec-sub">Situations réelles. Lisez, répondez, puis révélez la solution. C'est ainsi que les vrais ingénieurs apprennent.</p>
+
+  <!-- PROB 1 -->
+  <div class="problem">
+    <div class="prob-head">
+      <div class="prob-icon">🎛️</div>
+      <div class="prob-meta">
+        <div class="prob-num">Problème 01</div>
+        <div class="prob-title">Lecture d'un Potentiomètre</div>
+        <div class="prob-diff">Difficulté : <span>⭐ Débutant</span> · Canal unique, mode scrutation</div>
+      </div>
+    </div>
+    <div class="prob-body">
+      <div class="enonce">
+        <div class="enonce-label">📋 Énoncé</div>
+        <p>Potentiomètre 10 kΩ entre 3,3 V et GND, curseur sur <strong>PA0</strong>. Lire en scrutation toutes les 500 ms, convertir en tension et pourcentage, envoyer via UART2 à 115 200 bauds. CAN : 12 bits, horloge APB2/4 = 21 MHz.</p>
+      </div>
+      <div class="q-label">❓ Questions</div>
+      <div class="question"><div class="q-num">Q1</div><div class="q-text"><strong>Formule :</strong> Valeur brute = 3072, V_REF = 3,3 V, 12 bits → Tension en volts ?<div class="q-hint">💡 V = (brut / 4095) × 3,3</div></div></div>
+      <div class="question"><div class="q-num">Q2</div><div class="q-text"><strong>Séquence HAL :</strong> Les 4 fonctions HAL dans l'ordre exact pour une conversion unique ?<div class="q-hint">💡 Start → Poll → Get → Stop</div></div></div>
+      <div class="question"><div class="q-num">Q3</div><div class="q-text"><strong>Temps :</strong> Avec 3 cycles d'échantillonnage @ 21 MHz, durée d'une conversion en µs ?<div class="q-hint">💡 t = (S/H + 12,5) / f_CAN</div></div></div>
+      <div class="question"><div class="q-num">Q4</div><div class="q-text"><strong>Pourcentage :</strong> Formule C pour calculer 0–100% à partir de la valeur brute.</div></div>
+      <div style="margin-top:1rem;">
+        <button class="toggle-btn" onclick="toggleSol(this)">✅ Révéler la Solution <span class="arr">▼</span></button>
+        <div class="sol-body">
+          <div class="ans"><div class="ans-num">RÉPONSE Q1</div><p>V = (3072 / 4095) × 3,3 = 0,7502 × 3,3 = <strong>2,476 V</strong></p></div>
+          <div class="ans"><div class="ans-num">RÉPONSE Q2</div><p><code>HAL_ADC_Start()</code> → <code>HAL_ADC_PollForConversion()</code> → <code>HAL_ADC_GetValue()</code> → <code>HAL_ADC_Stop()</code></p></div>
+          <div class="ans"><div class="ans-num">RÉPONSE Q3</div><p>t = (3 + 12,5) / 21 000 000 = <strong>0,738 µs</strong> ≈ 1,35 MSPS max</p></div>
+          <div class="ans"><div class="ans-num">RÉPONSE Q4</div><p><code>float pct = ((float)brut / 4095.0f) * 100.0f;</code></p></div>
+          <div class="code-wrap" data-lang="C — Solution P1">
+<pre><span class="tp">uint32_t</span> brut; <span class="tp">float</span> tension, pct; <span class="tp">char</span> buf[<span class="num">80</span>];
+
+<span class="kw">while</span> (<span class="num">1</span>) {
+  <span class="fn">HAL_ADC_Start</span>(&hadc1);
+  <span class="fn">HAL_ADC_PollForConversion</span>(&hadc1, <span class="num">100</span>);
+  brut = <span class="fn">HAL_ADC_GetValue</span>(&hadc1);
+  <span class="fn">HAL_ADC_Stop</span>(&hadc1);
+
+  tension = ((<span class="tp">float</span>)brut / <span class="num">4095.0f</span>) * <span class="num">3.3f</span>;
+  pct     = ((<span class="tp">float</span>)brut / <span class="num">4095.0f</span>) * <span class="num">100.0f</span>;
+
+  <span class="fn">sprintf</span>(buf, <span class="str">"[%.*s%.*s] %5.1f%%  %.3fV\r\n"</span>,
+          (<span class="tp">int</span>)(pct/<span class="num">10</span>), <span class="str">"##########"</span>,
+          <span class="num">10</span>-(<span class="tp">int</span>)(pct/<span class="num">10</span>), <span class="str">"          "</span>, pct, tension);
+  <span class="fn">HAL_UART_Transmit</span>(&huart2, (<span class="tp">uint8_t</span>*)buf, <span class="fn">strlen</span>(buf), <span class="num">100</span>);
+  <span class="fn">HAL_Delay</span>(<span class="num">500</span>);
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROB 2 -->
+  <div class="problem">
+    <div class="prob-head">
+      <div class="prob-icon">🌡️</div>
+      <div class="prob-meta">
+        <div class="prob-num">Problème 02</div>
+        <div class="prob-title">Capteur de Température Interne</div>
+        <div class="prob-diff">Difficulté : <span>⭐⭐ Intermédiaire</span> · Canal interne, calibration usine</div>
+      </div>
+    </div>
+    <div class="prob-body">
+      <div class="enonce">
+        <div class="enonce-label">📋 Énoncé</div>
+        <p>Le STM32F407 intègre un capteur sur <strong>ADC1_IN16</strong>. Calibration usine : TS_CAL1 @ <code>0x1FFF7A2C</code> (30°C), TS_CAL2 @ <code>0x1FFF7A2E</code> (110°C). Afficher température en °C, 1 décimale, chaque seconde.</p>
+      </div>
+      <div class="q-label">❓ Questions</div>
+      <div class="question"><div class="q-num">Q1</div><div class="q-text"><strong>Activation :</strong> Quel bit dans quel registre activer avant de lire le capteur ?<div class="q-hint">💡 TSVREFE dans ADC_CCR</div></div></div>
+      <div class="question"><div class="q-num">Q2</div><div class="q-text"><strong>Temps d'échantillonnage :</strong> Minimum 10 µs requis. Combien de cycles @ 21 MHz ? Quelle constante HAL ?<div class="q-hint">💡 N ≥ 10µs × 21MHz = 210 cycles</div></div></div>
+      <div class="question"><div class="q-num">Q3</div><div class="q-text"><strong>Formule calibration usine :</strong> Interpolation linéaire entre CAL1 (30°C) et CAL2 (110°C).</div></div>
+      <div style="margin-top:1rem;">
+        <button class="toggle-btn" onclick="toggleSol(this)">✅ Révéler la Solution <span class="arr">▼</span></button>
+        <div class="sol-body">
+          <div class="ans"><div class="ans-num">RÉPONSE Q1</div><p>Bit <strong>TSVREFE</strong> (bit 23) dans <strong>ADC_CCR</strong>. Désactivé par défaut pour économiser l'énergie.</p></div>
+          <div class="ans"><div class="ans-num">RÉPONSE Q2</div><p>N ≥ 210 cycles → choisir <strong>480 cycles</strong> (<code>ADC_SAMPLETIME_480CYCLES</code>).</p></div>
+          <div class="ans"><div class="ans-num">RÉPONSE Q3</div><p><code>t = (110.0f-30.0f)/((float)(*cal2-*cal1)) * ((float)brut - *cal1) + 30.0f;</code></p></div>
+          <div class="code-wrap" data-lang="C — Solution P2">
+<pre><span class="tp">float</span> <span class="fn">Lire_Temperature</span>(<span class="kw">void</span>) {
+  <span class="tp">uint32_t</span> brut;
+  ADC_ChannelConfTypeDef sConfig = {<span class="num">0</span>};
+
+  <span class="reg">ADC</span>->CCR |= ADC_CCR_TSVREFE;      <span class="cm">/* Activer capteur interne */</span>
+
+  sConfig.Channel      = ADC_CHANNEL_TEMPSENSOR;
+  sConfig.Rank         = <span class="num">1</span>;
+  sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
+  <span class="fn">HAL_ADC_ConfigChannel</span>(&hadc1, &sConfig);
+
+  <span class="fn">HAL_ADC_Start</span>(&hadc1);
+  <span class="fn">HAL_ADC_PollForConversion</span>(&hadc1, <span class="num">100</span>);
+  brut = <span class="fn">HAL_ADC_GetValue</span>(&hadc1);
+  <span class="fn">HAL_ADC_Stop</span>(&hadc1);
+
+  <span class="tp">uint16_t</span> *cal1 = (<span class="tp">uint16_t</span>*)<span class="num">0x1FFF7A2C</span>;
+  <span class="tp">uint16_t</span> *cal2 = (<span class="tp">uint16_t</span>*)<span class="num">0x1FFF7A2E</span>;
+  <span class="kw">return</span> (<span class="num">110.0f</span>-<span class="num">30.0f</span>) / ((<span class="tp">float</span>)(*cal2-*cal1))
+         * ((<span class="tp">float</span>)brut - *cal1) + <span class="num">30.0f</span>;
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROB 3 -->
+  <div class="problem">
+    <div class="prob-head">
+      <div class="prob-icon">💡</div>
+      <div class="prob-meta">
+        <div class="prob-num">Problème 03</div>
+        <div class="prob-title">Contrôle Automatique de Luminosité (LDR)</div>
+        <div class="prob-diff">Difficulté : <span>⭐⭐ Intermédiaire</span> · Hystérésis</div>
+      </div>
+    </div>
+    <div class="prob-body">
+      <div class="enonce">
+        <div class="enonce-label">📋 Énoncé</div>
+        <p>LDR (100Ω – 1MΩ) + résistance fixe 10 kΩ en diviseur de tension → <strong>PA1 (ADC1_IN1)</strong>. Allumer LED sur PD12 si sombre (CAN &gt; 3000), éteindre si clair (CAN &lt; 1000). Implémenter une <strong>zone d'hystérésis</strong> pour éviter le scintillement.</p>
+      </div>
+      <div style="margin-top:1rem;">
+        <button class="toggle-btn" onclick="toggleSol(this)">✅ Révéler la Solution <span class="arr">▼</span></button>
+        <div class="sol-body">
+          <div class="ans"><div class="ans-num">RÉPONSE — HYSTÉRÉSIS</div><p>Deux seuils (3000 et 1000) créent une zone morte. Avec un seul seuil à 2000, un signal oscillant entre 1980–2020 ferait commuter la LED des dizaines de fois par seconde.</p></div>
+          <div class="code-wrap" data-lang="C — Solution P3">
+<pre><span class="mac">#define</span> SEUIL_SOMBRE  <span class="num">3000</span>
+<span class="mac">#define</span> SEUIL_CLAIR   <span class="num">1000</span>
+
+<span class="kw">static</span> <span class="tp">uint8_t</span> led_on = <span class="num">0</span>;
+
+<span class="fn">HAL_ADC_Start</span>(&hadc1);
+<span class="fn">HAL_ADC_PollForConversion</span>(&hadc1, <span class="num">100</span>);
+<span class="tp">uint32_t</span> brut = <span class="fn">HAL_ADC_GetValue</span>(&hadc1);
+<span class="fn">HAL_ADC_Stop</span>(&hadc1);
+
+<span class="kw">if</span> (!led_on && brut > SEUIL_SOMBRE) {
+  led_on = <span class="num">1</span>;
+  <span class="fn">HAL_GPIO_WritePin</span>(GPIOD, GPIO_PIN_12, GPIO_PIN_SET);
+} <span class="kw">else if</span> (led_on && brut < SEUIL_CLAIR) {
+  led_on = <span class="num">0</span>;
+  <span class="fn">HAL_GPIO_WritePin</span>(GPIOD, GPIO_PIN_12, GPIO_PIN_RESET);
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROB 4 -->
+  <div class="problem">
+    <div class="prob-head">
+      <div class="prob-icon">🔋</div>
+      <div class="prob-meta">
+        <div class="prob-num">Problème 04</div>
+        <div class="prob-title">Moniteur de Tension Batterie LiPo</div>
+        <div class="prob-diff">Difficulté : <span>⭐⭐⭐ Avancé</span> · Diviseur de tension, suréchantillonnage</div>
+      </div>
+    </div>
+    <div class="prob-body">
+      <div class="enonce">
+        <div class="enonce-label">📋 Énoncé</div>
+        <p>Batterie LiPo 1S : 3,0 V (vide) → 4,2 V (pleine). Diviseur R1=R2=100 kΩ → <strong>PA4</strong>. Suréchantillonnage ×16. Afficher tension réelle, SoC (0–100%), alarme si V &lt; 3,2 V.</p>
+      </div>
+      <div style="margin-top:1rem;">
+        <button class="toggle-btn" onclick="toggleSol(this)">✅ Révéler la Solution <span class="arr">▼</span></button>
+        <div class="sol-body">
+          <div class="ans"><div class="ans-num">RÉPONSE — Circuit</div><p>Rapport = 0,5. CAN voit 1,5 V à 2,1 V → sûr. V_bat = V_CAN × 2.</p></div>
+          <div class="ans"><div class="ans-num">RÉPONSE — Suréchantillonnage</div><p>16 mesures → +log₂(16) = <strong>+4 bits</strong> effectifs → résolution effective 16 bits.</p></div>
+          <div class="code-wrap" data-lang="C — Solution P4">
+<pre><span class="mac">#define</span> N_OS  <span class="num">16</span>
+<span class="tp">uint32_t</span> somme = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="tp">int</span> i=<span class="num">0</span>; i&lt;N_OS; i++) {
+  <span class="fn">HAL_ADC_Start</span>(&hadc1);
+  <span class="fn">HAL_ADC_PollForConversion</span>(&hadc1, <span class="num">10</span>);
+  somme += <span class="fn">HAL_ADC_GetValue</span>(&hadc1);
+  <span class="fn">HAL_ADC_Stop</span>(&hadc1);
+}
+<span class="tp">float</span> v_can = ((<span class="tp">float</span>)(somme/N_OS) / <span class="num">4095.0f</span>) * <span class="num">3.3f</span>;
+<span class="tp">float</span> v_bat = v_can * <span class="num">2.0f</span>;   <span class="cm">/* annuler diviseur R1=R2 */</span>
+<span class="tp">float</span> soc   = (v_bat-<span class="num">3.0f</span>)/(<span class="num">4.2f</span>-<span class="num">3.0f</span>)*<span class="num">100.0f</span>;
+<span class="kw">if</span>(soc&lt;<span class="num">0</span>)soc=<span class="num">0</span>; <span class="kw">if</span>(soc&gt;<span class="num">100</span>)soc=<span class="num">100</span>;
+<span class="fn">HAL_GPIO_WritePin</span>(GPIOD, GPIO_PIN_14,
+  v_bat&lt;<span class="num">3.2f</span> ? GPIO_PIN_SET : GPIO_PIN_RESET);</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROB 5 -->
+  <div class="problem">
+    <div class="prob-head">
+      <div class="prob-icon">🕹️</div>
+      <div class="prob-meta">
+        <div class="prob-num">Problème 05</div>
+        <div class="prob-title">Joystick Double Axe avec DMA</div>
+        <div class="prob-diff">Difficulté : <span>⭐⭐⭐ Avancé</span> · 2 canaux, DMA balayage, zone morte</div>
+      </div>
+    </div>
+    <div class="prob-body">
+      <div class="enonce">
+        <div class="enonce-label">📋 Énoncé</div>
+        <p>Joystick : axe X sur <strong>PA0 (CH0)</strong>, axe Y sur <strong>PA1 (CH1)</strong>. Lire les deux axes simultanément avec DMA balayage continu. Normaliser −1,0 à +1,0. Zone morte ±150 pts autour du centre (2048). 50 Hz de mise à jour.</p>
+      </div>
+      <div style="margin-top:1rem;">
+        <button class="toggle-btn" onclick="toggleSol(this)">✅ Révéler la Solution <span class="arr">▼</span></button>
+        <div class="sol-body">
+          <div class="ans"><div class="ans-num">RÉPONSE — DMA</div><p>ADC1 → DMA2 Flux 0 Canal 0 → Mode Circulaire → Taille mémoire Word. ScanConvMode=ENABLE, NbrOfConversion=2, ContinuousConvMode=ENABLE, DMAContinuousRequests=ENABLE.</p></div>
+          <div class="ans"><div class="ans-num">RÉPONSE — Tampon Global</div><p>Le tampon DMA doit être global car le DMA y accède directement en arrière-plan. Variable locale = adresse sur la pile → peut être écrasée ou libérée.</p></div>
+          <div class="code-wrap" data-lang="C — Solution P5">
+<pre><span class="tp">uint32_t</span> buf_joy[<span class="num">2</span>];   <span class="cm">/* [0]=X, [1]=Y — GLOBAL ! */</span>
+<span class="mac">#define</span> CENTRE  <span class="num">2048</span>
+<span class="mac">#define</span> DZ      <span class="num">150</span>
+
+<span class="tp">float</span> <span class="fn">zone_morte</span>(<span class="tp">uint32_t</span> brut) {
+  <span class="tp">int32_t</span> e = (<span class="tp">int32_t</span>)brut - CENTRE;
+  <span class="kw">if</span> (e > -DZ && e < DZ) <span class="kw">return</span> <span class="num">0.0f</span>;
+  <span class="tp">float</span> v = ((<span class="tp">float</span>)e - (<span class="tp">float</span>)(e><span class="num">0</span> ? DZ : -DZ)) / (<span class="tp">float</span>)(CENTRE-DZ);
+  <span class="kw">if</span>(v> <span class="num">1.0f</span>)v= <span class="num">1.0f</span>; <span class="kw">if</span>(v<-<span class="num">1.0f</span>)v=-<span class="num">1.0f</span>; <span class="kw">return</span> v;
+}
+
+<span class="cm">/* Dans main() */</span>
+<span class="fn">HAL_ADC_Start_DMA</span>(&hadc1, buf_joy, <span class="num">2</span>);
+
+<span class="kw">while</span>(<span class="num">1</span>) {
+  <span class="tp">float</span> x = <span class="fn">zone_morte</span>(buf_joy[<span class="num">0</span>]);
+  <span class="tp">float</span> y = <span class="fn">zone_morte</span>(buf_joy[<span class="num">1</span>]);
+  <span class="cm">/* PWM moteur : ARR=1000, 500=arrêt */</span>
+  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, (<span class="tp">uint32_t</span>)(<span class="num">500</span> + x*<span class="num">500</span>));
+  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, (<span class="tp">uint32_t</span>)(<span class="num">500</span> + y*<span class="num">500</span>));
+  <span class="fn">HAL_Delay</span>(<span class="num">20</span>);  <span class="cm">/* 50 Hz */</span>
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ═══ M8 CONSEILS PRO ═══ -->
+<section id="m8">
+<div class="container">
+  <div class="sec-overline"><span class="sec-num">09</span> Module</div>
+  <h2 class="sec-title">Conseils Pro &amp; <em>Erreurs Courantes</em></h2>
+  <p class="sec-sub">Leçons du monde réel qui distinguent les débutants des ingénieurs embarqués professionnels.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>⚡ Temps d'Échantillonnage</h3>
+      <ul>
+        <li><strong>3–15 cycles :</strong> Sources &lt;1 kΩ</li>
+        <li><strong>28–56 cycles :</strong> Sources 1–10 kΩ</li>
+        <li><strong>84–480 cycles :</strong> Haute impédance (&gt;10 kΩ)</li>
+        <li><strong>480 cycles :</strong> Capteur temp (obligatoire)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🔌 Filtre Anti-Repliement</h3>
+      <p>R = 1 kΩ en série + C = 100 nF vers GND. f_coupure ≈ 1,6 kHz. Placer au plus près de la broche MCU.</p>
+    </div>
+    <div class="card">
+      <h3>🚫 À Ne Jamais Faire</h3>
+      <ul>
+        <li>❌ &gt;3,3 V sur une broche CAN sans protection</li>
+        <li>❌ Broche GPIO flottante comme entrée CAN</li>
+        <li>❌ Oublier <code>volatile</code> sur variables partagées DMA</li>
+        <li>❌ TSVREFE non activé pour le capteur interne</li>
+        <li>❌ Tampon DMA sur la pile (variable locale)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🧮 Guide Sélection du Mode</h3>
+      <table style="margin:0;">
+        <thead><tr><th>Mode</th><th>CPU</th><th>Usage</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag to">Scrutation</span></td><td>100% bloqué</td><td>Apprentissage, &lt;1 Hz</td></tr>
+          <tr><td><span class="tag tc">DMA</span></td><td>~0%</td><td>Haute vitesse, audio</td></tr>
+          <tr><td><span class="tag tg">DMA Scan</span></td><td>~0%</td><td>Multi-capteurs</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;">
+    <h3>🧮 Calculateur de Temps de Conversion</h3>
+    <p>APB2 = 84 MHz, prédiviseur /4, S/H = 84 cycles, résolution 12 bits :</p>
+    <div class="formula">Horloge_CAN = 84 MHz / 4 = 21 MHz</div>
+    <div class="formula">t_conv = (84 + 12,5) / 21 000 000 = 96,5 / 21M = <strong>4,595 µs</strong></div>
+    <div class="formula">Débit max = 1 / 4,595 µs ≈ <strong>217 600 éch/s</strong> par canal</div>
+  </div>
+</div>
+</section>
+
+</div><!-- /root -->
+
+<footer>
+  <div class="container" style="z-index:2;position:relative;">
+    <p><span>STM32F4 · CAN Course</span> — Chaque octet expliqué. Zéro hypothèse.</p>
+    <p style="margin-top:.5rem;">Référence : RM0090 Rev 19 · HAL STM32F4xx UM1725 · Fiche technique STM32F407</p>
+    <div style="margin-top:1.25rem;display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;">
+      <span class="tag tc">STM32F4</span><span class="tag to">CAN 12-bit</span><span class="tag tg">HAL</span>
+      <span class="tag tc">DMA</span><span class="tag to">CubeMX</span><span class="tag tv">C Embarqué</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════ SCRIPTS ═══════════════════════ -->
+<script>
+/* ── Stars ── */
+const cv = document.getElementById('stars');
+const ctx = cv.getContext('2d');
+let W, H, pts = [];
+const resize = () => { W = cv.width = innerWidth; H = cv.height = innerHeight; };
+const mkStar = () => ({
+  x: Math.random()*W, y: Math.random()*H,
+  r: Math.random()*.8+.1, a: Math.random()*.35, da: (Math.random()-.5)*.003,
+  vy: -(Math.random()*.12+.02),
+  col: Math.random()>.5 ? 'rgba(0,212,255,' : 'rgba(180,210,255,'
+});
+const initStars = () => { resize(); pts = Array.from({length:160}, mkStar); };
+const drawStars = () => {
+  ctx.clearRect(0,0,W,H);
+  pts.forEach(p => {
+    p.a = Math.max(.02, Math.min(.4, p.a+p.da));
+    if (p.a<=.03||p.a>=.39) p.da*=-1;
+    p.y += p.vy; if (p.y < -2) { p.y = H+2; p.x = Math.random()*W; }
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle = p.col+p.a+')'; ctx.fill();
+  });
+  requestAnimationFrame(drawStars);
+};
+window.addEventListener('resize', resize);
+initStars(); drawStars();
+
+/* ── Cursor ── */
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cur.style.left = mx+'px'; cur.style.top = my+'px';
+});
+(function rl(){
+  rx += (mx-rx)*.1; ry += (my-ry)*.1;
+  ring.style.left = rx+'px'; ring.style.top = ry+'px';
+  requestAnimationFrame(rl);
+})();
+document.querySelectorAll('a,.toggle-btn,.btn,.quiz-opt,.f-btn,.card,.problem').forEach(el => {
+  el.addEventListener('mouseenter',()=>cur.classList.add('expand'));
+  el.addEventListener('mouseleave',()=>cur.classList.remove('expand'));
+});
+
+/* ── Orb parallax ── */
+document.addEventListener('mousemove', e => {
+  const px = (e.clientX/innerWidth-.5)*30, py = (e.clientY/innerHeight-.5)*30;
+  document.querySelectorAll('.orb').forEach((o,i)=>{
+    o.style.transform=`translate(${px*(i+1)*.2}px,${py*(i+1)*.2}px)`;
+  });
+});
+
+/* ── Nav active ── */
+const secs = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('nav a');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('actif'));
+      const a = document.querySelector(`nav a[href="#${e.target.id}"]`);
+      if (a) a.classList.add('actif');
+    }
+  });
+}, { threshold: 0.2 });
+secs.forEach(s => obs.observe(s));
+
+/* ── Fade-up on scroll ── */
+const fEls = document.querySelectorAll('.card,.problem,.step');
+const fObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity='1';
+      e.target.style.transform='translateY(0)';
+      e.target.style.transition='opacity .55s ease, transform .55s ease';
+      fObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+fEls.forEach(el => {
+  el.style.opacity='0'; el.style.transform='translateY(20px)';
+  fObs.observe(el);
+});
+
+/* ── Solution toggle ── */
+function toggleSol(btn) {
+  btn.classList.toggle('open');
+  btn.nextElementSibling.classList.toggle('show');
+}
+
+/* ── Quiz check ── */
+function checkQ(el, qId, correct) {
+  const parent = el.closest('.quiz-card');
+  parent.querySelectorAll('.quiz-opt').forEach(o => o.style.pointerEvents='none');
+  el.classList.add(correct ? 'correct' : 'wrong');
+  const fb = document.getElementById('fb-'+qId);
+  fb.className = 'quiz-fb show ' + (correct ? 'ok' : 'err');
+  if (!correct) fb.textContent = '❌ Pas tout à fait... ' + fb.textContent.replace('✅','');
+}
+
+/* ── Shannon demo ── */
+function updateShannon() {
+  const fs = parseInt(document.getElementById('fSamp').value);
+  const fm = parseInt(document.getElementById('fSig').value);
+  document.getElementById('fSampVal').textContent = fs.toLocaleString('fr-FR') + ' Hz';
+  document.getElementById('fSigVal').textContent  = fm.toLocaleString('fr-FR') + ' Hz';
+  const minFs = 2*fm, nyq = fs/2, ratio = fs/minFs;
+  document.getElementById('nyqFormula').textContent = fs.toLocaleString('fr-FR') + ' ≥ 2 × ' + fm.toLocaleString('fr-FR');
+  const nyqEl = document.getElementById('nyqResult');
+  nyqEl.textContent = fs.toLocaleString('fr-FR') + ' ≥ ' + minFs.toLocaleString('fr-FR') + (fs>=minFs ? ' ✅':' ❌');
+  nyqEl.style.color = fs>=minFs ? 'var(--green)' : 'var(--orange)';
+  document.getElementById('nyqNyq').textContent = 'f_Nyquist = ' + nyq.toLocaleString('fr-FR') + ' Hz';
+  const st = document.getElementById('shannonStatus'), mk = document.getElementById('shannonMarker');
+  const pct = Math.min(Math.max(ratio/3,0),1)*100;
+  mk.style.left = pct+'%';
+  if (ratio>=2) { st.className='shannon-status s-ok'; st.textContent='✅ Bon — f_s ≥ 2·f_max'; }
+  else if (ratio>=1) { st.className='shannon-status s-limit'; st.textContent='⚠️ Limite — risque d\'aliasing, ajouter filtre !'; }
+  else { st.className='shannon-status s-bad'; st.textContent='❌ ALIASING ! Augmenter f_s ou filtrer le signal.'; }
+}
+
+/* ── SAR simulator ── */
+let sarS = { step:0, bits:[], N:12, vin:2.2, vref:3.3, done:false };
+
+function sarInit() {
+  const vin=parseFloat(document.getElementById('sarVin').value);
+  const N=parseInt(document.getElementById('sarBits').value);
+  const vref=parseFloat(document.getElementById('sarVref').value);
+  if (isNaN(vin)||vin<0||vin>vref) { document.getElementById('sarInfo').textContent='⚠️ Tension invalide (0 à VREF).'; return; }
+  sarS = { step:0, bits:new Array(N).fill(null), N, vin, vref, done:false };
+  document.getElementById('sarResult').style.display='none';
+  const d = document.getElementById('sarBitsDisplay'); d.innerHTML='';
+  for (let i=0;i<N;i++) {
+    const c=document.createElement('div'); c.className='sar-bit'; c.id='sarB'+i; c.textContent='?'; d.appendChild(c);
+  }
+  const vp=(vin/vref)*100;
+  document.getElementById('sarDacFill').style.width='0%';
+  document.getElementById('sarTarget').style.left=vp+'%';
+  document.getElementById('sarVinL').textContent='V_in: '+vin.toFixed(3)+' V';
+  document.getElementById('sarVrefL').textContent=vref.toFixed(1)+' V';
+  document.getElementById('sarVdacL').textContent='V_DAC: 0 V';
+  document.getElementById('sarInfo').innerHTML='<span style="color:var(--cyan)">Prêt — '+N+' bits, V_in='+vin.toFixed(3)+'V</span>. Cliquez Étape Suivante.';
+}
+
+function sarStep() {
+  if (sarS.done) return;
+  const {N,vin,vref} = sarS, i = sarS.step;
+  if (i>=N) return;
+  const tb = [...sarS.bits]; tb[i]=1;
+  let dv=0; for(let b=0;b<N;b++) if(tb[b]===1) dv+=Math.pow(2,N-1-b);
+  const vdac=(dv/(Math.pow(2,N)-1))*vref;
+  const keep = vin>=vdac;
+  sarS.bits[i] = keep?1:0;
+  const cell = document.getElementById('sarB'+i);
+  cell.textContent = sarS.bits[i];
+  cell.className = 'sar-bit '+(sarS.bits[i]===1?'one':'zero');
+  if (i+1<N) { const nc=document.getElementById('sarB'+(i+1)); nc.className='sar-bit test'; nc.textContent='?'; }
+  let fd=0; for(let b=0;b<N;b++) if(sarS.bits[b]===1) fd+=Math.pow(2,N-1-b);
+  const fv=(fd/(Math.pow(2,N)-1))*vref;
+  document.getElementById('sarDacFill').style.width=(fv/vref*100)+'%';
+  document.getElementById('sarVdacL').textContent='V_DAC: '+fv.toFixed(4)+' V';
+  document.getElementById('sarInfo').innerHTML=
+    '<span style="color:var(--yellow)">Cycle '+(i+1)+'/'+N+' — Bit B'+(N-1-i)+'</span> : V_DAC=<span style="color:var(--violet)">'+vdac.toFixed(4)+'V</span> vs V_in=<span style="color:var(--orange)">'+vin.toFixed(3)+'V</span> → '+
+    (keep?'<span style="color:var(--green)">Vin ≥ V_DAC → B'+(N-1-i)+'=1 ✅</span>':'<span style="color:var(--orange)">Vin &lt; V_DAC → B'+(N-1-i)+'=0 ❌</span>');
+  sarS.step++;
+  if (sarS.step===N) {
+    sarS.done=true;
+    let res=0; for(let b=0;b<N;b++) if(sarS.bits[b]===1) res+=Math.pow(2,N-1-b);
+    const rv=(res/(Math.pow(2,N)-1))*vref;
+    for(let b=0;b<N;b++) document.getElementById('sarB'+b).className='sar-bit done';
+    document.getElementById('sarResult').style.display='block';
+    document.getElementById('sarResBin').textContent=sarS.bits.join('')+' = '+res;
+    document.getElementById('sarResDec').textContent='Valeur décimale : '+res+' / '+(Math.pow(2,N)-1);
+    document.getElementById('sarResV').textContent='Tension : '+rv.toFixed(4)+' V (erreur : '+Math.abs(rv-vin).toFixed(4)+' V)';
+  }
+}
+
+function sarAuto() {
+  sarInit();
+  const N=parseInt(document.getElementById('sarBits').value);
+  for(let i=0;i<N;i++) setTimeout(sarStep, 550*(i+1));
+}
+
+window.addEventListener('load', () => { sarInit(); updateShannon(); });
+</script>
+</body>
+</html>
